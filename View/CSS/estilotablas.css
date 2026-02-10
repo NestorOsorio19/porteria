@@ -1,0 +1,118 @@
+/* Estilos para los botones */
+.buttons-container {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.buttons-container .btn-consulta {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    margin: 0 10px;
+}
+
+.buttons-container .btn-consulta:hover {
+    background-color: #45a049;
+}
+
+/* Estilos para la tabla de registros */
+.tabla-registros {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.tabla-registros th, .tabla-registros td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+.tabla-registros th {
+    background-color: #f4f4f4;
+}
+
+/* Estilo de paginación */
+.paginacion {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.paginacion .pagina {
+    padding: 5px 10px;
+    text-decoration: none;
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 4px;
+    margin: 0 5px;
+}
+
+.paginacion .pagina:hover {
+    background-color: #45a049;
+}
+
+@media screen and (max-width: 768px) {
+    .buttons-container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .buttons-container .btn-consulta {
+        width: 80%;
+        text-align: center;
+        padding: 12px;
+        font-size: 16px;
+    }
+
+    .tabla-registros th,
+    .tabla-registros td {
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    .paginacion .pagina {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .buttons-container .btn-consulta {
+        width: 100%;
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .tabla-registros {
+        display: block;
+        overflow-x: auto; /* Para permitir desplazamiento lateral si la tabla es ancha */
+    }
+
+    .tabla-registros table {
+        width: 100%;
+        min-width: 600px; /* Previene que se encoja demasiado */
+    }
+
+    .tabla-registros th,
+    .tabla-registros td {
+        font-size: 13px;
+        padding: 6px;
+    }
+
+    .paginacion {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    .paginacion .pagina {
+        padding: 6px 10px;
+        font-size: 13px;
+    }
+}
+

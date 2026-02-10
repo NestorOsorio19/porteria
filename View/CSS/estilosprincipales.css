@@ -1,0 +1,411 @@
+/* Estilos para el cuerpo y la estructura base */
+body {
+    font-family: 'Arial', sans-serif; /* Fuente más limpia */
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4; /* Fondo suave */
+}
+
+/* Estilos para el contenedor del logo dentro del menú lateral */
+.logo-container {
+    display: flex; /* Usamos flexbox para centrar el logo */
+    justify-content: center; /* Centrar horizontalmente */
+    align-items: center; /* Centrar verticalmente */
+    margin-bottom: 20px; /* Espacio abajo del logo */
+}
+
+/* Estilos para el logo dentro del menú lateral */
+.logo-container img {
+    width: 40px; /* Tamaño del logo */
+    height: auto; /* Mantener la proporción del logo */
+}
+
+/* Estilos básicos para el menú lateral */
+.menu-lateral {
+    position: fixed;
+    left: -250px; /* Menú oculto fuera de la pantalla */
+    top: 0;
+    width: 250px;
+    height: 100%;
+    background-color: #f89520;
+    transition: left 0.3s ease;
+    padding-top: 60px;
+    z-index: 1000;
+}
+
+/* Estilos para los enlaces dentro del menú lateral */
+.nav-links {
+    list-style-type: none;
+    padding: 0;
+}
+
+.nav-links li {
+    margin: 15px 0;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    padding: 10px 20px;
+    display: block;
+    transition: background-color 0.3s ease;
+    border-radius: 4px; /* Bordes redondeados */
+}
+
+.nav-links a:hover {
+    background-color: #575757; /* Fondo oscuro al pasar el mouse */
+}
+
+/* Estilo para el botón de menú tipo hamburguesa */
+.menu-toggle {
+    background-color: white; /* Fondo blanco */
+    border: 2px solid #333; /* Borde gris oscuro */
+    color: #333; /* Color del ícono de menú */
+    font-size: 30px;
+    padding: 10px 15px;
+    cursor: pointer;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    border-radius: 50%; /* Redondear el botón */
+    z-index: 1100;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.menu-toggle:hover {
+    background-color: #333; /* Fondo gris oscuro */
+    color: white; /* Ícono blanco cuando está en hover */
+}
+
+/* Estilo cuando el menú lateral está visible */
+.menu-lateral.open {
+    left: 0; /* Muestra el menú lateral */
+}
+
+/* Estilos para el área del contenido principal */
+.main-content {
+    padding-left: 0;
+    transition: padding-left 0.3s ease;
+}
+
+.main-content.shift {
+    padding-left: 250px; /* Desplaza el contenido cuando el menú está visible */
+}
+
+/* Estilos para el formulario */
+.users-form {
+    background-color: white;
+    margin: 50px auto;
+    padding: 30px;
+    width: 90%;
+    max-width: 800px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    border-radius: 8px; /* Bordes redondeados */
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    font-size: 24px;
+}
+
+/* Estilos para las etiquetas y los campos del formulario */
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #555;
+}
+
+/* Estilo de los campos de entrada */
+input[type="text"],
+input[type="date"],
+input[type="time"],
+input[type="checkbox"],
+select,
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s;
+}
+
+input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+}
+
+textarea {
+    height: 120px; /* Altura definida para el textarea */
+    resize: vertical; /* Permitir el cambio de tamaño vertical */
+}
+
+input[type="text"]:focus,
+input[type="date"]:focus,
+input[type="time"]:focus,
+select:focus,
+textarea:focus {
+    border-color: #007bff; /* Resaltar los campos al hacer focus */
+    outline: none; /* Quitar el borde azul por defecto del navegador */
+}
+
+/* Estilo para el contenedor de botones */
+.buttons-container {
+    text-align: center;
+}
+
+/* Estilo para los botones */
+input[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+input[type="submit"]:hover {
+    background-color: #0056b3; /* Cambiar el color al pasar el mouse */
+}
+
+a.btn-consulta {
+    display: inline-block;
+    text-decoration: none;
+    background-color: #28a745;
+    color: white;
+    padding: 12px 30px;
+    font-size: 16px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+a.btn-consulta:hover {
+    background-color: #218838; /* Cambiar el color al pasar el mouse */
+}
+
+@media screen and (max-width: 480px) {
+    /* Menú lateral aún más compacto */
+    .menu-lateral {
+        width: 180px;
+        padding-top: 50px;
+    }
+
+    .main-content.shift {
+        padding-left: 180px;
+    }
+
+    /* Reducción del tamaño del ícono de hamburguesa */
+    .menu-toggle {
+        font-size: 24px;
+        padding: 6px 10px;
+    }
+
+    /* Ajustes para el formulario */
+    .users-form {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+
+    input[type="submit"],
+    a.btn-consulta {
+        padding: 10px 20px;
+        font-size: 14px;
+        width: 100%; /* Ocupa todo el ancho disponible */
+        box-sizing: border-box;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="time"],
+    select,
+    textarea {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    label {
+        font-size: 14px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .users-form {
+        width: 95%;
+        margin: 20px auto;
+        padding: 20px;
+    }
+
+    .users-form h1 {
+        font-size: 22px;
+    }
+
+    label {
+        font-size: 14px;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="time"],
+    select,
+    textarea {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .buttons-container {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+
+    input[type="submit"],
+    a.btn-consulta {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .users-form {
+        padding: 15px;
+    }
+
+    .users-form h1 {
+        font-size: 20px;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="time"],
+    select,
+    textarea {
+        padding: 8px;
+        font-size: 13px;
+    }
+
+    input[type="submit"],
+    a.btn-consulta {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .buttons-container {
+        gap: 8px;
+    }
+}
+
+/* Estilos para hacer el menú lateral responsive */
+@media screen and (max-width: 768px) {
+    /* Menú lateral */
+    .menu-lateral {
+        width: 200px; /* Reducir el tamaño del menú lateral */
+        left: -200px; /* Dejar el menú fuera de la vista inicialmente */
+        transition: left 0.3s ease;
+    }
+
+    .menu-lateral.open {
+        left: 0; /* Mostrar el menú cuando tenga la clase "open" */
+    }
+
+    /* Cuando el menú está abierto, desplazar el contenido principal */
+    .main-content.shift {
+        padding-left: 200px;
+    }
+
+    /* Ajuste en el botón de menú hamburguesa */
+    .menu-toggle {
+        font-size: 28px;
+        padding: 8px 12px;
+        top: 15px;
+        left: 15px;
+    }
+
+    /* Estilos para el formulario en pantallas pequeñas */
+    .users-form {
+        width: 95%;
+        margin: 20px auto;
+        padding: 20px;
+    }
+
+    .users-form h1 {
+        font-size: 22px;
+    }
+
+    label {
+        font-size: 14px;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="time"],
+    select,
+    textarea {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .buttons-container {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+
+    input[type="submit"],
+    a.btn-consulta {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+    }
+}
+
+/* Para pantallas muy pequeñas (móviles) */
+@media screen and (max-width: 480px) {
+    /* Ajustes en el tamaño del formulario y los inputs */
+    .users-form {
+        padding: 15px;
+    }
+
+    .users-form h1 {
+        font-size: 20px;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="time"],
+    select,
+    textarea {
+        padding: 8px;
+        font-size: 13px;
+    }
+
+    input[type="submit"],
+    a.btn-consulta {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .buttons-container {
+        gap: 8px;
+    }
+
+    /* Ajuste en el menú lateral */
+    .menu-lateral {
+        width: 180px; /* Reducir aún más el menú lateral */
+    }
+
+    .menu-toggle {
+        font-size: 26px;
+        padding: 8px 10px;
+    }
+}
