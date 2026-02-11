@@ -1,41 +1,119 @@
-<?php 
-include("../Config/database.php");
-$con = connection(); // Establecer la conexión a la base de datos
+<?php
+session_start();
 
-// Verificar si se recibieron los datos del formulario
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Recoger los datos del formulario
-    $fecha    = mysqli_real_escape_string($con, $_POST['fecha']);
-    $nombre   = mysqli_real_escape_string($con, $_POST['nombre']);
-    $cedula   = mysqli_real_escape_string($con, $_POST['cedula']);
-    $arl      = mysqli_real_escape_string($con, $_POST['arl']);
-    $eps      = mysqli_real_escape_string($con, $_POST['eps']);
-    $rh       = mysqli_real_escape_string($con, $_POST['rh']);
-    $telefono = mysqli_real_escape_string($con, $_POST['telefono']);
-    $empresa  = mysqli_real_escape_string($con, $_POST['empresa']);
-    $motivo   = mysqli_real_escape_string($con, $_POST['motivo']);
-    $ingreso  = mysqli_real_escape_string($con, $_POST['ingreso']);
-    $carnet   = mysqli_real_escape_string($con, $_POST['carnet']);
+require_once '../Config/config.php';
+require_once '../Config/database.php';
 
-    // Si seleccionaron "otra", usar el campo empresa_otro
-    if ($empresa === "otra" && !empty($_POST['empresa_otro'])) {
-        $empresa_otro = mysqli_real_escape_string($con, $_POST['empresa_otro']);
-        $empresa = $empresa_otro;
-    }
-
-    // Preparar la consulta de inserción
-    $sql = "INSERT INTO porteria (fecha, nombre, cedula, arl, eps, rh, telefono, empresa, motivo, ingreso, carnet)
-            VALUES ('$fecha', '$nombre', '$cedula', '$arl', '$eps', '$rh', '$telefono', '$empresa', '$motivo', '$ingreso', '$carnet')";
-
-    // Ejecutar la consulta y manejar errores
-    session_start();
-    if (mysqli_query($con, $sql)) {
-        $_SESSION['success'] = "Registro exitoso";
-    } else {
-        $_SESSION['error'] = "Error al registrar los datos: " . mysqli_error($con);
-    }
-
+/* =====================================================
+ CONEXIÓN
+===================================================== */
+$con = connection();
+if (!$con) {
+    $_SESSION['error'] = "Error al conectar a la base de datos";
     header("Location: ../index.php");
-    exit();
+    exit;
 }
+
+/* =====================================================
+ FUNCIÓN PARA RESPONDER ERRORES
+===================================================== */
+function responderError($mensaje)
+{
+    $_SESSION['error'] = $mensaje;
+    header("Location: ../index.php");
+    exit;
+}
+
+/* =====================================================
+ FUNCIÓN DE SANITIZACIÓN
+===================================================== */
+function clean_text(string $value): string
+{
+    $value = trim(strip_tags($value));
+    return preg_replace('/[^A-Za-z0-9 áéíóúÁÉÍÓÚñÑ.-]/', '', $value);
+}
+
+/* =====================================================
+ DATOS RECIBIDOS
+===================================================== */
+$fecha      = $_POST['fecha'] ?? '';
+$cedula     = clean_text($_POST['cedula'] ?? '');
+$nombre     = clean_text($_POST['nombre'] ?? '');
+$rh         = clean_text($_POST['rh'] ?? '');
+$telefono   = clean_text($_POST['telefono'] ?? '');
+$motivo     = clean_text($_POST['motivo'] ?? '');
+$marca      = clean_text($_POST['marca'] ?? '');
+$serial     = clean_text($_POST['serial'] ?? '');
+$carnet     = clean_text($_POST['carnet'] ?? '');
+
+$ingreso    = $_POST['ingreso'] ?? '';
+$arl        = filter_var($_POST['arl'] ?? null, FILTER_VALIDATE_INT);
+$eps        = filter_var($_POST['eps'] ?? null, FILTER_VALIDATE_INT);
+$empresa    = filter_var($_POST['empresa'] ?? null, FILTER_VALIDATE_INT);
+$equipo     = isset($_POST['equipo']) ? 'SI' : 'NO';
+
+/* =====================================================
+ VALIDACIONES
+===================================================== */
+if (
+    !$fecha || !$cedula || !$nombre || !$rh ||
+    !$telefono || !$motivo || !$ingreso ||
+    !$arl || !$eps || !$empresa || !$carnet
+) {
+    responderError("Todos los campos obligatorios deben completarse.");
+}
+
+if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha)) {
+    responderError("Formato de fecha inválido.");
+}
+
+if (strtotime($fecha) > strtotime(date('Y-m-d'))) {
+    responderError("No se permite fecha futura.");
+}
+
+/* Validación equipo electrónico */
+if ($equipo === 'NO') {
+    $marca = '';
+    $serial = '';
+} else {
+    if (!$marca || !$serial) {
+        responderError("Debe completar marca y serial del equipo.");
+    }
+}
+
+/* =====================================================
+ INSERTAR CON PREPARED STATEMENT
+===================================================== */
+$stmt = $con->prepare("INSERT INTO visitantes 
+    (fecha, cedula, nombre, id_arl, id_eps, rh, telefono, empresa_fk, motivo, marca, serial, carnet, ingreso)
+    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
+
+$stmt->bind_param(
+    "sssiississsss",
+    $fecha,
+    $cedula,
+    $nombre,
+    $id_arl,
+    $id_eps,
+    $rh,
+    $telefono,
+    $empresa_fk,
+    $motivo,
+    $marca,
+    $serial,
+    $carnet,
+    $ingreso
+);
+
+if ($stmt->execute()) {
+    $_SESSION['success'] = "Visitante registrado correctamente.";
+} else {
+    $_SESSION['error'] = "Error al registrar: " . $stmt->error;
+}
+
+$stmt->close();
+$con->close();
+
+header("Location: ../index.php");
+exit;
 ?>
