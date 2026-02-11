@@ -1,6 +1,8 @@
 <?php
 session_start();
-include("../Config/database.php");
+
+require_once '../Config/config.php';
+require_once '../Config/database.php';
 
 // ------------------------
 // Conexión a la base de datos
@@ -52,6 +54,7 @@ mysqli_close($con);
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -61,158 +64,227 @@ mysqli_close($con);
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
+
 <body>
-<?php include("layout/header.html"); ?>
+    <?php include("layout/header.html"); ?>
 
-<div class="main-content">
-    <div class="users-form">
-        <h1>Registro de Contratistas</h1>
+    <div class="main-content">
+        <div class="users-form">
+            <h1>Registro de Contratistas</h1>
 
-        <form action="../Controller/ingreso_contratistas.php" method="POST">
-            <!-- Fecha -->
-            <label for="fecha">Fecha:</label>
-            <input type="date" name="fecha" id="fecha" value="<?= date('Y-m-d') ?>" required>
+            <form action="../Controller/ingreso_contratistas.php" method="POST">
+                <!-- Fecha -->
+                <label for="fecha">Fecha:</label>
+                <input type="date" name="fecha" id="fecha" value="<?= date('Y-m-d') ?>" required>
 
-            <!-- Cédula -->
-            <label for="cedula">Cédula:</label>
-            <input type="text" name="cedula" id="cedula" placeholder="Cédula" required>
+                <!-- Cédula -->
+                <label for="cedula">Cédula:</label>
+                <input type="text" name="cedula" id="cedula" placeholder="Cédula" required>
 
-            <!-- Nombre -->
-            <label for="nombre">Nombre:</label>
-            <input type="text" name="nombre" id="nombre" placeholder="Ingrese el nombre" required>
+                <!-- Nombre -->
+                <label for="nombre">Nombre:</label>
+                <input type="text" name="nombre" id="nombre" placeholder="Ingrese el nombre" required>
 
-            <!-- Tipo de Sangre -->
-            <label for="rh">Tipo de Sangre:</label>
-            <select name="rh" id="rh" required>
-                <option value="" disabled selected>Seleccione el tipo de sangre</option>
-                <option value="O-">O -</option>
-                <option value="O+">O +</option>
-                <option value="A-">A -</option>
-                <option value="A+">A +</option>
-                <option value="B-">B -</option>
-                <option value="B+">B +</option>
-                <option value="AB-">AB -</option>
-                <option value="AB+">AB +</option>
-            </select>
+                <!-- Tipo de Sangre -->
+                <label for="rh">Tipo de Sangre:</label>
+                <select name="rh" id="rh" required>
+                    <option value="" disabled selected>Seleccione el tipo de sangre</option>
+                    <option value="O-">O -</option>
+                    <option value="O+">O +</option>
+                    <option value="A-">A -</option>
+                    <option value="A+">A +</option>
+                    <option value="B-">B -</option>
+                    <option value="B+">B +</option>
+                    <option value="AB-">AB -</option>
+                    <option value="AB+">AB +</option>
+                </select>
 
-            <!-- ARL -->
-            <label for="arl">Seleccione ARL:</label>
-            <select name="arl" id="arl" required>
-                <option value="" disabled selected>Seleccione la ARL...</option>
-                <?= $arl_options ?>
-            </select>
+                <!-- ARL -->
+                <label for="arl">Seleccione ARL:</label>
+                <select name="arl" id="arl" required>
+                    <option value="" disabled selected>Seleccione la ARL...</option>
+                    <?= $arl_options ?>
+                </select>
 
-            <!-- EPS -->
-            <label for="eps">Seleccione EPS:</label>
-            <select name="eps" id="eps" required>
-                <option value="" disabled selected>Seleccione la EPS...</option>
-                <?= $eps_options ?>
-            </select>
+                <!-- EPS -->
+                <label for="eps">Seleccione EPS:</label>
+                <select name="eps" id="eps" required>
+                    <option value="" disabled selected>Seleccione la EPS...</option>
+                    <?= $eps_options ?>
+                </select>
 
-            <!-- Empresa -->
-            <label for="empresa">Empresa a la que Pertenece:</label>
-            <select name="empresa" id="empresa" required>
-                <option value="" disabled selected>Seleccione la Empresa...</option>
-                <?= $empresas ?>
-            </select>
+                <!-- Empresa -->
+                <label for="empresa">Empresa a la que Pertenece:</label>
+                <select name="empresa" id="empresa" required>
+                    <option value="" disabled selected>Seleccione la Empresa...</option>
+                    <?= $empresas ?>
+                </select>
 
-            <!-- Enfermedades o Alergias -->
-            <label for="enfermedad_alergia">Enfermedades o alergias:</label>
-            <textarea name="enfermedad_alergia" id="enfermedad_alergia" placeholder="Descríbalas acá..." required></textarea>
+                <!-- Enfermedades o Alergias -->
+                <label for="enfermedad_alergia">Enfermedades o alergias:</label>
+                <textarea name="enfermedad_alergia" id="enfermedad_alergia" placeholder="Descríbalas acá..." required></textarea>
 
-            <!-- Contacto de Emergencia -->
-            <label for="nombre_emergencia">Contacto en caso de emergencia (Nombre):</label>
-            <input type="text" name="nombre_emergencia" id="nombre_emergencia" placeholder="Nombre" required>
+                <!-- Contacto de Emergencia -->
+                <label for="nombre_emergencia">Contacto en caso de emergencia (Nombre):</label>
+                <input type="text" name="nombre_emergencia" id="nombre_emergencia" placeholder="Nombre" required>
 
-            <label for="telefono_emergencia">Teléfono de emergencia:</label>
-            <input type="text" name="telefono_emergencia" id="telefono_emergencia" placeholder="Teléfono" required>
+                <label for="telefono_emergencia">Teléfono de emergencia:</label>
+                <input type="text" name="telefono_emergencia" id="telefono_emergencia" placeholder="Teléfono" required>
 
-            <!-- Inducción SG-SST -->
-            <label for="induccion_sgsst">Recibió inducción de SG-SST:</label>
-            <select name="induccion_sgsst" id="induccion_sgsst" required>
-                <option value="" disabled selected>Seleccione su respuesta</option>
-                <option value="1">SI</option>
-                <option value="0">NO</option>
-            </select>
+                <!-- Inducción SG-SST -->
+                <label for="induccion_sgsst">Recibió inducción de SG-SST:</label>
+                <select name="induccion_sgsst" id="induccion_sgsst" required>
+                    <option value="" disabled selected>Seleccione su respuesta</option>
+                    <option value="1">SI</option>
+                    <option value="0">NO</option>
+                </select>
 
-            <!-- Equipo Electrónico -->
-            <label style="display: flex;">
-                <input name="equipo" type="checkbox" id="equipoElectronicoCheckbox" value="SI"> Ingreso de equipo electrónico
-            </label>
+                <!-- Equipo Electrónico -->
+                <label style="display: flex;">
+                    <input name="equipo" type="checkbox" id="equipoElectronicoCheckbox" value="SI"> Ingreso de equipo electrónico
+                </label>
 
-            <div id="inputsEquipoElectronico" style="display: none">
-                <label for="marca">Marca:</label>
-                <input type="text" id="marca" name="marca">
+                <div id="inputsEquipoElectronico" style="display: none">
+                    <label for="marca">Marca:</label>
+                    <input type="text" id="marca" name="marca">
 
-                <label for="serial">Serial:</label>
-                <input type="text" id="serial" name="serial">
-            </div>
+                    <label for="serial">Serial:</label>
+                    <input type="text" id="serial" name="serial">
+                </div>
 
-            <!-- Hora de Ingreso -->
-            <label for="ingreso">Hora de ingreso:</label>
-            <input type="time" name="ingreso" id="ingreso" required>
+                <!-- Hora de Ingreso -->
+                <label for="ingreso">Hora de ingreso:</label>
+                <input type="time" name="ingreso" id="ingreso" required>
 
-            <div class="buttons-container">
-                <input type="submit" value="Agregar">
-                <a href="../View/tablacontratistas.php" class="btn-consulta">Consultar Registro</a>
-            </div>
-        </form>
+                <div class="buttons-container">
+                    <input type="submit" value="Agregar">
+                    <a href="../View/tablacontratistas.php" class="btn-consulta">Consultar Registro</a>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 
-<script>
-    // ------------------------
-    // Mostrar/Ocultar campos de equipo electrónico
-    // ------------------------
-    $("#equipoElectronicoCheckbox").change(function () {
-        $("#inputsEquipoElectronico").toggle(this.checked);
-    });
+    <!-- Incluir script para el menú -->
+    <script src="layout/menu.js"></script>
+    <script>
+        $(document).ready(function() {
 
-    // ------------------------
-    // Validar que la cédula solo tenga números
-    // ------------------------
-    $("#cedula").on("input", function () {
-        this.value = this.value.replace(/[^0-9]/g, '');
-    });
-
-    // ------------------------
-    // Validar inducción SG-SST antes de enviar
-    // ------------------------
-    $("form").on("submit", function (e) {
-        const induccion = $("#induccion_sgsst").val();
-        if (induccion === "0") {
-            e.preventDefault();
-            Swal.fire({
-                icon: 'error',
-                title: 'Acceso denegado',
-                text: 'No se puede ingresar a la planta sin una inducción previa de SG-SST',
-                confirmButtonColor: '#d33'
+            // ------------------------
+            // Validar que el campo 'cedula' solo permita números
+            // ------------------------
+            $("#cedula").on("input", function() {
+                this.value = this.value.replace(/[^0-9]/g, '');
             });
-        }
-    });
 
-    // ------------------------
-    // Mensajes SweetAlert desde PHP
-    // ------------------------
-    <?php if (isset($_SESSION['success'])): ?>
-        Swal.fire({
-            icon: 'success',
-            title: '¡Éxito!',
-            text: '<?= $_SESSION['success'] ?>',
-            confirmButtonColor: '#3085d6'
-        });
-        <?php unset($_SESSION['success']); ?>
-    <?php endif; ?>
+            // ------------------------
+            // Funcionalidad para autocompletar los campos con los datos existentes al ingresar la cédula
+            // ------------------------
+            $("#cedula").on("blur", function() {
+                var cedula = $(this).val();
+                if (cedula.length > 0) {
+                    $.ajax({
+                        url: "../Controller/buscar_contratistas.php",
+                        method: "POST",
+                        data: {
+                            cedula: cedula
+                        },
+                        dataType: "json",
+                        success: function(response) {
+                            if (!response.error) {
+                                $("input[name='nombre']").val(response.nombre);
+                                $("select[name='arl']").val(response.arl);
+                                $("select[name='eps']").val(response.eps);
+                                $("input[name='nombre_emergencia']").val(response.nombre_emergencia);
+                                $("input[name='telefono_emergencia']").val(response.telefono_emergencia);
+                                $("select[name='rh']").val(response.rh);
+                                $("input[name='placa']").val(response.placa);
+                                $("input[name='ingreso']").val(response.ingreso);
+                                $("#motivo").val(response.motivo);
+                            } else {
+                                Swal.fire({
+                                    icon: 'info',
+                                    title: 'No encontrado',
+                                    text: 'Usuario no encontrado en el sistema'
+                                });
+                            }
+                        },
+                        error: function() {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Hubo un error al consultar la base de datos'
+                            });
+                        }
+                    });
+                }
+            });
 
-    <?php if (isset($_SESSION['error'])): ?>
-        Swal.fire({
-            icon: 'error',
-            title: '¡Error!',
-            text: '<?= $_SESSION['error'] ?>',
-            confirmButtonColor: '#d33'
+            // ------------------------
+            // Validación de fecha futura
+            // ------------------------
+            $("#fecha").on("change", function() {
+                const selectedDate = new Date(this.value);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0); // eliminar horas para comparar solo la fecha
+                if (selectedDate > today) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Fecha inválida',
+                        text: 'No se puede seleccionar una fecha futura.'
+                    });
+                    this.value = ""; // limpiar campo
+                }
+            });
+
+            // ------------------------
+            // Mostrar/Ocultar campos de equipo electrónico
+            // ------------------------
+            $("#equipoElectronicoCheckbox").change(function() {
+                $("#inputsEquipoElectronico").toggle(this.checked);
+            });
+
+            // ------------------------
+            // Validar inducción SG-SST antes de enviar
+            // ------------------------
+            $("form").on("submit", function(e) {
+                const induccion = $("#induccion_sgsst").val();
+                if (induccion === "0") {
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Acceso denegado',
+                        text: 'No se puede ingresar a la planta sin una inducción previa de SG-SST',
+                        confirmButtonColor: '#d33'
+                    });
+                }
+            });
+
+            // ------------------------
+            // Mensajes SweetAlert desde PHP
+            // ------------------------
+            <?php if (isset($_SESSION['success'])): ?>
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: '<?= $_SESSION['success'] ?>',
+                    confirmButtonColor: '#3085d6'
+                });
+                <?php unset($_SESSION['success']); ?>
+            <?php endif; ?>
+
+            <?php if (isset($_SESSION['error'])): ?>
+                Swal.fire({
+                    icon: 'error',
+                    title: '¡Error!',
+                    text: '<?= $_SESSION['error'] ?>',
+                    confirmButtonColor: '#d33'
+                });
+                <?php unset($_SESSION['error']); ?>
+            <?php endif; ?>
+
         });
-        <?php unset($_SESSION['error']); ?>
-    <?php endif; ?>
-</script>
+    </script>
+
 </body>
+
 </html>
