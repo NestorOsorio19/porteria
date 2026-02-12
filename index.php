@@ -138,7 +138,14 @@ mysqli_close($con);
                 <select name="empresa" id="empresa" required>
                     <option value="" disabled selected>Seleccione la Empresa...</option>
                     <?= $empresas ?>
+                    <option value="otra">OTRA...</option>
                 </select>
+
+                <!-- Input oculto -->
+                <div id="nuevaEmpresaContainer" style="display:none;">
+                    <label for="nueva_empresa">Nombre de la nueva empresa:</label>
+                    <input type="text" name="nueva_empresa" id="nueva_empresa" placeholder="Ingrese el nombre de la empresa">
+                </div>
 
                 <!-- Campo para ingresar el motivo del ingreso -->
                 <label for="motivo">Motivo de Ingreso:</label>
@@ -225,6 +232,17 @@ mysqli_close($con);
                 });
             }
         });
+
+        // Mostrar input si selecciona "OTRA"
+            $("#empresa").change(function() {
+                if ($(this).val() === "otra") {
+                    $("#nuevaEmpresaContainer").show();
+                    $("#nueva_empresa").prop("required", true);
+                } else {
+                    $("#nuevaEmpresaContainer").hide();
+                    $("#nueva_empresa").prop("required", false);
+                }
+            });
 
         // ------------------------
         // Validación de fecha futura

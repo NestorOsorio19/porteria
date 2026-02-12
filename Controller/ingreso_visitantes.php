@@ -49,7 +49,7 @@ $carnet     = clean_text($_POST['carnet'] ?? '');
 $ingreso    = $_POST['ingreso'] ?? '';
 $arl        = filter_var($_POST['arl'] ?? null, FILTER_VALIDATE_INT);
 $eps        = filter_var($_POST['eps'] ?? null, FILTER_VALIDATE_INT);
-$empresa    = filter_var($_POST['empresa'] ?? null, FILTER_VALIDATE_INT);
+$empresa_post = $_POST['empresa'] ?? null; // Puede ser ID o "otra"
 $equipo     = isset($_POST['equipo']) ? 'SI' : 'NO';
 
 /* =====================================================
@@ -79,6 +79,45 @@ if ($equipo === 'NO') {
     if (!$marca || !$serial) {
         responderError("Debe completar marca y serial del equipo.");
     }
+}
+
+/* =====================================================
+ MANEJO DE EMPRESA (NORMAL U "OTRA")
+===================================================== */
+if ($empresa_post === "otra") {
+
+    $nueva_empresa = clean_text($_POST['nueva_empresa'] ?? '');
+
+    if (!$nueva_empresa) {
+        responderError('nueva_empresa_vacia');
+    }
+
+    // Verificar si la empresa ya existe
+    $sql_check = "SELECT id_registro FROM empresas WHERE nom_empresa = ?";
+    $stmt_check = mysqli_prepare($con, $sql_check);
+    mysqli_stmt_bind_param($stmt_check, "s", $nueva_empresa);
+    mysqli_stmt_execute($stmt_check);
+    $result = mysqli_stmt_get_result($stmt_check);
+
+    if ($row = mysqli_fetch_assoc($result)) {
+        // Si existe, usar el ID existente
+        $empresa = $row['id_registro'];
+    } else {
+        // Si no existe, insertarla
+        $sql_insert_empresa = "INSERT INTO empresas (nom_empresa) VALUES (?)";
+        $stmt_insert = mysqli_prepare($con, $sql_insert_empresa);
+        mysqli_stmt_bind_param($stmt_insert, "s", $nueva_empresa);
+        mysqli_stmt_execute($stmt_insert);
+
+        $empresa = mysqli_insert_id($con);
+        mysqli_stmt_close($stmt_insert);
+    }
+
+    mysqli_stmt_close($stmt_check);
+
+} else {
+    // Empresa seleccionada normalmente
+    $empresa = filter_var($empresa_post, FILTER_VALIDATE_INT);
 }
 
 /* =====================================================
