@@ -105,15 +105,17 @@ $stmt->bind_param(
     $ingreso
 );
 
-if ($stmt->execute()) {
+if (mysqli_stmt_execute($stmt)) {
     $_SESSION['success'] = "Visitante registrado correctamente.";
 } else {
-    $_SESSION['error'] = "Error al registrar: " . $stmt->error;
+    responderError('error_insert');
 }
 
-$stmt->close();
-$con->close();
+mysqli_stmt_close($stmt);
+mysqli_close($con);
 
+// Redirigir de nuevo al formulario
 header("Location: ../index.php");
 exit;
 ?>
+

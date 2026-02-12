@@ -8,7 +8,7 @@ if (isset($_POST['cedula'])) {
     $cedula = $_POST['cedula'];
 
     // Realizar la consulta para obtener los datos del visitante
-    $sql = "SELECT * FROM porteria WHERE cedula = '$cedula' LIMIT 1";
+    $sql = "SELECT * FROM visitantes WHERE cedula = '$cedula' LIMIT 1";
     $result = mysqli_query($con, $sql);
 
     if ($result && mysqli_num_rows($result) > 0) {
