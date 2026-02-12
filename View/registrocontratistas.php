@@ -168,7 +168,6 @@ mysqli_close($con);
     <script src="layout/menu.js"></script>
     <script>
         $(document).ready(function() {
-
             // ------------------------
             // Validar que el campo 'cedula' solo permita números
             // ------------------------
@@ -197,7 +196,6 @@ mysqli_close($con);
                                 $("input[name='nombre_emergencia']").val(response.nombre_emergencia);
                                 $("input[name='telefono_emergencia']").val(response.telefono_emergencia);
                                 $("select[name='rh']").val(response.rh);
-                                $("input[name='placa']").val(response.placa);
                                 $("input[name='ingreso']").val(response.ingreso);
                                 $("#motivo").val(response.motivo);
                             } else {
@@ -244,22 +242,6 @@ mysqli_close($con);
             });
 
             // ------------------------
-            // Validar inducción SG-SST antes de enviar
-            // ------------------------
-            $("form").on("submit", function(e) {
-                const induccion = $("#induccion_sgsst").val();
-                if (induccion === "0") {
-                    e.preventDefault();
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Acceso denegado',
-                        text: 'No se puede ingresar a la planta sin una inducción previa de SG-SST',
-                        confirmButtonColor: '#d33'
-                    });
-                }
-            });
-
-            // ------------------------
             // Mensajes SweetAlert desde PHP
             // ------------------------
             <?php if (isset($_SESSION['success'])): ?>
@@ -281,10 +263,8 @@ mysqli_close($con);
                 });
                 <?php unset($_SESSION['error']); ?>
             <?php endif; ?>
-
         });
     </script>
-
 </body>
 
 </html>

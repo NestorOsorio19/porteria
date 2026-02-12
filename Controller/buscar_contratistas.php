@@ -1,32 +1,48 @@
 <?php
-// Se incluye un archivo externo que contiene la función para establecer la conexión con la base de datos.
-include("../Config/database.php");
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-// Se establece la conexión a la base de datos mediante la función 'connection' que debe estar definida en el archivo incluido.
+include("../Config/database.php");
 $con = connection();
 
-// Verificamos si la variable 'cedula' fue enviada por el método POST (es decir, si el formulario o solicitud contiene este dato).
+if (!$con) {
+    echo json_encode(["error" => "No se pudo conectar a la base de datos"]);
+    exit;
+}
+
 if (isset($_POST['cedula'])) {
-
-    // Se limpia la variable 'cedula' para prevenir inyecciones SQL, usando la función 'mysqli_real_escape_string' que escapa caracteres especiales.
     $cedula = mysqli_real_escape_string($con, $_POST['cedula']);
+    $sql = "SELECT c.nombre, c.rh, c.nombre_emergencia, c.telefono_emergencia, c.ingreso,
+                   c.enfermedad_alergia, c.induccion_sgsst,
+                   c.empresa_fk AS empresa_fk,
+                   c.id_arl AS id_arl,
+                   c.id_eps AS id_eps
+            FROM contratistas c
+            WHERE c.cedula = '$cedula'";
 
-    // Se crea una consulta SQL para buscar en la tabla 'contratistas' un registro donde la 'cedula' coincida con el valor proporcionado.
-    $sql = "SELECT * FROM contratistas WHERE cedula = '$cedula'";
-
-    // Se ejecuta la consulta SQL usando 'mysqli_query', lo que devuelve un recurso de resultado.
     $query = mysqli_query($con, $sql);
 
-    // Si la consulta devuelve al menos un registro (es decir, si se encuentra un contratista con esa cédula),
-    if (mysqli_num_rows($query) > 0) {
-        
-        // Se obtiene la primera fila del resultado como un arreglo asociativo con 'mysqli_fetch_assoc'.
-        $row = mysqli_fetch_assoc($query);
+    if (!$query) {
+        echo json_encode(["error" => "Error en la consulta: " . mysqli_error($con)]);
+        exit;
+    }
 
-        // Se convierte el arreglo a formato JSON y se envía como respuesta, para que pueda ser procesado en el lado del cliente.
-        echo json_encode($row); // Enviar los datos en formato JSON
+    if (mysqli_num_rows($query) > 0) {
+        $row = mysqli_fetch_assoc($query);
+        echo json_encode([
+            "nombre" => $row["nombre"],
+            "id_arl" => $row["id_arl"],
+            "id_eps" => $row["id_eps"],
+            "empresa_fk" => $row["empresa_fk"],
+            "rh" => $row["rh"],
+            "nombre_emergencia" => $row["nombre_emergencia"],
+            "telefono_emergencia" => $row["telefono_emergencia"],
+            "ingreso" => $row["ingreso"],
+            "enfermedad_alergia" => $row["enfermedad_alergia"],
+            "induccion_sgsst" => $row["induccion_sgsst"]
+        ]);
     } else {
-        // Si no se encuentra ningún registro, se envía una respuesta JSON indicando que no se encontró al contratista.
         echo json_encode(["error" => "No encontrado"]);
     }
 }
