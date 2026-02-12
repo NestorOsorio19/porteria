@@ -82,7 +82,7 @@ if ($equipo === 'NO') {
 $con = connection();
 
 $sql = "INSERT INTO contratistas 
-    (fecha, nombre, cedula, rh, id_arl, id_eps, empresa_fk, enfermedad_alergia, nombre_emergencia, telefono_emergencia, induccion_sgsst, marca, serial, ingreso)
+    (fecha, nombre, cedula, rh, arl, id_eps, empresa_fk, enfermedad_alergia, nombre_emergencia, telefono_emergencia, induccion_sgsst, marca, serial, ingreso)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 $stmt = mysqli_prepare($con, $sql);
