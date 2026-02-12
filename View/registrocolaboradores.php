@@ -20,19 +20,21 @@ if (!$query) {
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Vincular archivo de estilos CSS -->
+    <title>Registro de Colaboradores</title>
     <link href="../View/CSS/estilosprincipales.css" rel="stylesheet">
-    <!-- Incluir la librería de jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <title>Registro Colaboradores</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
+
 <body>
-    
-<?php include("layout/header.html"); // Incluir el encabezado desde un archivo externo ?>
+
+    <?php include("layout/header.html"); // Incluir el encabezado desde un archivo externo 
+    ?>
 
     <div class="main-content">
         <div class="users-form">
@@ -40,12 +42,14 @@ if (!$query) {
 
             <!-- Mostrar un mensaje de éxito si existe en la sesión -->
             <?php if (isset($_SESSION['success'])): ?>
-                <div class="message success"><?= htmlspecialchars($_SESSION['success']); unset($_SESSION['success']); ?></div>
+                <div class="message success"><?= htmlspecialchars($_SESSION['success']);
+                                                unset($_SESSION['success']); ?></div>
             <?php endif; ?>
 
             <!-- Mostrar un mensaje de error si existe en la sesión -->
             <?php if (isset($_SESSION['error'])): ?>
-                <div class="message error"><?= htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?></div>
+                <div class="message error"><?= htmlspecialchars($_SESSION['error']);
+                                            unset($_SESSION['error']); ?></div>
             <?php endif; ?>
 
             <!-- Formulario para agregar un colaborador -->
@@ -62,33 +66,33 @@ if (!$query) {
                 <label for="nombre">Nombre:</label>
                 <input type="text" name="nombre" id="nombre" placeholder="Ingrese el nombre" required>
 
-            <!-- Campo para ingresar la ARL -->
-            <label for="arl">Seleccione la ARL:</label>
-            <select name="arl" id="arl" required>
-                <option value="" disabled selected>Selecione la ARL...</option>
-                <option value="sura">SURA</option>
-                <option value="postiva">POSITIVA</option>
-                <option value="axacolpatria">AXA COLPATRIA</option>
-                <option value="colmena">COLMENA</option>
-                <option value="Bolivia">BOLIVAR</option>
-                <option value="liberty">LIBERTY</option>
-                <option value="extranjero">EXTRANJERO</option>
-                <option value="otra">OTRA</option>
-            </select>
+                <!-- Campo para ingresar la ARL -->
+                <label for="arl">Seleccione la ARL:</label>
+                <select name="arl" id="arl" required>
+                    <option value="" disabled selected>Selecione la ARL...</option>
+                    <option value="sura">SURA</option>
+                    <option value="postiva">POSITIVA</option>
+                    <option value="axacolpatria">AXA COLPATRIA</option>
+                    <option value="colmena">COLMENA</option>
+                    <option value="Bolivia">BOLIVAR</option>
+                    <option value="liberty">LIBERTY</option>
+                    <option value="extranjero">EXTRANJERO</option>
+                    <option value="otra">OTRA</option>
+                </select>
 
-            <!-- Campo para ingresar la EPS -->
-            <label for="eps">Seleccione una EPS:</label>
-            <select name="eps" id="eps" required>
-                <option value="" disabled selected>Seleccione la EPS...</option>
-                <option value="comeva">COMEVA EPS</option>
-                <option value="coosalud">COOSALUD</option>
-                <option value="famisanar">FAMISANAR</option>
-                <option value="nuevaeps">NUEVA EPS</option>
-                <option value="saludtotal">SALUD TOTAL</option>
-                <option value="sanitas">SANITAS</option>
-                <option value="sura">SURA</option>
-                <option value="otra">OTRA</option>
-            </select>
+                <!-- Campo para ingresar la EPS -->
+                <label for="eps">Seleccione una EPS:</label>
+                <select name="eps" id="eps" required>
+                    <option value="" disabled selected>Seleccione la EPS...</option>
+                    <option value="comeva">COMEVA EPS</option>
+                    <option value="coosalud">COOSALUD</option>
+                    <option value="famisanar">FAMISANAR</option>
+                    <option value="nuevaeps">NUEVA EPS</option>
+                    <option value="saludtotal">SALUD TOTAL</option>
+                    <option value="sanitas">SANITAS</option>
+                    <option value="sura">SURA</option>
+                    <option value="otra">OTRA</option>
+                </select>
 
 
                 <!-- Campo para ingresar el nombre del contacto de emergencia -->
@@ -112,10 +116,6 @@ if (!$query) {
                     <option value="AB-">AB -</option>
                     <option value="AB+">AB +</option>
                 </select>
-
-                <!-- Campo opcional para ingresar la placa del vehículo -->
-                <label for="placa">Placa Vehículo:</label>
-                <input type="text" name="placa" id="placa" placeholder="Placa Vehículo">
 
                 <!-- Campo para ingresar la hora de ingreso -->
                 <label for="ingreso">Hora de ingreso:</label>
@@ -164,17 +164,16 @@ if (!$query) {
     <!-- Incluir script para el menú -->
     <script src="layout/menu.js"></script>
     <script>
-
-         // Validar que el campo 'cedula' solo permita números
+        // Validar que el campo 'cedula' solo permita números
         $("#cedula").on("input", function() {
-        var cedula = $(this).val();
-        var cedulaValida = /^[0-9]*$/;  // Expresión regular para solo permitir números
-        if (!cedulaValida.test(cedula)) {
-            // Si no es válida, eliminamos el último carácter ingresado
-            $(this).val(cedula.substring(0, cedula.length - 1));
-            alert("La cédula solo debe contener números.");
-        }
-    });
+            var cedula = $(this).val();
+            var cedulaValida = /^[0-9]*$/; // Expresión regular para solo permitir números
+            if (!cedulaValida.test(cedula)) {
+                // Si no es válida, eliminamos el último carácter ingresado
+                $(this).val(cedula.substring(0, cedula.length - 1));
+                alert("La cédula solo debe contener números.");
+            }
+        });
 
         $(document).ready(function() {
             // Mostrar/ocultar los campos de equipo electrónico al marcar o desmarcar el checkbox
@@ -193,7 +192,9 @@ if (!$query) {
                     $.ajax({
                         url: "../Controller/buscar_colaborador.php", // Consultar en la base de datos
                         method: "POST",
-                        data: { cedula: cedula },
+                        data: {
+                            cedula: cedula
+                        },
                         dataType: "json",
                         success: function(response) {
                             // Si la consulta es exitosa, completar los campos con la información
@@ -204,20 +205,74 @@ if (!$query) {
                                 $("input[name='nombre_emergencia']").val(response.nombre_emergencia);
                                 $("input[name='telefono_emergencia']").val(response.telefono_emergencia);
                                 $("select[name='rh']").val(response.rh);
-                                $("input[name='placa']").val(response.placa);
                                 $("input[name='ingreso']").val(response.ingreso);
-                                $("select[name='motivo']").val(response.rh);
                             } else {
-                                alert("Usuario no encontrado.");
+                                Swal.fire({
+                                    icon: 'info',
+                                    title: 'No encontrado',
+                                    text: 'Usuario no encontrado en el sistema'
+                                });
                             }
                         },
                         error: function() {
-                            alert("Hubo un error al consultar la base de datos.");
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Hubo un error al consultar la base de datos'
+                            });
                         }
                     });
                 }
             });
+
+            // ------------------------
+            // Validación de fecha futura
+            // ------------------------
+            $("#fecha").on("change", function() {
+                const selectedDate = new Date(this.value);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0); // eliminar horas para comparar solo la fecha
+                if (selectedDate > today) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Fecha inválida',
+                        text: 'No se puede seleccionar una fecha futura.'
+                    });
+                    this.value = ""; // limpiar campo
+                }
+            });
+
+            // ------------------------
+            // Mostrar/Ocultar campos de equipo electrónico
+            // ------------------------
+            $("#equipoElectronicoCheckbox").change(function() {
+                $("#inputsEquipoElectronico").toggle(this.checked);
+            });
+
+            // ------------------------
+            // Mensajes SweetAlert desde PHP
+            // ------------------------
+            <?php if (isset($_SESSION['success'])): ?>
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: '<?= $_SESSION['success'] ?>',
+                    confirmButtonColor: '#3085d6'
+                });
+                <?php unset($_SESSION['success']); ?>
+            <?php endif; ?>
+
+            <?php if (isset($_SESSION['error'])): ?>
+                Swal.fire({
+                    icon: 'error',
+                    title: '¡Error!',
+                    text: '<?= $_SESSION['error'] ?>',
+                    confirmButtonColor: '#d33'
+                });
+                <?php unset($_SESSION['error']); ?>
+            <?php endif; ?>
         });
     </script>
 </body>
+
 </html>
