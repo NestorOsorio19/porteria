@@ -66,7 +66,6 @@ mysqli_close($con);
 </head>
 
 <body>
-
     <header>
         <button class="menu-toggle" id="menu-toggle">&#9776;</button>
         <div class="menu-lateral" id="menu-lateral">
@@ -87,18 +86,6 @@ mysqli_close($con);
     <div class="main-content">
         <div class="users-form">
             <h1>Registros de Visitantes</h1>
-
-            <!-- Mostrar un mensaje de éxito si existe en la sesión -->
-            <?php if (isset($_SESSION['success'])): ?>
-                <div class="message success"><?= $_SESSION['success'];
-                                                unset($_SESSION['success']); ?></div>
-            <?php endif; ?>
-
-            <!-- Mostrar un mensaje de error si existe en la sesión -->
-            <?php if (isset($_SESSION['error'])): ?>
-                <div class="message error"><?= $_SESSION['error'];
-                                            unset($_SESSION['error']); ?></div>
-            <?php endif; ?>
 
             <!-- Formulario para agregar un visitante -->
             <form action="Controller/ingreso_visitantes.php" method="POST">
@@ -186,7 +173,10 @@ mysqli_close($con);
             </form>
         </div>
     </div>
+    <!-- Incluir script para el menú -->
+    <script src="View/layout/menu.js"></script>
     <script>
+        $(document).ready(function() {
         // ------------------------
         // Validar que el campo 'cedula' solo permita números
         // ------------------------
@@ -201,7 +191,7 @@ mysqli_close($con);
             var cedula = $(this).val();
             if (cedula.length > 0) {
                 $.ajax({
-                    url: "Controller/buscar_contratistas.php",
+                    url: "Controller/buscar_visitantes.php",
                     method: "POST",
                     data: {
                         cedula: cedula
@@ -215,7 +205,6 @@ mysqli_close($con);
                             $("input[name='nombre_emergencia']").val(response.nombre_emergencia);
                             $("input[name='telefono_emergencia']").val(response.telefono_emergencia);
                             $("select[name='rh']").val(response.rh);
-                            $("input[name='placa']").val(response.placa);
                             $("input[name='ingreso']").val(response.ingreso);
                             $("#motivo").val(response.motivo);
                         } else {
@@ -261,8 +250,6 @@ mysqli_close($con);
             $("#inputsEquipoElectronico").toggle(this.checked);
         });
 
-
-
         // ------------------------
             // Mensajes SweetAlert desde PHP
             // ------------------------
@@ -285,6 +272,7 @@ mysqli_close($con);
                 });
                 <?php unset($_SESSION['error']); ?>
             <?php endif; ?>
+        });
     </script>
 </body>
 
