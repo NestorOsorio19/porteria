@@ -30,7 +30,7 @@ function responderError($mensaje)
 function clean_text(string $value): string
 {
     $value = trim(strip_tags($value));
-    return preg_replace('/[^A-Za-z0-9 áéíóúÁÉÍÓÚñÑ.-]/', '', $value);
+    return preg_replace('/[^A-Za-z0-9 áéíóúÁÉÍÓÚñÑ.+-]/', '', $value);
 }
 
 /* =====================================================
@@ -47,21 +47,21 @@ $serial     = clean_text($_POST['serial'] ?? '');
 $carnet     = clean_text($_POST['carnet'] ?? '');
 
 $ingreso    = $_POST['ingreso'] ?? '';
-$arl        = filter_var($_POST['arl'] ?? null, FILTER_VALIDATE_INT);
-$eps        = filter_var($_POST['eps'] ?? null, FILTER_VALIDATE_INT);
+$arl        = $_POST['arl'] ?? null;
+$eps        = $_POST['eps'] ?? null;
 $empresa_post = $_POST['empresa'] ?? null; // Puede ser ID o "otra"
 $equipo     = isset($_POST['equipo']) ? 'SI' : 'NO';
 
 /* =====================================================
  VALIDACIONES
 ===================================================== */
-if (
-    !$fecha || !$cedula || !$nombre || !$rh ||
-    !$telefono || !$motivo || !$ingreso ||
-    !$arl || !$eps || !$empresa || !$carnet
-) {
+if (!$fecha || !$cedula || !$nombre || !$rh || !$telefono || !$motivo || !$ingreso || !$empresa_post || !$carnet || !$arl || !$eps) {
     responderError("Todos los campos obligatorios deben completarse.");
 }
+
+// Convertir a enteros
+$arl = intval($arl);
+$eps = intval($eps);
 
 if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha)) {
     responderError("Formato de fecha inválido.");
@@ -132,11 +132,11 @@ $stmt->bind_param(
     $fecha,
     $cedula,
     $nombre,
-    $id_arl,
-    $id_eps,
+    $arl,
+    $eps,
     $rh,
     $telefono,
-    $empresa_fk,
+    $empresa,
     $motivo,
     $marca,
     $serial,
