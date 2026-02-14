@@ -1,27 +1,22 @@
 <?php
 include("../Config/database.php");
-
 $con = connection();
 
-// Obtener los parámetros enviados por POST
-$id = $_POST['id'];
-$hora_salida = $_POST['hora_salida'];
+if(isset($_POST['id']) && isset($_POST['hora_salida'])){
+    $id = intval($_POST['id']); // Convertir a número entero
+    $hora_salida = $_POST['hora_salida'];
 
-// Asegurarse de que los parámetros existen
-if (isset($id) && isset($hora_salida)) {
-    // Escapar los datos para prevenir SQL Injection
-    $id = mysqli_real_escape_string($con, $id);
-    $hora_salida = mysqli_real_escape_string($con, $hora_salida);
+    $sql = "UPDATE visitantes SET salida = ? WHERE id = ?";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, "si", $hora_salida, $id);
 
-    // Actualizar la hora de salida en la base de datos
-    $sql = "UPDATE porteria SET salida = '$hora_salida' WHERE id = $id";
-
-    if (mysqli_query($con, $sql)) {
-        echo "Salida registrada con éxito";
+    if(mysqli_stmt_execute($stmt)){
+        echo "ok"; // Solo devolvemos 'ok' si todo salió bien
     } else {
-        echo "Error al registrar la salida: " . mysqli_error($con);
+        echo "error";
     }
-} else {
-    echo "Faltan datos para registrar la salida.";
+
+    mysqli_stmt_close($stmt);
 }
+mysqli_close($con);
 ?>
