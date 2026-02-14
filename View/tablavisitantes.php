@@ -6,7 +6,15 @@ include("../Config/database.php");
 $con = connection();
 
 // Consulta SQL para obtener todos los registros de la tabla 'porteria'
-$sql = "SELECT * FROM visitantes";
+$sql = "SELECT v.*, 
+       a.nom_arl, 
+       e.nom_eps, 
+       emp.nom_empresa
+FROM visitantes v
+LEFT JOIN arls a ON v.id_arl = a.id_arl
+LEFT JOIN eps e ON v.id_eps = e.id_eps
+LEFT JOIN empresas emp ON v.empresa_fk = emp.id_registro
+ORDER BY v.fecha DESC";
 
 // Ejecutar la consulta y verificar si se ha realizado correctamente
 $query = mysqli_query($con, $sql);
@@ -25,6 +33,8 @@ if (!$query) {
     <meta name="keywords" content="php, base de datos, visitantes, sistema">
     <link rel="stylesheet" href="../View/CSS/style.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <title>Consulta Visitantes</title>
 
     <style>
@@ -186,18 +196,17 @@ if (!$query) {
             <tbody>
                 <?php while ($row = mysqli_fetch_assoc($query)): ?>
                     <tr>
-
-                        <td data-label="Fecha"><?= htmlspecialchars($row['fecha']) ?></td>
-                        <td data-label="Nombre"><?= htmlspecialchars($row['nombre']) ?></td>
-                        <td data-label="Cédula"><?= htmlspecialchars($row['cedula']) ?></td>
-                        <td data-label="arl"><?= htmlspecialchars($row['arl']) ?></td>
-                        <td data-label="eps"><?= htmlspecialchars($row['eps']) ?></td>
-                        <td data-label="rh"><?= htmlspecialchars($row['rh']) ?></td>
-                        <td data-label="empresa"><?= htmlspecialchars($row['empresa']) ?></td>
-                        <td data-label="Motivo"><?= htmlspecialchars($row['motivo']) ?></td>
-                        <td data-label="Carnet"><?= htmlspecialchars($row['carnet']) ?></td>
-                        <td data-label="Ingreso"><?= htmlspecialchars($row['ingreso']) ?></td>
-                        <td data-label="Salida" id="salida_<?= $row['id'] ?>"><?= htmlspecialchars($row['salida']) ?></td>
+                        <td data-label="Fecha"><?= htmlspecialchars($row['fecha'] ?? '') ?></td>
+                        <td data-label="Nombre"><?= htmlspecialchars($row['nombre'] ?? '') ?></td>
+                        <td data-label="Cédula"><?= htmlspecialchars($row['cedula'] ?? '') ?></td>
+                        <td data-label="ARL"><?= htmlspecialchars($row['nom_arl'] ?? '') ?></td>
+                        <td data-label="EPS"><?= htmlspecialchars($row['nom_eps'] ?? '') ?></td>
+                        <td data-label="RH"><?= htmlspecialchars($row['rh'] ?? '') ?></td>
+                        <td data-label="Empresa"><?= htmlspecialchars($row['nom_empresa'] ?? '') ?></td>
+                        <td data-label="Motivo"><?= htmlspecialchars($row['motivo'] ?? '') ?></td>
+                        <td data-label="Carnet"><?= htmlspecialchars($row['carnet'] ?? '') ?></td>
+                        <td data-label="Ingreso"><?= htmlspecialchars($row['ingreso'] ?? '') ?></td>
+                        <td data-label="Salida" id="salida_<?= $row['id'] ?>"><?= htmlspecialchars($row['salida'] ?? '') ?></td>
                         <td data-label="Acciones">
                             <button
                                 id="btnSalida_<?= $row['id'] ?>"
@@ -209,8 +218,8 @@ if (!$query) {
                             </button>
                         </td>
                     </tr>
-
                 <?php endwhile; ?>
+
             </tbody>
         </table>
     </div>
@@ -236,20 +245,54 @@ if (!$query) {
         });
 
         function marcarSalida(id) {
-            const horaSalida = new Date().toTimeString().split(' ')[0]; // Obtener la hora actual (HH:MM:SS)
+            // Obtener la hora actual en HH:MM:SS
+            const horaSalida = new Date().toTimeString().split(' ')[0];
 
-            $.post('../Controller/salidas_visitantes.php', {
-                id: id,
-                hora_salida: horaSalida
-            }, function(respuesta) {
-                if (respuesta) {
-                    $('#salida_' + id).text(horaSalida); // Actualizar la hora de salida en la tabla
-                    $('#btnSalida_' + id).hide(); // Ocultar el botón de marcar salida
-                } else {
-                    alert('No se pudo registrar la salida.');
+            // Confirmación con SweetAlert
+            Swal.fire({
+                title: '¿Desea marcar la salida?',
+                text: "Se registrará la hora de salida del visitante.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, marcar salida',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Hacer la petición AJAX solo si confirmamos
+                    $.post('../Controller/salidas_visitantes.php', {
+                        id: id,
+                        hora_salida: horaSalida
+                    }, function(respuesta) {
+                        if (respuesta.trim() === 'ok') {
+                            // Actualizar la tabla
+                            $('#salida_' + id).text(horaSalida);
+                            $('#btnSalida_' + id).hide();
+
+                            // Mensaje de éxito
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Salida registrada',
+                                text: 'La hora de salida se ha registrado correctamente.'
+                            });
+                        } else {
+                            // Mensaje de error
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'No se pudo registrar la salida. Revisa la consola para más detalles.'
+                            });
+                            console.log(respuesta); // Depuración
+                        }
+                    }).fail(function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error de servidor',
+                            text: 'No se pudo conectar con el servidor.'
+                        });
+                    });
                 }
-            }).fail(function() {
-                alert('Error al conectar con el servidor.');
             });
         }
     </script>
