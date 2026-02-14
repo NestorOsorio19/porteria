@@ -1,24 +1,33 @@
 <?php
-// Incluir el archivo de conexión a la base de datos
 include("../Config/database.php");
 $con = connection();
 
-// Verificar si se ha enviado la cédula via POST
 if (isset($_POST['cedula'])) {
     $cedula = $_POST['cedula'];
-
-    // Realizar la consulta para obtener los datos del visitante
-    $sql = "SELECT * FROM visitantes WHERE cedula = '$cedula' LIMIT 1";
-    $result = mysqli_query($con, $sql);
+    $sql = "SELECT nombre, id_arl, id_eps, empresa_fk, rh, telefono, motivo, ingreso FROM visitantes WHERE cedula = ? LIMIT 1";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, "s", $cedula);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
 
     if ($result && mysqli_num_rows($result) > 0) {
-        // Si el visitante existe, devolver los datos en formato JSON
         $row = mysqli_fetch_assoc($result);
-        echo json_encode($row);
+        // Cambia las claves para que JS sea claro
+        $response = [
+            "nombre" => $row['nombre'],
+            "arl" => $row['id_arl'],
+            "eps" => $row['id_eps'],
+            "empresa" => $row['empresa_fk'],
+            "rh" => $row['rh'],
+            "telefono" => $row['telefono'],
+            "motivo" => $row['motivo'],
+            "ingreso" => $row['ingreso']
+        ];
+        echo json_encode($response);
     } else {
-        // Si no se encuentra al visitante, devolver un error
         echo json_encode(['error' => 'Usuario no encontrado.']);
     }
+    mysqli_stmt_close($stmt);
 } else {
     echo json_encode(['error' => 'No se recibió la cédula.']);
 }
