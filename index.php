@@ -184,56 +184,64 @@ mysqli_close($con);
     <script src="View/layout/menu.js"></script>
     <script>
         $(document).ready(function() {
-        // ------------------------
-        // Validar que el campo 'cedula' solo permita números
-        // ------------------------
-        $("#cedula").on("input", function() {
-            this.value = this.value.replace(/[^0-9]/g, '');
-        });
+            // ------------------------
+            // Validar que el campo 'cedula' solo permita números
+            // ------------------------
+            $("#cedula").on("input", function() {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
 
-        // ------------------------
-        // Funcionalidad para autocompletar los campos con los datos existentes al ingresar la cédula
-        // ------------------------
-        $("#cedula").on("blur", function() {
-            var cedula = $(this).val();
-            if (cedula.length > 0) {
-                $.ajax({
-                    url: "Controller/buscar_visitantes.php",
-                    method: "POST",
-                    data: {
-                        cedula: cedula
-                    },
-                    dataType: "json",
-                    success: function(response) {
-                        if (!response.error) {
-                            $("input[name='nombre']").val(response.nombre);
-                            $("select[name='arl']").val(response.arl);
-                            $("select[name='eps']").val(response.eps);
-                            $("input[name='nombre_emergencia']").val(response.nombre_emergencia);
-                            $("input[name='telefono_emergencia']").val(response.telefono_emergencia);
-                            $("select[name='rh']").val(response.rh);
-                            $("input[name='ingreso']").val(response.ingreso);
-                            $("#motivo").val(response.motivo);
-                        } else {
+            // ------------------------
+            // Funcionalidad para autocompletar los campos con los datos existentes al ingresar la cédula
+            // ------------------------
+            $("#cedula").on("blur", function() {
+                var cedula = $(this).val();
+                if (cedula.length > 0) {
+                    $.ajax({
+                        url: "Controller/buscar_visitantes.php",
+                        method: "POST",
+                        data: {
+                            cedula: cedula
+                        },
+                        dataType: "json",
+                        success: function(response) {
+                            console.log("Respuesta AJAX:", JSON.stringify(response, null, 4));
+                            console.log("Valores recibidos:", JSON.stringify({
+                                arl: response.arl,
+                                eps: response.eps,
+                                empresa: response.empresa,
+                                rh: response.rh,
+                                telefono: response.telefono
+                            }, null, 4));
+                            if (!response.error) {
+                                $("input[name='nombre']").val(response.nombre);
+                                $("select[name='arl']").val(response.arl);
+                                $("select[name='eps']").val(response.eps);
+                                $("select[name='rh']").val(response.rh);
+                                $("input[name='telefono']").val(response.telefono);
+                                $("select[name='empresa']").val(response.empresa);
+                                $("input[name='ingreso']").val(response.ingreso);
+                                $("#motivo").val(response.motivo);
+                            } else {
+                                Swal.fire({
+                                    icon: 'info',
+                                    title: 'No encontrado',
+                                    text: 'Usuario no encontrado en el sistema'
+                                });
+                            }
+                        },
+                        error: function() {
                             Swal.fire({
-                                icon: 'info',
-                                title: 'No encontrado',
-                                text: 'Usuario no encontrado en el sistema'
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Hubo un error al consultar la base de datos'
                             });
                         }
-                    },
-                    error: function() {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Hubo un error al consultar la base de datos'
-                        });
-                    }
-                });
-            }
-        });
+                    });
+                }
+            });
 
-        // Mostrar input si selecciona "OTRA"
+            // Mostrar input si selecciona "OTRA"
             $("#empresa").change(function() {
                 if ($(this).val() === "otra") {
                     $("#nuevaEmpresaContainer").show();
@@ -244,31 +252,31 @@ mysqli_close($con);
                 }
             });
 
-        // ------------------------
-        // Validación de fecha futura
-        // ------------------------
-        $("#fecha").on("change", function() {
-            const selectedDate = new Date(this.value);
-            const today = new Date();
-            today.setHours(0, 0, 0, 0); // eliminar horas para comparar solo la fecha
-            if (selectedDate > today) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Fecha inválida',
-                    text: 'No se puede seleccionar una fecha futura.'
-                });
-                this.value = ""; // limpiar campo
-            }
-        });
+            // ------------------------
+            // Validación de fecha futura
+            // ------------------------
+            $("#fecha").on("change", function() {
+                const selectedDate = new Date(this.value);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0); // eliminar horas para comparar solo la fecha
+                if (selectedDate > today) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Fecha inválida',
+                        text: 'No se puede seleccionar una fecha futura.'
+                    });
+                    this.value = ""; // limpiar campo
+                }
+            });
 
-        // ------------------------
-        // Mostrar/Ocultar campos de equipo electrónico
-        // ------------------------
-        $("#equipoElectronicoCheckbox").change(function() {
-            $("#inputsEquipoElectronico").toggle(this.checked);
-        });
+            // ------------------------
+            // Mostrar/Ocultar campos de equipo electrónico
+            // ------------------------
+            $("#equipoElectronicoCheckbox").change(function() {
+                $("#inputsEquipoElectronico").toggle(this.checked);
+            });
 
-        // ------------------------
+            // ------------------------
             // Mensajes SweetAlert desde PHP
             // ------------------------
             <?php if (isset($_SESSION['success'])): ?>
