@@ -205,14 +205,6 @@ mysqli_close($con);
                         },
                         dataType: "json",
                         success: function(response) {
-                            console.log("Respuesta AJAX:", JSON.stringify(response, null, 4));
-                            console.log("Valores recibidos:", JSON.stringify({
-                                arl: response.arl,
-                                eps: response.eps,
-                                empresa: response.empresa,
-                                rh: response.rh,
-                                telefono: response.telefono
-                            }, null, 4));
                             if (!response.error) {
                                 $("input[name='nombre']").val(response.nombre);
                                 $("select[name='arl']").val(response.arl);

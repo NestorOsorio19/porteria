@@ -1,21 +1,68 @@
 <?php
-// Incluir el archivo de conexión para conectar con la base de datos
-include("../Config/database.php");
-
-// Iniciar sesión para manejar los mensajes de éxito o error
 session_start();
 
-// Establecer la conexión con la base de datos
+require_once '../Config/config.php';
+require_once '../Config/database.php';
+
+// ------------------------
+// Conexión a la base de datos
+// ------------------------
 $con = connection();
 
-// Realizar la consulta SQL para obtener todos los registros de la tabla 'colaboradores'
-$sql = "SELECT * FROM colaboradores";
-$query = mysqli_query($con, $sql);
-
-// Verificar si la consulta fue exitosa, si no, mostrar el error
-if (!$query) {
-    die("Error en la consulta: " . mysqli_error($con));
+// ------------------------
+// Cargar Empresas
+// ------------------------
+$empresas = '';
+$q_emp = mysqli_query($con, "SELECT id_registro, nom_empresa FROM empresas ORDER BY nom_empresa ASC");
+if ($q_emp && mysqli_num_rows($q_emp) > 0) {
+    while ($row = mysqli_fetch_assoc($q_emp)) {
+        $empresas .= "<option value='" . htmlspecialchars($row['id_registro']) . "'>" . htmlspecialchars($row['nom_empresa']) . "</option>";
+    }
+} else {
+    $empresas = "<option value='' disabled>No hay empresas disponibles</option>";
 }
+
+// ------------------------
+// Cargar ARL
+// ------------------------
+$arl_options = '';
+$q_arl = mysqli_query($con, "SELECT id_arl, nom_arl FROM arls ORDER BY nom_arl ASC");
+if ($q_arl && mysqli_num_rows($q_arl) > 0) {
+    while ($row = mysqli_fetch_assoc($q_arl)) {
+        $arl_options .= "<option value='" . htmlspecialchars($row['id_arl']) . "'>" . htmlspecialchars($row['nom_arl']) . "</option>";
+    }
+} else {
+    $arl_options = "<option value='' disabled>No hay ARL disponibles</option>";
+}
+
+// ------------------------
+// Cargar EPS
+// ------------------------
+$eps_options = '';
+$q_eps = mysqli_query($con, "SELECT id_eps, nom_eps FROM eps ORDER BY nom_eps ASC");
+if ($q_eps && mysqli_num_rows($q_eps) > 0) {
+    while ($row = mysqli_fetch_assoc($q_eps)) {
+        $eps_options .= "<option value='" . htmlspecialchars($row['id_eps']) . "'>" . htmlspecialchars($row['nom_eps']) . "</option>";
+    }
+} else {
+    $eps_options = "<option value='' disabled>No hay EPS disponibles</option>";
+}
+
+// ------------------------
+// Cargar Areas
+// ------------------------
+$areas = '';
+$q_emp = mysqli_query($con, "SELECT id_area, nom_area FROM areas ORDER BY nom_area ASC");
+if ($q_emp && mysqli_num_rows($q_emp) > 0) {
+    while ($row = mysqli_fetch_assoc($q_emp)) {
+        $areas .= "<option value='" . htmlspecialchars($row['id_area']) . "'>" . htmlspecialchars($row['nom_area']) . "</option>";
+    }
+} else {
+    $areas = "<option value='' disabled>No hay areas disponibles</option>";
+}
+
+// Cerramos la conexión porque solo necesitamos los datos para los select
+mysqli_close($con);
 ?>
 
 <!DOCTYPE html>
@@ -40,18 +87,6 @@ if (!$query) {
         <div class="users-form">
             <h1>Registros de Colaboradores</h1>
 
-            <!-- Mostrar un mensaje de éxito si existe en la sesión -->
-            <?php if (isset($_SESSION['success'])): ?>
-                <div class="message success"><?= htmlspecialchars($_SESSION['success']);
-                                                unset($_SESSION['success']); ?></div>
-            <?php endif; ?>
-
-            <!-- Mostrar un mensaje de error si existe en la sesión -->
-            <?php if (isset($_SESSION['error'])): ?>
-                <div class="message error"><?= htmlspecialchars($_SESSION['error']);
-                                            unset($_SESSION['error']); ?></div>
-            <?php endif; ?>
-
             <!-- Formulario para agregar un colaborador -->
             <form action="../Controller/ingreso_colaboradores.php" method="POST" id="form_colaborador">
                 <!-- Campo para ingresar la fecha -->
@@ -66,42 +101,19 @@ if (!$query) {
                 <label for="nombre">Nombre:</label>
                 <input type="text" name="nombre" id="nombre" placeholder="Ingrese el nombre" required>
 
-                <!-- Campo para ingresar la ARL -->
-                <label for="arl">Seleccione la ARL:</label>
+                <!-- ARL -->
+                <label for="arl">Seleccione ARL:</label>
                 <select name="arl" id="arl" required>
-                    <option value="" disabled selected>Selecione la ARL...</option>
-                    <option value="sura">SURA</option>
-                    <option value="postiva">POSITIVA</option>
-                    <option value="axacolpatria">AXA COLPATRIA</option>
-                    <option value="colmena">COLMENA</option>
-                    <option value="Bolivia">BOLIVAR</option>
-                    <option value="liberty">LIBERTY</option>
-                    <option value="extranjero">EXTRANJERO</option>
-                    <option value="otra">OTRA</option>
+                    <option value="" disabled selected>Seleccione la ARL...</option>
+                    <?= $arl_options ?>
                 </select>
 
-                <!-- Campo para ingresar la EPS -->
-                <label for="eps">Seleccione una EPS:</label>
+                <!-- EPS -->
+                <label for="eps">Seleccione EPS:</label>
                 <select name="eps" id="eps" required>
                     <option value="" disabled selected>Seleccione la EPS...</option>
-                    <option value="comeva">COMEVA EPS</option>
-                    <option value="coosalud">COOSALUD</option>
-                    <option value="famisanar">FAMISANAR</option>
-                    <option value="nuevaeps">NUEVA EPS</option>
-                    <option value="saludtotal">SALUD TOTAL</option>
-                    <option value="sanitas">SANITAS</option>
-                    <option value="sura">SURA</option>
-                    <option value="otra">OTRA</option>
+                    <?= $eps_options ?>
                 </select>
-
-
-                <!-- Campo para ingresar el nombre del contacto de emergencia -->
-                <label for="nombre_emergencia">Contacto en caso de emergencia (Nombre):</label>
-                <input type="text" name="nombre_emergencia" id="nombre_emergencia" placeholder="Nombre" required>
-
-                <!-- Campo para ingresar el teléfono de emergencia -->
-                <label for="telefono_emergencia">Teléfono de emergencia:</label>
-                <input type="text" name="telefono_emergencia" id="telefono_emergencia" placeholder="Teléfono" required>
 
                 <!-- Campo para seleccionar el tipo de sangre -->
                 <label for="rh">Tipo de Sangre:</label>
@@ -117,94 +129,78 @@ if (!$query) {
                     <option value="AB+">AB +</option>
                 </select>
 
-                <!-- Campo para ingresar la hora de ingreso -->
-                <label for="ingreso">Hora de ingreso:</label>
-                <input type="time" name="ingreso" id="ingreso" required>
+                <!-- Campo para ingresar el nombre del contacto de emergencia -->
+                <label for="nombre_emergencia">Contacto en caso de emergencia (Nombre):</label>
+                <input type="text" name="nombre_emergencia" id="nombre_emergencia" placeholder="Nombre" required>
 
-                <!-- Campo para seleccionar el área a la que se dirige el colaborador -->
-                <label for="motivo">Área a la que se dirige:</label>
-                <select name="motivo" id="motivo" required>
-                    <option value="" disabled selected>Selecciona a donde se dirige...</option>
-                    <option value="ambiental">Ambiental</option>
-                    <option value="calidad">Calidad</option>
-                    <option value="compras">Compras</option>
-                    <option value="gerencia">Gerencia</option>
-                    <option value="gestionhumana">Gestión Humana</option>
-                    <option value="mantenimiento">Mantenimiento</option>
-                    <option value="produccion">Producción</option>
-                    <option value="sst">Oficina SST</option>
-                    <option value="saladejuntas">Sala de Juntas</option>
-                    <option value="sistemas">Sistemas</option>
-                    <option value="transporte">Transporte</option>
+                <!-- Campo para ingresar el teléfono de emergencia -->
+                <label for="telefono_emergencia">Contacto en caso de emergencia (Telefono):</label>
+                <input type="text" name="telefono_emergencia" id="telefono_emergencia" placeholder="Teléfono" required>
+
+                <!-- Areas -->
+                <label for="area">Seleccione Area a la que se Dirige :</label>
+                <select name="area" id="area" required>
+                    <option value="" disabled selected>Seleccione la Area...</option>
+                    <?= $areas ?>
                 </select>
 
-                <!-- Campo para seleccionar si se ingresa un equipo electrónico -->
+                <!-- Equipo Electrónico -->
                 <label style="display: flex;">
                     <input name="equipo" type="checkbox" id="equipoElectronicoCheckbox" value="SI"> Ingreso de equipo electrónico
                 </label>
 
-                <!-- Campos ocultos que se mostrarán si se marca el checkbox de equipo electrónico -->
                 <div id="inputsEquipoElectronico" style="display: none">
-                    <label for="tipo">Tipo:</label>
-                    <input type="text" id="tipo" name="tipo">
+                    <label for="marca">Marca:</label>
+                    <input type="text" id="marca" name="marca">
 
                     <label for="serial">Serial:</label>
                     <input type="text" id="serial" name="serial">
                 </div>
 
+                <!-- Campo para ingresar la hora de ingreso -->
+                <label for="ingreso">Hora de ingreso:</label>
+                <input type="time" name="ingreso" id="ingreso" required>
+
                 <!-- Botones de acción: enviar formulario o consultar registros -->
                 <div class="buttons-container">
                     <input type="submit" value="Agregar">
-                    <a href="../View/tablacolaboradores.php" class="btn-consulta">Consultar Registro</a>
+                    <a href="../view/tablacolaboradores.php" class="btn-consulta">Consultar Registro</a>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Incluir script para el menú -->
-    <script src="layout/menu.js"></script>
+    <script src="../View/layout/menu.js"></script>
     <script>
-        // Validar que el campo 'cedula' solo permita números
-        $("#cedula").on("input", function() {
-            var cedula = $(this).val();
-            var cedulaValida = /^[0-9]*$/; // Expresión regular para solo permitir números
-            if (!cedulaValida.test(cedula)) {
-                // Si no es válida, eliminamos el último carácter ingresado
-                $(this).val(cedula.substring(0, cedula.length - 1));
-                alert("La cédula solo debe contener números.");
-            }
-        });
-
         $(document).ready(function() {
-            // Mostrar/ocultar los campos de equipo electrónico al marcar o desmarcar el checkbox
-            $("#equipoElectronicoCheckbox").on("change", function() {
-                if (this.checked) {
-                    $("#inputsEquipoElectronico").show(); // Mostrar los campos de equipo electrónico
-                } else {
-                    $("#inputsEquipoElectronico").hide(); // Ocultar los campos si no está marcado
-                }
+            // ------------------------
+            // Validar que el campo 'cedula' solo permita números
+            // ------------------------
+            $("#cedula").on("input", function() {
+                this.value = this.value.replace(/[^0-9]/g, '');
             });
 
-            // Autocompletar los campos con los datos del colaborador cuando se ingresa la cédula
+            // ------------------------
+            // Funcionalidad para autocompletar los campos con los datos existentes al ingresar la cédula
+            // ------------------------
             $("#cedula").on("blur", function() {
-                var cedula = $(this).val().trim();
+                var cedula = $(this).val();
                 if (cedula.length > 0) {
                     $.ajax({
-                        url: "../Controller/buscar_colaborador.php", // Consultar en la base de datos
+                        url: "../Controller/buscar_colaborador.php",
                         method: "POST",
                         data: {
                             cedula: cedula
                         },
                         dataType: "json",
                         success: function(response) {
-                            // Si la consulta es exitosa, completar los campos con la información
                             if (!response.error) {
                                 $("input[name='nombre']").val(response.nombre);
                                 $("select[name='arl']").val(response.arl);
                                 $("select[name='eps']").val(response.eps);
-                                $("input[name='nombre_emergencia']").val(response.nombre_emergencia);
-                                $("input[name='telefono_emergencia']").val(response.telefono_emergencia);
                                 $("select[name='rh']").val(response.rh);
+                                $("input[name='telefono']").val(response.telefono);
                                 $("input[name='ingreso']").val(response.ingreso);
                             } else {
                                 Swal.fire({
