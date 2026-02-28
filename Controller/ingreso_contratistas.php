@@ -13,12 +13,12 @@ function responderError(string $codigo): void
 }
 
 /* =====================================================
- FUNCIÓN DE SANITIZACIÓN DE TEXTO
+ FUNCIÓN DE SANITIZACIÓN
 ===================================================== */
 function clean_text(string $value): string
 {
     $value = trim(strip_tags($value));
-    return preg_replace('/[^A-Za-z0-9 áéíóúÁÉÍÓÚñÑ.-]/', '', $value);
+    return preg_replace('/[^A-Za-z0-9 áéíóúÁÉÍÓÚñÑ.+-]/', '', $value);
 }
 
 /* =====================================================
