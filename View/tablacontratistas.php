@@ -13,7 +13,7 @@ $sql = "SELECT v.*,
 FROM contratistas v
 LEFT JOIN arls a ON v.id_arl = a.id_arl
 LEFT JOIN eps e ON v.id_eps = e.id_eps
-LEFT JOIN empresas emp ON v.empresa_fk = emp.id_registro
+LEFT JOIN empresas emp ON v.empresa_fk = emp.id
 ORDER BY v.fecha DESC";
 
 // Ejecutar la consulta y verificar si se ha realizado correctamente
@@ -209,14 +209,14 @@ if (!$query) {
                         <td data-label="Contac Emer"><?= htmlspecialchars($row['nombre_emergencia'] ?? '') ?></td>
                         <td data-label="Tel Emer"><?= htmlspecialchars($row['telefono_emergencia'] ?? '') ?></td>
                         <td data-label="Ingreso"><?= htmlspecialchars($row['ingreso'] ?? '') ?></td>
-                        <td data-label="Salida" id_registro="salida_<?= $row['id_registro'] ?>"><?= htmlspecialchars($row['salida'] ?? '') ?></td>
+                        <td data-label="Salida" id_registro="salida_<?= $row['id'] ?>"><?= htmlspecialchars($row['salida'] ?? '') ?></td>
                         <td data-label="Acciones">
                             <button
-                                id_registro="btnSalida_<?= $row['id_registro'] ?>"
+                                id_registro="btnSalida_<?= $row['id'] ?>"
                                 class="btnSalida"
-                                data-registro="<?= $row['id_registro'] ?>"
+                                data-registro="<?= $row['id'] ?>"
                                 <?= !empty($row['salida']) ? 'style="display:none;"' : '' ?>
-                                onclick="marcarSalida(<?= $row['id_registro'] ?>)">
+                                onclick="marcarSalida(<?= $row['id'] ?>)">
                                 Marcar Salida
                             </button>
                         </td>
