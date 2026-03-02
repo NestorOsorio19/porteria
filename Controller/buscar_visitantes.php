@@ -21,7 +21,6 @@ if (isset($_POST['cedula'])) {
             "rh" => $row['rh'],
             "telefono" => $row['telefono'],
             "motivo" => $row['motivo'],
-            "ingreso" => $row['ingreso']
         ];
         echo json_encode($response);
     } else {
