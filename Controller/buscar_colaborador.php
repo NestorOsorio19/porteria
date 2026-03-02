@@ -4,7 +4,7 @@ $con = connection();
 
 if (isset($_POST['cedula'])) {
     $cedula = $_POST['cedula'];
-    $sql = "SELECT nombre, id_arl, id_eps, rh, nom_eme, tel_eme, ingreso FROM colaboradores WHERE cedula = ? LIMIT 1";
+    $sql = "SELECT nombre, id_arl, id_eps, rh, nom_eme, tel_eme FROM colaboradores WHERE cedula = ? LIMIT 1";
     $stmt = mysqli_prepare($con, $sql);
     mysqli_stmt_bind_param($stmt, "s", $cedula);
     mysqli_stmt_execute($stmt);
@@ -20,7 +20,6 @@ if (isset($_POST['cedula'])) {
             "rh" => $row['rh'],
             "nombre_emergencia" => $row['nom_eme'],
             "telefono_emergencia" => $row['tel_eme'],
-            "ingreso" => $row['ingreso']
         ];
         echo json_encode($response);
     } else {
