@@ -201,7 +201,8 @@ mysqli_close($con);
                                 $("select[name='eps']").val(response.eps);
                                 $("select[name='rh']").val(response.rh);
                                 $("input[name='telefono']").val(response.telefono);
-                                $("input[name='ingreso']").val(response.ingreso);
+                                $("input[name='nombre_emergencia']").val(response.nombre_emergencia);
+                                $("input[name='telefono_emergencia']").val(response.telefono_emergencia);
                             } else {
                                 Swal.fire({
                                     icon: 'info',
