@@ -113,6 +113,6 @@ mysqli_stmt_close($stmt);
 mysqli_close($con);
 
 // Redirigir de nuevo al formulario
-header("Location: ../index.php");
+header("Location: ../View/registrocolaboradores.php");
 exit;
 ?>

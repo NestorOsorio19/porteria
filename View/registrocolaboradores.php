@@ -119,14 +119,14 @@ mysqli_close($con);
                 <label for="rh">Tipo de Sangre:</label>
                 <select name="rh" id="rh" required>
                     <option value="" disabled selected>Tipo de Sangre...</option>
-                    <option value="O-">O -</option>
-                    <option value="O+">O +</option>
-                    <option value="A-">A -</option>
-                    <option value="A+">A +</option>
-                    <option value="B-">B -</option>
-                    <option value="B+">B +</option>
-                    <option value="AB-">AB -</option>
-                    <option value="AB+">AB +</option>
+                    <option value="O-">O-</option>
+                    <option value="O+">O+</option>
+                    <option value="A-">A-</option>
+                    <option value="A+">A+</option>
+                    <option value="B-">B-</option>
+                    <option value="B+">B+</option>
+                    <option value="AB-">AB-</option>
+                    <option value="AB+">AB+</option>
                 </select>
 
                 <!-- Campo para ingresar el nombre del contacto de emergencia -->

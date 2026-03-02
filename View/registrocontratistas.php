@@ -85,10 +85,10 @@ mysqli_close($con);
                 <label for="nombre">Nombre:</label>
                 <input type="text" name="nombre" id="nombre" placeholder="Ingrese el nombre" required>
 
-                <!-- Tipo de Sangre -->
+                <!-- Campo para seleccionar el tipo de sangre -->
                 <label for="rh">Tipo de Sangre:</label>
                 <select name="rh" id="rh" required>
-                    <option value="" disabled selected>Seleccione el tipo de sangre</option>
+                    <option value="" disabled selected>Tipo de Sangre...</option>
                     <option value="O-">O -</option>
                     <option value="O+">O +</option>
                     <option value="A-">A -</option>

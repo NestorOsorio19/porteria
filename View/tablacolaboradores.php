@@ -179,6 +179,7 @@ if (!$query) {
             <thead>
                 <tr>
                     <!--  <th>Id</th> -->
+                    <th>ID</th>
                     <th>Fecha</th>
                     <th>Nombre</th>
                     <th>Cédula</th>
@@ -196,6 +197,7 @@ if (!$query) {
             <tbody>
                 <?php while ($row = mysqli_fetch_assoc($query)): ?>
                     <tr>
+                        <td data-label="ID"><?= htmlspecialchars($row['id_registro'] ?? '') ?></td>
                         <td data-label="Fecha"><?= htmlspecialchars($row['fecha'] ?? '') ?></td>
                         <td data-label="Nombre"><?= htmlspecialchars($row['nombre'] ?? '') ?></td>
                         <td data-label="Cédula"><?= htmlspecialchars($row['cedula'] ?? '') ?></td>

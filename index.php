@@ -212,7 +212,6 @@ mysqli_close($con);
                                 $("select[name='rh']").val(response.rh);
                                 $("input[name='telefono']").val(response.telefono);
                                 $("select[name='empresa']").val(response.empresa);
-                                $("input[name='ingreso']").val(response.ingreso);
                                 $("#motivo").val(response.motivo);
                             } else {
                                 Swal.fire({
