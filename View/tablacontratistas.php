@@ -13,7 +13,7 @@ $sql = "SELECT v.*,
 FROM contratistas v
 LEFT JOIN arls a ON v.id_arl = a.id_arl
 LEFT JOIN eps e ON v.id_eps = e.id_eps
-LEFT JOIN empresas emp ON v.empresa_fk = emp.id
+LEFT JOIN empresas emp ON v.empresa_fk = emp.id_registro
 ORDER BY v.fecha DESC";
 
 // Ejecutar la consulta y verificar si se ha realizado correctamente
@@ -186,6 +186,7 @@ if (!$query) {
                     <th>RH</th>
                     <th>ARL</th>
                     <th>EPS</th>
+                    <th>EMPRESA</th>
                     <th>ENFER / ALERG</th>
                     <th>CONT EMER</th>
                     <th>TEL EMER</th>
@@ -209,10 +210,10 @@ if (!$query) {
                         <td data-label="Contac Emer"><?= htmlspecialchars($row['nombre_emergencia'] ?? '') ?></td>
                         <td data-label="Tel Emer"><?= htmlspecialchars($row['telefono_emergencia'] ?? '') ?></td>
                         <td data-label="Ingreso"><?= htmlspecialchars($row['ingreso'] ?? '') ?></td>
-                        <td data-label="Salida" id_registro="salida_<?= $row['id'] ?>"><?= htmlspecialchars($row['salida'] ?? '') ?></td>
+                        <td data-label="Salida" id="salida_<?= $row['id'] ?>"><?= htmlspecialchars($row['salida'] ?? '') ?></td>
                         <td data-label="Acciones">
                             <button
-                                id_registro="btnSalida_<?= $row['id'] ?>"
+                                id="btnSalida_<?= $row['id'] ?>"
                                 class="btnSalida"
                                 data-registro="<?= $row['id'] ?>"
                                 <?= !empty($row['salida']) ? 'style="display:none;"' : '' ?>
@@ -247,14 +248,14 @@ if (!$query) {
             });
         });
 
-        function marcarSalida(id_registro) {
+        function marcarSalida(id) {
             // Obtener la hora actual en HH:MM:SS
             const horaSalida = new Date().toTimeString().split(' ')[0];
 
             // Confirmación con SweetAlert
             Swal.fire({
                 title: '¿Desea marcar la salida?',
-                text: "Se registrará la hora de salida del colaborador.",
+                text: "Se registrará la hora de salida del visitante.",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -265,13 +266,13 @@ if (!$query) {
                 if (result.isConfirmed) {
                     // Hacer la petición AJAX solo si confirmamos
                     $.post('../Controller/salidas_contratistas.php', {
-                        id_registro: id_registro,
+                        id: id,
                         hora_salida: horaSalida
                     }, function(respuesta) {
                         if (respuesta.trim() === 'ok') {
                             // Actualizar la tabla
-                            $('#salida_' + id_registro).text(horaSalida);
-                            $('#btnSalida_' + id_registro).hide();
+                            $('#salida_' + id).text(horaSalida);
+                            $('#btnSalida_' + id).hide();
 
                             // Mensaje de éxito
                             Swal.fire({
