@@ -1,296 +1,410 @@
 <?php
 session_start();
 
-require_once 'Config/config.php';
-require_once 'Config/database.php';
+/* ======================================================
+CONFIGURACIÓN DE SEGURIDAD Y SESIÓN
+====================================================== */
 
-// ------------------------
-// Conexión a la base de datos
-// ------------------------
-$con = connection();
+// Evitar caché del navegador
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Pragma: no-cache");
+header("Expires: 0");
 
-// ------------------------
-// Cargar Empresas
-// ------------------------
-$empresas = '';
-$q_emp = mysqli_query($con, "SELECT id_registro, nom_empresa FROM empresas ORDER BY nom_empresa ASC");
-if ($q_emp && mysqli_num_rows($q_emp) > 0) {
-    while ($row = mysqli_fetch_assoc($q_emp)) {
-        $empresas .= "<option value='" . htmlspecialchars($row['id_registro']) . "'>" . htmlspecialchars($row['nom_empresa']) . "</option>";
-    }
-} else {
-    $empresas = "<option value='' disabled>No hay empresas disponibles</option>";
-}
+/* ======================================================
+MÓDULOS DEL SISTEMA
+Cada módulo genera automáticamente una tarjeta
+====================================================== */
 
-// ------------------------
-// Cargar ARL
-// ------------------------
-$arl_options = '';
-$q_arl = mysqli_query($con, "SELECT id_arl, nom_arl FROM arls ORDER BY nom_arl ASC");
-if ($q_arl && mysqli_num_rows($q_arl) > 0) {
-    while ($row = mysqli_fetch_assoc($q_arl)) {
-        $arl_options .= "<option value='" . htmlspecialchars($row['id_arl']) . "'>" . htmlspecialchars($row['nom_arl']) . "</option>";
-    }
-} else {
-    $arl_options = "<option value='' disabled>No hay ARL disponibles</option>";
-}
-
-// ------------------------
-// Cargar EPS
-// ------------------------
-$eps_options = '';
-$q_eps = mysqli_query($con, "SELECT id_eps, nom_eps FROM eps ORDER BY nom_eps ASC");
-if ($q_eps && mysqli_num_rows($q_eps) > 0) {
-    while ($row = mysqli_fetch_assoc($q_eps)) {
-        $eps_options .= "<option value='" . htmlspecialchars($row['id_eps']) . "'>" . htmlspecialchars($row['nom_eps']) . "</option>";
-    }
-} else {
-    $eps_options = "<option value='' disabled>No hay EPS disponibles</option>";
-}
-
-// Cerramos la conexión porque solo necesitamos los datos para los select
-mysqli_close($con);
+$modulos = [
+    [
+        "titulo" => "Colaboradores",
+        "subtitulo" => "Formulario",
+        "icono" => "fa-house",
+        "color" => "gradient-1",
+        "link" => "View/registro_colaboradores.php"
+    ],
+    [
+        "titulo" => "Visitantes",
+        "subtitulo" => "Formulario",
+        "icono" => "fa-person",
+        "color" => "gradient-2",
+        "link" => "View/registro_visitantes.php"
+    ],
+    [
+        "titulo" => "Contratistas",
+        "subtitulo" => "Formulario",
+        "icono" => "fa-briefcase",
+        "color" => "gradient-3",
+        "link" => "View/registro_contratistas.php"
+    ],
+    [
+        "titulo" => "Vehiculos",
+        "subtitulo" => "Formulario",
+        "icono" => "fa-truck",
+        "color" => "gradient-4",
+        "link" => "View/registro_vehiculos.php"
+    ],
+    [
+        "titulo" => "Tabla de Registros",
+        "subtitulo" => "Formulario",
+        "icono" => "fa-table",
+        "color" => "gradient-7",
+        "link" => "View/tabla_registros.php"
+    ]
+];
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Visitantes</title>
-    <link href="View/CSS/estilosprincipales.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <title>Panel Principal</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+    <!-- ESTILOS PERSONALIZADOS -->
+    <style>
+        :root {
+            --bg: #edf4ff;
+            --card: #f8fbff;
+            --text: #1e293b;
+            --muted: #64748b;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg,
+                    #dbeafe,
+                    #eef6ff,
+                    #ffffff);
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        /* NAVBAR */
+
+        .clay-navbar {
+            margin: 20px;
+            padding: 15px 25px;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, .75);
+            backdrop-filter: blur(15px);
+
+            box-shadow:
+                12px 12px 30px rgba(0, 0, 0, .08),
+                -12px -12px 30px rgba(255, 255, 255, .95);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .user-info {
+            color: #334155;
+            font-weight: 500;
+        }
+
+        /* TITULO */
+
+        .welcome-box {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .welcome-box h1 {
+            color: var(--text);
+            font-size: 2.7rem;
+            font-weight: 800;
+        }
+
+        .welcome-box p {
+            color: var(--muted);
+            font-size: 1.1rem;
+        }
+
+        /* INFO */
+
+        .info-card {
+            border: none;
+            border-radius: 30px;
+            background: var(--card);
+
+            box-shadow:
+                15px 15px 40px rgba(0, 0, 0, .08),
+                -15px -15px 40px rgba(255, 255, 255, .95);
+
+            padding: 25px;
+            text-align: center;
+        }
+
+        .info-card h3 {
+            color: #2563eb;
+            font-weight: 800;
+        }
+
+        .info-card p {
+            margin-bottom: 0;
+            color: #64748b;
+        }
+
+        /* MODULOS */
+
+        .info-card {
+            height: 100%;
+            padding: 20px;
+            border-radius: 12px;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .info-card h3 {
+            color: #2563eb;
+            font-weight: 800;
+        }
+
+        .info-card p {
+            margin-bottom: 0;
+            color: #64748b;
+        }
+
+        .menu-card {
+            border: none;
+            border-radius: 30px;
+            background: #f8fbff;
+
+            box-shadow:
+                15px 15px 40px rgba(0, 0, 0, .08),
+                -15px -15px 40px rgba(255, 255, 255, .95);
+
+            transition: all .35s ease;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-10px);
+
+            box-shadow:
+                25px 25px 50px rgba(0, 0, 0, .12),
+                -15px -15px 40px rgba(255, 255, 255, 1);
+        }
+
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .icon-circle {
+            width: 100px;
+            height: 100px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            margin: auto;
+
+            border-radius: 28px;
+
+            color: white;
+            font-size: 38px;
+
+            box-shadow:
+                0 15px 25px rgba(0, 0, 0, .15);
+        }
+
+        .card-title {
+            font-weight: 800;
+            margin-top: 20px;
+            color: #1e293b;
+        }
+
+        .card-text {
+            color: #64748b;
+        }
+
+        /* GRADIENTES */
+
+        .gradient-1 {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .gradient-2 {
+            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+        }
+
+        .gradient-3 {
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
+        }
+
+        .gradient-4 {
+            background: linear-gradient(135deg, #ff512f, #dd2476);
+        }
+
+        .gradient-5 {
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
+        }
+
+        .gradient-6 {
+            background: linear-gradient(135deg, #f7971e, #ffd200);
+        }
+
+        .gradient-7 {
+            background: linear-gradient(135deg, #a18cd1, #fbc2eb);
+        }
+
+        .gradient-8 {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+        }
+
+        .gradient-9 {
+            background: linear-gradient(135deg, #fc466b, #3f5efb);
+        }
+
+        /* BOTONES */
+
+        .btn-clay {
+            border: none;
+            border-radius: 18px;
+            padding: 12px 28px;
+
+            color: white !important;
+            font-weight: 700;
+
+            box-shadow:
+                0 10px 20px rgba(0, 0, 0, .15);
+
+            transition: .3s;
+        }
+
+        .btn-clay:hover {
+            transform: translateY(-3px);
+        }
+
+        .logout-btn {
+            border-radius: 15px;
+        }
+
+        @media(max-width:768px) {
+
+            .welcome-box h1 {
+                font-size: 2rem;
+            }
+
+            .icon-circle {
+                width: 80px;
+                height: 80px;
+                font-size: 30px;
+            }
+        }
+    </style>
+
 </head>
 
 <body>
-    <header>
-        <button class="menu-toggle" id="menu-toggle">&#9776;</button>
-        <div class="menu-lateral" id="menu-lateral">
-            <ul class="nav-links">
-                <li><a href="index.php">REGISTRO VISITANTES</a></li>
-                <li><a href="View/tablavisitantes.php">TABLA REGISTROS VISITANTES</a></li>
-                <li><a href="View/registrocolaboradores.php">REGISTROS COLABORADORES</a></li>
-                <li><a href="View/tablacolaboradores.php">TABLA REGISTROS COLABORADORES</a></li>
-                <li><a href="View/registrocontratistas.php">REGISTROS CONTRATISTAS</a></li>
-                <li><a href="View/tablacontratistas.php">TABLA REGISTROS CONTRATISTAS</a></li>
-            </ul>
-            <div class="logo-container">
-                <img src="View/Img/favicon-avicampo.png" width="40" alt="Logo">
+
+    <!-- =========================================
+        NAVBAR SUPERIOR
+    ========================================== -->
+    <nav class="clay-navbar">
+
+        <div class="d-flex justify-content-between align-items-center">
+
+            <div class="navbar-brand">
+                <i class="fas fa-layer-group me-2"></i>
+                Plataforma Ingresos - Planta Lebrija
             </div>
+
+            <div>
+
+                <span class="user-info me-3">
+                    Bienvenido
+                </span>
+
+            </div>
+
         </div>
-    </header>
 
-    <div class="main-content">
-        <div class="users-form">
-            <h1>Registros de Visitantes</h1>
+    </nav>
 
-            <!-- Formulario para agregar un visitante -->
-            <form action="Controller/ingreso_visitantes.php" method="POST">
-                <!-- Campo para ingresar la fecha -->
-                <label for="fecha">Fecha:</label>
-                <input type="date" name="fecha" id="fecha" placeholder="Fecha" value="<?= date('Y-m-d') ?>">
+    <!-- =========================================
+        CONTENIDO PRINCIPAL
+    ========================================== -->
+    <div class="container py-5">
 
-                <!-- Campo para ingresar la cédula del visitante -->
-                <label for="cedula">Cédula:</label>
-                <input type="text" name="cedula" id="cedula" placeholder="Cédula" required>
+        <!-- BIENVENIDA -->
+        <div class="welcome-box">
 
-                <!-- Campo para ingresar el nombre del visitante -->
-                <label for="nombre">Nombre:</label>
-                <input type="text" name="nombre" id="nombre" placeholder="Ingrese el nombre" required>
+            <h1>Menu Principal</h1>
 
-                <!-- ARL -->
-                <label for="arl">Seleccione ARL:</label>
-                <select name="arl" id="arl" required>
-                    <option value="" disabled selected>Seleccione la ARL...</option>
-                    <?= $arl_options ?>
-                </select>
+            <p>
+                Ingreso Modulos de Registro
+            </p>
 
-                <!-- EPS -->
-                <label for="eps">Seleccione EPS:</label>
-                <select name="eps" id="eps" required>
-                    <option value="" disabled selected>Seleccione la EPS...</option>
-                    <?= $eps_options ?>
-                </select>
-
-                <!-- Campo para seleccionar el tipo de sangre -->
-                <label for="rh">Tipo de Sangre:</label>
-                <select name="rh" id="rh" required>
-                    <option value="" disabled selected>Tipo de Sangre...</option>
-                    <option value="O-">O -</option>
-                    <option value="O+">O +</option>
-                    <option value="A-">A -</option>
-                    <option value="A+">A +</option>
-                    <option value="B-">B -</option>
-                    <option value="B+">B +</option>
-                    <option value="AB-">AB -</option>
-                    <option value="AB+">AB +</option>
-                </select>
-
-                <!-- Campo para ingresar el teléfono -->
-                <label for="telefono">Teléfono:</label>
-                <input type="text" name="telefono" id="telefono" placeholder="Teléfono" required>
-
-                <!-- Empresa -->
-                <label for="empresa">Empresa a la que Pertenece:</label>
-                <select name="empresa" id="empresa" required>
-                    <option value="" disabled selected>Seleccione la Empresa...</option>
-                    <?= $empresas ?>
-                    <option value="otra">OTRA...</option>
-                </select>
-
-                <!-- Input oculto -->
-                <div id="nuevaEmpresaContainer" style="display:none;">
-                    <label for="nueva_empresa">Nombre de la nueva empresa:</label>
-                    <input type="text" name="nueva_empresa" id="nueva_empresa" placeholder="Ingrese el nombre de la empresa">
-                </div>
-
-                <!-- Campo para ingresar el motivo del ingreso -->
-                <label for="motivo">Motivo de Ingreso:</label>
-                <textarea class="form-control" name="motivo" id="motivo" placeholder="Motivo de ingreso..." required></textarea>
-
-                <!-- Equipo Electrónico -->
-                <label style="display: flex;">
-                    <input name="equipo" type="checkbox" id="equipoElectronicoCheckbox" value="SI"> Ingreso de equipo electrónico
-                </label>
-
-                <div id="inputsEquipoElectronico" style="display: none">
-                    <label for="marca">Marca:</label>
-                    <input type="text" id="marca" name="marca">
-
-                    <label for="serial">Serial:</label>
-                    <input type="text" id="serial" name="serial">
-                </div>
-
-                <!-- Campo para ingresar el número del carnet -->
-                <label for="carnet">Ingrese el Número del Carnet:</label>
-                <input type="text" name="carnet" id="carnet" placeholder="N° Carnet" required>
-
-                <!-- Campo para ingresar la hora de ingreso -->
-                <label for="ingreso">Hora de ingreso:</label>
-                <input type="time" name="ingreso" id="ingreso" placeholder="Hora de ingreso" required>
-
-                <!-- Botones de acción: enviar formulario o consultar registros -->
-                <div class="buttons-container">
-                    <input type="submit" value="Agregar">
-                    <a href="View/tablavisitantes.php" class="btn-consulta">Consultar Registro</a>
-                </div>
-            </form>
         </div>
-    </div>
-    <!-- Incluir script para el menú -->
-    <script src="View/layout/menu.js"></script>
-    <script>
-        $(document).ready(function() {
-            // ------------------------
-            // Validar que el campo 'cedula' solo permita números
-            // ------------------------
-            $("#cedula").on("input", function() {
-                this.value = this.value.replace(/[^0-9]/g, '');
-            });
 
-            // ------------------------
-            // Funcionalidad para autocompletar los campos con los datos existentes al ingresar la cédula
-            // ------------------------
-            $("#cedula").on("blur", function() {
-                var cedula = $(this).val();
-                if (cedula.length > 0) {
-                    $.ajax({
-                        url: "Controller/buscar_visitantes.php",
-                        method: "POST",
-                        data: {
-                            cedula: cedula
-                        },
-                        dataType: "json",
-                        success: function(response) {
-                            if (!response.error) {
-                                $("input[name='nombre']").val(response.nombre);
-                                $("select[name='arl']").val(response.arl);
-                                $("select[name='eps']").val(response.eps);
-                                $("select[name='rh']").val(response.rh);
-                                $("input[name='telefono']").val(response.telefono);
-                                $("select[name='empresa']").val(response.empresa);
-                                $("#motivo").val(response.motivo);
-                            } else {
-                                Swal.fire({
-                                    icon: 'info',
-                                    title: 'No encontrado',
-                                    text: 'Usuario no encontrado en el sistema'
-                                });
-                            }
-                        },
-                        error: function() {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: 'Hubo un error al consultar la base de datos'
-                            });
-                        }
-                    });
-                }
-            });
+        <!-- GRID DE MÓDULOS -->
 
-            // Mostrar input si selecciona "OTRA"
-            $("#empresa").change(function() {
-                if ($(this).val() === "otra") {
-                    $("#nuevaEmpresaContainer").show();
-                    $("#nueva_empresa").prop("required", true);
-                } else {
-                    $("#nuevaEmpresaContainer").hide();
-                    $("#nueva_empresa").prop("required", false);
-                }
-            });
+        <div class="row g-4">
 
-            // ------------------------
-            // Validación de fecha futura
-            // ------------------------
-            $("#fecha").on("change", function() {
-                const selectedDate = new Date(this.value);
-                const today = new Date();
-                today.setHours(0, 0, 0, 0); // eliminar horas para comparar solo la fecha
-                if (selectedDate > today) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Fecha inválida',
-                        text: 'No se puede seleccionar una fecha futura.'
-                    });
-                    this.value = ""; // limpiar campo
-                }
-            });
+            <!-- GRID DE TARJETAS -->
+            <div class="row g-4">
 
-            // ------------------------
-            // Mostrar/Ocultar campos de equipo electrónico
-            // ------------------------
-            $("#equipoElectronicoCheckbox").change(function() {
-                $("#inputsEquipoElectronico").toggle(this.checked);
-            });
+                <?php foreach ($modulos as $modulo): ?>
 
-            // ------------------------
-            // Mensajes SweetAlert desde PHP
-            // ------------------------
-            <?php if (isset($_SESSION['success'])): ?>
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Éxito!',
-                    text: '<?= $_SESSION['success'] ?>',
-                    confirmButtonColor: '#3085d6'
-                });
-                <?php unset($_SESSION['success']); ?>
-            <?php endif; ?>
+                    <div class="col-12 col-sm-6 col-lg-4">
 
-            <?php if (isset($_SESSION['error'])): ?>
-                Swal.fire({
-                    icon: 'error',
-                    title: '¡Error!',
-                    text: '<?= $_SESSION['error'] ?>',
-                    confirmButtonColor: '#d33'
-                });
-                <?php unset($_SESSION['error']); ?>
-            <?php endif; ?>
-        });
-    </script>
+                        <div class="card menu-card shadow-sm h-100">
+
+                            <div class="card-body text-center p-4">
+
+                                <!-- ICONO -->
+
+                                <div class="icon-circle <?= $modulo['color'] ?>">
+                                    <i class="fas <?= $modulo['icono'] ?>"></i>
+                                </div>
+
+                                <!-- TITULO -->
+                                <h5 class="card-title">
+                                    <?= strtoupper($modulo['titulo']) ?>
+                                </h5>
+
+                                <!-- SUBTITULO -->
+                                <p class="text-muted">
+                                    <?= $modulo['subtitulo'] ?>
+                                </p>
+
+                                <!-- BOTÓN -->
+                                <a href="<?= $modulo['link'] ?>"
+                                    class="btn btn-clay <?= $modulo['color'] ?>">
+                                    Abrir módulo
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                <?php endforeach; ?>
+
+            </div>
+
+        </div>
+
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 
 </html>

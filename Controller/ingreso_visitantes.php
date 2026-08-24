@@ -5,9 +5,15 @@ require_once '../Config/config.php';
 require_once '../Config/database.php';
 
 /* =====================================================
+ ACTIVAR ERRORES MYSQL (IMPORTANTE)
+===================================================== */
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+/* =====================================================
  CONEXIÓN
 ===================================================== */
 $con = connection();
+
 if (!$con) {
     $_SESSION['error'] = "Error al conectar a la base de datos";
     header("Location: ../index.php");
@@ -15,7 +21,7 @@ if (!$con) {
 }
 
 /* =====================================================
- FUNCIÓN PARA RESPONDER ERRORES
+ FUNCIÓN ERROR
 ===================================================== */
 function responderError($mensaje)
 {
@@ -25,7 +31,7 @@ function responderError($mensaje)
 }
 
 /* =====================================================
- FUNCIÓN DE SANITIZACIÓN
+ SANITIZACIÓN
 ===================================================== */
 function clean_text(string $value): string
 {
@@ -34,22 +40,22 @@ function clean_text(string $value): string
 }
 
 /* =====================================================
- DATOS RECIBIDOS
+ DATOS
 ===================================================== */
 $fecha      = $_POST['fecha'] ?? '';
-$cedula     = clean_text($_POST['cedula'] ?? '');
+$cedula     = intval($_POST['cedula'] ?? 0);
 $nombre     = clean_text($_POST['nombre'] ?? '');
 $rh         = clean_text($_POST['rh'] ?? '');
 $telefono   = clean_text($_POST['telefono'] ?? '');
 $motivo     = clean_text($_POST['motivo'] ?? '');
 $marca      = clean_text($_POST['marca'] ?? '');
 $serial     = clean_text($_POST['serial'] ?? '');
-$carnet     = clean_text($_POST['carnet'] ?? '');
+$carnet     = intval($_POST['carnet'] ?? 0);
 
 $ingreso    = $_POST['ingreso'] ?? '';
-$arl        = $_POST['arl'] ?? null;
-$eps        = $_POST['eps'] ?? null;
-$empresa_post = $_POST['empresa'] ?? null; // Puede ser ID o "otra"
+$arl        = intval($_POST['arl'] ?? 0);
+$eps        = intval($_POST['eps'] ?? 0);
+$empresa_post = $_POST['empresa'] ?? null;
 $equipo     = isset($_POST['equipo']) ? 'SI' : 'NO';
 
 /* =====================================================
@@ -59,10 +65,6 @@ if (!$fecha || !$cedula || !$nombre || !$rh || !$telefono || !$motivo || !$ingre
     responderError("Todos los campos obligatorios deben completarse.");
 }
 
-// Convertir a enteros
-$arl = intval($arl);
-$eps = intval($eps);
-
 if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha)) {
     responderError("Formato de fecha inválido.");
 }
@@ -71,7 +73,12 @@ if (strtotime($fecha) > strtotime(date('Y-m-d'))) {
     responderError("No se permite fecha futura.");
 }
 
-/* Validación equipo electrónico */
+/* Validar hora */
+if (!preg_match('/^\d{2}:\d{2}(:\d{2})?$/', $ingreso)) {
+    responderError("Formato de hora inválido.");
+}
+
+/* Equipo */
 if ($equipo === 'NO') {
     $marca = '';
     $serial = '';
@@ -82,53 +89,53 @@ if ($equipo === 'NO') {
 }
 
 /* =====================================================
- MANEJO DE EMPRESA (NORMAL U "OTRA")
+ EMPRESA
 ===================================================== */
 if ($empresa_post === "otra") {
 
     $nueva_empresa = clean_text($_POST['nueva_empresa'] ?? '');
 
     if (!$nueva_empresa) {
-        responderError('nueva_empresa_vacia');
+        responderError('Debe ingresar la nueva empresa');
     }
 
-    // Verificar si la empresa ya existe
     $sql_check = "SELECT id_registro FROM empresas WHERE nom_empresa = ?";
-    $stmt_check = mysqli_prepare($con, $sql_check);
-    mysqli_stmt_bind_param($stmt_check, "s", $nueva_empresa);
-    mysqli_stmt_execute($stmt_check);
-    $result = mysqli_stmt_get_result($stmt_check);
+    $stmt_check = $con->prepare($sql_check);
+    $stmt_check->bind_param("s", $nueva_empresa);
+    $stmt_check->execute();
+    $result = $stmt_check->get_result();
 
-    if ($row = mysqli_fetch_assoc($result)) {
-        // Si existe, usar el ID existente
-        $empresa = $row['id_registro'];
+    if ($row = $result->fetch_assoc()) {
+        $empresa = intval($row['id_registro']);
     } else {
-        // Si no existe, insertarla
         $sql_insert_empresa = "INSERT INTO empresas (nom_empresa) VALUES (?)";
-        $stmt_insert = mysqli_prepare($con, $sql_insert_empresa);
-        mysqli_stmt_bind_param($stmt_insert, "s", $nueva_empresa);
-        mysqli_stmt_execute($stmt_insert);
+        $stmt_insert = $con->prepare($sql_insert_empresa);
+        $stmt_insert->bind_param("s", $nueva_empresa);
+        $stmt_insert->execute();
 
-        $empresa = mysqli_insert_id($con);
-        mysqli_stmt_close($stmt_insert);
+        $empresa = $con->insert_id;
+        $stmt_insert->close();
     }
 
-    mysqli_stmt_close($stmt_check);
+    $stmt_check->close();
 
 } else {
-    // Empresa seleccionada normalmente
-    $empresa = filter_var($empresa_post, FILTER_VALIDATE_INT);
+    $empresa = intval($empresa_post);
+}
+
+if (!$empresa) {
+    responderError("Empresa inválida.");
 }
 
 /* =====================================================
- INSERTAR CON PREPARED STATEMENT
+ INSERT
 ===================================================== */
 $stmt = $con->prepare("INSERT INTO visitantes 
-    (fecha, cedula, nombre, id_arl, id_eps, rh, telefono, empresa_fk, motivo, marca, serial, carnet, ingreso)
-    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
+(fecha, cedula, nombre, id_arl, id_eps, rh, telefono, empresa_fk, motivo, marca, serial, carnet, ingreso)
+VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
 
 $stmt->bind_param(
-    "sssiississsss",
+    "sisiississsis",
     $fecha,
     $cedula,
     $nombre,
@@ -144,17 +151,15 @@ $stmt->bind_param(
     $ingreso
 );
 
-if (mysqli_stmt_execute($stmt)) {
-    $_SESSION['success'] = "Visitante registrado correctamente.";
-} else {
-    responderError('error_insert');
-}
+$stmt->execute();
 
-mysqli_stmt_close($stmt);
-mysqli_close($con);
+$_SESSION['success'] = "Visitante registrado correctamente.";
 
-// Redirigir de nuevo al formulario
+/* =====================================================
+ CIERRE
+===================================================== */
+$stmt->close();
+$con->close();
+
 header("Location: ../index.php");
 exit;
-?>
-

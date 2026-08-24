@@ -1,22 +1,147 @@
 <?php
-include("../Config/database.php");
-$con = connection();
 
-if(isset($_POST['id_registro']) && isset($_POST['hora_salida'])){
-    $id_registro = intval($_POST['id_registro']); // Convertir a número entero
-    $hora_salida = $_POST['hora_salida'];
+session_start();
 
-    $sql = "UPDATE colaboradores SET salida = ? WHERE id_registro = ?";
-    $stmt = mysqli_prepare($con, $sql);
-    mysqli_stmt_bind_param($stmt, "si", $hora_salida, $id_registro);
+header('Content-Type: application/json; charset=utf-8');
 
-    if(mysqli_stmt_execute($stmt)){
-        echo "ok"; // Solo devolvemos 'ok' si todo salió bien
-    } else {
-        echo "error";
+require_once '../Config/database.php';
+
+try {
+
+    $con = connection();
+
+
+    /* ==========================================================
+       RECIBIR ID
+    ========================================================== */
+
+    $id = filter_input(
+        INPUT_POST,
+        'id_registro',
+        FILTER_VALIDATE_INT
+    );
+
+
+    if (!$id || $id <= 0) {
+
+        echo json_encode([
+            'ok' => false,
+            'mensaje' => 'ID de registro inválido.'
+        ]);
+
+        exit;
     }
 
-    mysqli_stmt_close($stmt);
+
+    /* ==========================================================
+       BUSCAR REGISTRO
+    ========================================================== */
+
+    $stmt = $con->prepare("
+        SELECT
+            id_registro,
+            salida
+        FROM colaboradores
+        WHERE id_registro = :id
+        LIMIT 1
+    ");
+
+    $stmt->execute([
+        ':id' => $id
+    ]);
+
+    $registro = $stmt->fetch(PDO::FETCH_ASSOC);
+
+
+    if (!$registro) {
+
+        echo json_encode([
+            'ok' => false,
+            'mensaje' => 'El colaborador no existe.'
+        ]);
+
+        exit;
+    }
+
+
+    /* ==========================================================
+       VERIFICAR SI YA TIENE SALIDA
+    ========================================================== */
+
+    if (
+        !empty($registro['salida']) &&
+        $registro['salida'] !== '00:00:00'
+    ) {
+
+        echo json_encode([
+            'ok' => false,
+            'mensaje' =>
+                'El colaborador ya tiene registrada una hora de salida.'
+        ]);
+
+        exit;
+    }
+
+
+    /* ==========================================================
+       HORA ACTUAL
+    ========================================================== */
+
+    $horaSalida = date('H:i:s');
+
+
+    /* ==========================================================
+       ACTUALIZAR SALIDA
+    ========================================================== */
+
+    $stmt = $con->prepare("
+        UPDATE colaboradores
+        SET salida = :salida
+        WHERE id_registro = :id
+    ");
+
+    $stmt->execute([
+        ':salida' => $horaSalida,
+        ':id' => $id
+    ]);
+
+
+    /* ==========================================================
+       RESPUESTA
+    ========================================================== */
+
+    echo json_encode([
+
+        'ok' => true,
+
+        'hora_salida' => $horaSalida,
+
+        'mensaje' =>
+            'Salida registrada correctamente.'
+
+    ]);
+
+    exit;
+
+
+} catch (PDOException $e) {
+
+
+    http_response_code(500);
+
+
+    echo json_encode([
+
+        'ok' => false,
+
+        'mensaje' =>
+            'Error de base de datos.',
+
+        'error' =>
+            $e->getMessage()
+
+    ]);
+
+    exit;
+
 }
-mysqli_close($con);
-?>

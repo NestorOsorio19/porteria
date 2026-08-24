@@ -188,6 +188,8 @@ if (!$query) {
                     <th>Rh</th>
                     <th>Empresa</th>
                     <th>Motivo</th>
+                    <th>Marca</th>
+                    <th>Serial</th>
                     <th>Carnet</th>
                     <th>Ingreso</th>
                     <th>Salida</th>
@@ -206,6 +208,8 @@ if (!$query) {
                         <td data-label="RH"><?= htmlspecialchars($row['rh'] ?? '') ?></td>
                         <td data-label="Empresa"><?= htmlspecialchars($row['nom_empresa'] ?? '') ?></td>
                         <td data-label="Motivo"><?= htmlspecialchars($row['motivo'] ?? '') ?></td>
+                        <td data-label="Marca"><?= htmlspecialchars($row['marca'] ?? '') ?></td>
+                        <td data-label="Serial"><?= htmlspecialchars($row['serial'] ?? '') ?></td>
                         <td data-label="Carnet"><?= htmlspecialchars($row['carnet'] ?? '') ?></td>
                         <td data-label="Ingreso"><?= htmlspecialchars($row['ingreso'] ?? '') ?></td>
                         <td data-label="Salida" id="salida_<?= $row['id'] ?>"><?= htmlspecialchars($row['salida'] ?? '') ?></td>

@@ -190,6 +190,8 @@ if (!$query) {
                     <th>ENFER / ALERG</th>
                     <th>CONT EMER</th>
                     <th>TEL EMER</th>
+                    <th>Marca</th>
+                    <th>Serial</th>
                     <th>INGRESO</th>
                     <th>SALIDA</th>
                     <th>ACCION</th>
@@ -209,6 +211,8 @@ if (!$query) {
                         <td data-label="Enfermedad"><?= htmlspecialchars($row['enfermedad_alergia'] ?? '') ?></td>
                         <td data-label="Contac Emer"><?= htmlspecialchars($row['nombre_emergencia'] ?? '') ?></td>
                         <td data-label="Tel Emer"><?= htmlspecialchars($row['telefono_emergencia'] ?? '') ?></td>
+                        <td data-label="Marca"><?= htmlspecialchars($row['marca'] ?? '') ?></td>
+                        <td data-label="Serial"><?= htmlspecialchars($row['serial'] ?? '') ?></td>
                         <td data-label="Ingreso"><?= htmlspecialchars($row['ingreso'] ?? '') ?></td>
                         <td data-label="Salida" id="salida_<?= $row['id'] ?>"><?= htmlspecialchars($row['salida'] ?? '') ?></td>
                         <td data-label="Acciones">
