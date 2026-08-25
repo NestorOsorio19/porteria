@@ -1089,7 +1089,7 @@ $empresa = cargarEmpresa($connection);
                         <div class="col-12 col-md-3">
 
                             <label
-                                for="contacto"
+                                for="nombre_emergencia"
                                 class="form-label">
 
                                 Contacto de Emergencia:
@@ -1099,8 +1099,8 @@ $empresa = cargarEmpresa($connection);
 
                             <input
                                 type="text"
-                                name="contacto"
-                                id="contacto"
+                                name="nombre_emergencia"
+                                id="nombre_emergencia"
                                 class="form-control"
                                 minlength="2"
                                 maxlength="100"
@@ -1114,7 +1114,7 @@ $empresa = cargarEmpresa($connection);
                         <div class="col-12 col-md-3">
 
                             <label
-                                for="numero_emergencia"
+                                for="telefono_emergencia"
                                 class="form-label">
 
                                 Número de Emergencia:
@@ -1124,8 +1124,8 @@ $empresa = cargarEmpresa($connection);
 
                             <input
                                 type="tel"
-                                name="numero_emergencia"
-                                id="numero_emergencia"
+                                name="telefono_emergencia"
+                                id="telefono_emergencia"
                                 class="form-control"
                                 inputmode="numeric"
                                 pattern="[0-9]+"
@@ -1343,7 +1343,7 @@ $empresa = cargarEmpresa($connection);
                         <!-- VER REGISTROS -->
 
                         <a
-                            href="tablacolaboradores.php"
+                            href="tabla_contratistas.php"
                             class="btn btn-danger btn-lg px-5">
 
                             <i class="fas fa-eye me-2"></i>
@@ -1401,9 +1401,9 @@ $empresa = cargarEmpresa($connection);
 
                 $("#empresa").val("");
 
-                $("#contacto").val("");
+                $("#nombre_emergencia").val("");
 
-                $("#numero_emergencia").val("");
+                $("#telefono_emergencia").val("");
 
                 $("#induccion_sgsst").val("");
 
@@ -1653,15 +1653,15 @@ $empresa = cargarEmpresa($connection);
                            CONTACTO DE EMERGENCIA
                         ============================================== */
 
-                        $("#contacto")
+                        $("#nombre_emergencia")
                             .val(
-                                response.contacto || ""
+                                response.nombre_emergencia || ""
                             );
 
 
-                        $("#numero_emergencia")
+                        $("#telefono_emergencia")
                             .val(
-                                response.numero_emergencia || ""
+                                response.telefono_emergencia || ""
                             );
 
 

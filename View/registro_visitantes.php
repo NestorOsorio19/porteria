@@ -87,32 +87,6 @@ function cargarEPS(PDO $connection): string
 }
 
 /* ==========================================================
-CARGAR AREA PARA EL SELECT
-========================================================== */
-function cargarArea(PDO $connection): string
-{
-    $stmt = $connection->prepare("
-        SELECT id_area, nom_area
-        FROM areas
-        ORDER BY nom_area ASC
-    ");
-
-    $stmt->execute();
-
-    $options = '';
-
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-
-        $id = htmlspecialchars($row['id_area'], ENT_QUOTES, 'UTF-8');
-        $nombre = htmlspecialchars($row['nom_area'], ENT_QUOTES, 'UTF-8');
-
-        $options .= "<option value=\"$id\">$nombre</option>";
-    }
-
-    return $options;
-}
-
-/* ==========================================================
 CARGAR EMPRESA PARA EL SELECT
 ========================================================== */
 function cargarEmpresa(PDO $connection): string
@@ -144,7 +118,6 @@ VALORES INICIALES
 $fecha_inicial = date('Y-m-d');
 $ARL = cargarARL($connection);
 $EPS = cargarEPS($connection);
-$Area = cargarArea($connection);
 $empresa = cargarEmpresa($connection);
 
 ?>
@@ -490,7 +463,7 @@ $empresa = cargarEmpresa($connection);
 
             </div>
             <!-- Formulario para agregar un visitante -->
-            <form action="Controller/ingreso_visitantes.php" method="POST">
+            <form id="formulario_visitantes" action="Controller/ingreso_visitantes.php" method="POST">
 
                 <!-- MINI CARDS -->
                 <div class="row g-4 mb-4 justify-content-center">
@@ -547,6 +520,11 @@ $empresa = cargarEmpresa($connection);
                         <div class="col-12 col-md-3">
                             <label for="nombre" class="form-label">Nombre:</label>
                             <input type="text" name="nombre" id="nombre" class="form-control" min="1" required>
+                        </div>
+
+                        <div class="col-12 col-md-3">
+                            <label for="telefono" class="form-label">Telefono:</label>
+                            <input type="text" name="telefono" id="telefono" class="form-control" min="1" required>
                         </div>
 
                         <div class="col-12 col-md-3">
@@ -710,12 +688,11 @@ $empresa = cargarEmpresa($connection);
 
                         </button>
 
-                        <a href="tablacolaboradores.php"
+                        <a href="tabla_visitantes.php"
                             class="btn btn-danger btn-lg px-5">
 
                             <i class="fas fa-eye me-2"></i>
                             Ver Registros
-
                         </a>
 
                     </div>
@@ -726,579 +703,408 @@ $empresa = cargarEmpresa($connection);
         </div>
     </main>
     <script>
-    $(function() {
+        $(function() {
+            /* ==========================================================
+            CONFIGURACIÓN
+            ========================================================== */
+            const $form = $("#formulario_visitantes");
+            const $cedula = $("#cedula");
+            const $equipo = $("#equipoElectronicoCheckbox");
+            const $inputsEquipo = $("#inputsEquipoElectronico");
 
-        /* ==========================================================
-           CONFIGURACIÓN
-        ========================================================== */
+            let consultaActual = 0;
+            let enviandoFormulario = false;
 
-        const $cedula = $("#cedula");
+            /* ==========================================================
+            LIMPIAR DATOS DEL VISITANTES
+            ========================================================== */
 
-        let ultimaCedulaConsultada = "";
+            function limpiarDatosVisitantes() {
 
-
-        /* ==========================================================
-           SOLO NÚMEROS EN CÉDULA
-        ========================================================== */
-
-        $cedula.on("input", function() {
-
-            this.value = this.value.replace(/\D/g, "");
-
-            /*
-             * Si el usuario modifica la cédula,
-             * permitimos una nueva consulta.
-             */
-            ultimaCedulaConsultada = "";
-
-            /*
-             * Limpiar mensaje anterior.
-             */
-            $("#mensajeCedula")
-                .removeClass(
-                    "text-success text-danger text-primary text-warning"
-                )
-                .text("");
-        });
-
-
-        /* ==========================================================
-           CONSULTAR VISITANTE POR CÉDULA
-        ========================================================== */
-
-        $cedula.off("blur").on("blur", function() {
-
-            const cedula = $(this).val().trim();
-
-
-            /* ======================================================
-               CÉDULA VACÍA
-            ====================================================== */
-
-            if (!cedula) {
-
-                $("#mensajeCedula")
-                    .removeClass(
-                        "text-success text-danger text-primary text-warning"
-                    )
-                    .text("");
-
-                return;
+                $("#nombre").val("");
+                $("#telefono").val("");
+                $("#arl").val("");
+                $("#eps").val("");
+                $("#area").val("");
+                $("#rh").val("");
+                $("#contacto").val("");
+                $("#numero_emergencia").val("");
             }
 
+            /* ==========================================================
+            EQUIPO ELECTRÓNICO
+            ========================================================== */
 
-            /* ======================================================
-               VALIDACIÓN MÍNIMA
-            ====================================================== */
+            function actualizarEquipoElectronico() {
 
-            if (cedula.length < 5) {
+                const activo = $equipo.is(":checked");
 
-                $("#mensajeCedula")
-                    .removeClass(
-                        "text-success text-danger text-primary"
-                    )
-                    .addClass(
-                        "text-warning fw-semibold"
-                    )
-                    .text(
-                        "Ingrese una cédula válida."
-                    );
+                $("#marca, #serial").prop("required", activo);
 
-                return;
+                if (activo) {
+
+                    $inputsEquipo
+                        .stop(true, true)
+                        .slideDown(250);
+
+                } else {
+
+                    $inputsEquipo
+                        .stop(true, true)
+                        .slideUp(250);
+
+                    $("#marca, #serial").val("");
+                }
             }
 
+            /* ==========================================================
+            SOLO NÚMEROS
+            ========================================================== */
 
-            /* ======================================================
-               EVITAR CONSULTAR LA MISMA CÉDULA
-            ====================================================== */
+            $("#cedula, #telefono, #numero_emergencia").on(
+                "input",
+                function() {
 
-            if (ultimaCedulaConsultada === cedula) {
-                return;
-            }
+                    this.value = this.value.replace(/\D/g, "");
 
-            ultimaCedulaConsultada = cedula;
+                }
+            );
+
+            /* ==========================================
+            CONSULTAR VISITANTE
+            ========================================== */
+            $("#cedula").off("blur").on("blur", function() {
+
+                const cedula = $(this).val().trim();
+
+                if (!cedula) {
+                    $("#mensajeCedula").text("");
+                    return;
+                }
+
+                if (cedula.length < 5) {
+                    $("#mensajeCedula").text("");
+                    return;
+                }
+
+                console.log("Página actual:", window.location.href);
+                console.log("Ruta AJAX:", "../Controller/buscar_visitante.php");
+
+                // ultimaCedulaConsultada = cedula;
+
+                $.ajax({
+
+                    url: "../Controller/buscar_visitantes.php",
+                    type: "POST",
+                    data: {
+                        cedula: cedula
+                    },
+                    dataType: "json",
+
+                    success: function(response) {
+
+                        console.log("RESPUESTA:", response);
+
+                        if (!response.error) {
+
+                            $("#nombre").val(response.nombre);
+                            $("#telefono").val(response.telefono);
+                            $("#arl").val(response.arl);
+                            $("#eps").val(response.eps);
+                            $("#rh").val(response.rh);
+                            $("#contacto").val(response.contacto);
+                            $("#numero_emergencia").val(response.numero_emergencia);
+                            $("#area").val(response.area);
+
+                            $("#mensajeCedula")
+                                .html("✅ Visitante encontrado")
+                                .css("color", "green");
+
+                        } else {
+
+                            $("#mensajeCedula")
+                                .html("⚠️ Visitante no encontrado. Complete los datos.")
+                                .css("color", "orange");
+
+                        }
+
+                    },
+
+                    error: function(xhr, status, error) {
+
+                        console.error(xhr.responseText);
+                        console.error(status);
+                        console.error(error);
+
+                    }
+                });
+
+            });
+
+            /* ==========================================================
+            SI CAMBIA LA CÉDULA
+            INVALIDAR CONSULTAS ANTERIORES
+            ========================================================== */
+
+            $cedula.on("input", function() {
+
+                consultaActual++;
+
+            });
+
+            /* ==========================================================
+            VALIDAR FECHA
+            ========================================================== */
+
+            $("#fecha").on("change", function() {
+
+                const valor = this.value;
+
+                if (!valor) {
+
+                    return;
+                }
 
 
-            /* ======================================================
-               MENSAJE CONSULTANDO
-            ====================================================== */
+                const partes = valor.split("-");
 
-            $("#mensajeCedula")
-                .removeClass(
-                    "text-success text-danger text-warning"
-                )
-                .addClass(
-                    "text-primary fw-semibold"
-                )
-                .text(
-                    "Consultando..."
+                if (partes.length !== 3) {
+
+                    this.value = "";
+
+                    return;
+                }
+
+
+                const fechaSeleccionada = new Date(
+                    Number(partes[0]),
+                    Number(partes[1]) - 1,
+                    Number(partes[2])
                 );
 
 
-            /* ======================================================
-               AJAX
-            ====================================================== */
+                const hoy = new Date();
 
-            $.ajax({
+                hoy.setHours(0, 0, 0, 0);
 
-                url: "Controller/buscar_visitantes.php",
 
-                type: "POST",
+                if (fechaSeleccionada > hoy) {
 
-                data: {
-                    cedula: cedula
-                },
+                    Swal.fire({
 
-                dataType: "json",
+                        icon: "warning",
 
+                        title: "Fecha inválida",
 
-                /* ==================================================
-                   RESPUESTA CORRECTA
-                ================================================== */
+                        text: "No se permiten fechas futuras."
 
-                success: function(response) {
+                    });
 
-                    console.log(
-                        "RESPUESTA BUSCAR VISITANTE:",
-                        response
-                    );
 
-
-                    /* ==============================================
-                       VALIDAR RESPUESTA
-                    ============================================== */
-
-                    if (!response || typeof response !== "object") {
-
-                        $("#mensajeCedula")
-                            .removeClass(
-                                "text-success text-primary text-warning"
-                            )
-                            .addClass(
-                                "text-danger fw-semibold"
-                            )
-                            .text(
-                                "Respuesta inválida del servidor."
-                            );
-
-                        return;
-                    }
-
-
-                    /* ==============================================
-                       VISITANTE NO ENCONTRADO
-                    ============================================== */
-
-                    if (response.error === true) {
-
-                        /*
-                         * Limpiar los campos que podrían
-                         * contener información anterior.
-                         */
-
-                        $("#nombre").val("");
-
-                        $("#arl").val("");
-
-                        $("#eps").val("");
-
-                        $("#rh").val("");
-
-                        $("#contacto").val("");
-
-                        $("#numero_emergencia").val("");
-
-                        $("#empresa").val("");
-
-                        $("#motivo").val("");
-
-                        $("#carnet").val("");
-
-                        /*
-                         * Ocultar empresa nueva.
-                         */
-
-                        $("#nuevaEmpresaContainer").hide();
-
-                        $("#nueva_empresa")
-                            .val("")
-                            .prop("required", false);
-
-
-                        /*
-                         * Mostrar mensaje debajo de la cédula.
-                         */
-
-                        $("#mensajeCedula")
-                            .removeClass(
-                                "text-success text-danger text-primary"
-                            )
-                            .addClass(
-                                "text-warning fw-semibold"
-                            )
-                            .text(
-                                response.mensaje ||
-                                "Cédula no encontrada. Complete la información."
-                            );
-
-                        return;
-                    }
-
-
-                    /* ==============================================
-                       VISITANTE ENCONTRADO
-                    ============================================== */
-
-                    $("#nombre").val(
-                        response.nombre || ""
-                    );
-
-
-                    $("#arl").val(
-                        response.arl || ""
-                    );
-
-
-                    $("#eps").val(
-                        response.eps || ""
-                    );
-
-
-                    $("#rh").val(
-                        response.rh || ""
-                    );
-
-
-                    /*
-                     * IMPORTANTE:
-                     *
-                     * Tu formulario NO tiene un input llamado
-                     * "telefono".
-                     *
-                     * Tiene:
-                     *
-                     * contacto
-                     * numero_emergencia
-                     */
-
-                    $("#contacto").val(
-                        response.contacto || ""
-                    );
-
-
-                    $("#numero_emergencia").val(
-                        response.numero_emergencia || ""
-                    );
-
-
-                    $("#empresa").val(
-                        response.empresa || ""
-                    );
-
-
-                    $("#motivo").val(
-                        response.motivo || ""
-                    );
-
-
-                    $("#carnet").val(
-                        response.carnet || ""
-                    );
-
-
-                    /* ==============================================
-                       EMPRESA
-                    ============================================== */
-
-                    /*
-                     * Si la empresa encontrada existe
-                     * dentro del SELECT, la seleccionamos.
-                     */
-
-                    if (
-                        response.empresa &&
-                        $("#empresa option[value='" + response.empresa + "']").length > 0
-                    ) {
-
-                        $("#empresa").val(
-                            response.empresa
-                        );
-
-                        $("#nuevaEmpresaContainer").hide();
-
-                        $("#nueva_empresa")
-                            .val("")
-                            .prop("required", false);
-
-                    } else if (
-                        response.empresa &&
-                        response.empresa !== ""
-                    ) {
-
-                        /*
-                         * Si la empresa no existe en el SELECT,
-                         * dejamos el SELECT vacío.
-                         */
-
-                        $("#empresa").val("");
-
-                    }
-
-
-                    /* ==============================================
-                       MENSAJE DE ÉXITO
-                    ============================================== */
-
-                    $("#mensajeCedula")
-                        .removeClass(
-                            "text-primary text-danger text-warning"
-                        )
-                        .addClass(
-                            "text-success fw-semibold"
-                        )
-                        .text(
-                            "Visitante encontrado. Datos cargados."
-                        );
-
-                },
-
-
-                /* ==================================================
-                   ERROR AJAX
-                ================================================== */
-
-                error: function(xhr, status, error) {
-
-                    console.error(
-                        "========== ERROR AJAX =========="
-                    );
-
-                    console.error(
-                        "HTTP:",
-                        xhr.status
-                    );
-
-                    console.error(
-                        "STATUS:",
-                        status
-                    );
-
-                    console.error(
-                        "ERROR:",
-                        error
-                    );
-
-                    console.error(
-                        "RESPUESTA:",
-                        xhr.responseText
-                    );
-
-                    console.error(
-                        "================================"
-                    );
-
-
-                    $("#mensajeCedula")
-                        .removeClass(
-                            "text-success text-primary text-warning"
-                        )
-                        .addClass(
-                            "text-danger fw-semibold"
-                        )
-                        .text(
-                            "Error al consultar el visitante."
-                        );
+                    this.value = "";
 
                 }
 
             });
 
-        });
+            /* ==========================================================
+            EQUIPO ELECTRÓNICO
+            ========================================================== */
 
-
-        /* ==========================================================
-           MOSTRAR INPUT "OTRA EMPRESA"
-        ========================================================== */
-
-        $("#empresa").on("change", function() {
-
-            const valor = $(this).val();
-
-
-            if (valor === "otra") {
-
-                $("#nuevaEmpresaContainer").show();
-
-                $("#nueva_empresa")
-                    .prop("required", true);
-
-            } else {
-
-                $("#nuevaEmpresaContainer").hide();
-
-                $("#nueva_empresa")
-                    .prop("required", false)
-                    .val("");
-
-            }
-
-        });
-
-
-        /* ==========================================================
-           VALIDACIÓN DE FECHA
-        ========================================================== */
-
-        $("#fecha").on("change", function() {
-
-            const valor = this.value;
-
-
-            if (!valor) {
-                return;
-            }
-
-
-            /*
-             * Evitamos problemas de zona horaria
-             * utilizando directamente las partes de la fecha.
-             */
-
-            const partes = valor.split("-");
-
-
-            if (partes.length !== 3) {
-
-                this.value = "";
-
-                return;
-            }
-
-
-            const fechaSeleccionada = new Date(
-                Number(partes[0]),
-                Number(partes[1]) - 1,
-                Number(partes[2])
+            $equipo.on(
+                "change",
+                actualizarEquipoElectronico
             );
 
 
-            const hoy = new Date();
+            /* Inicializar */
+            actualizarEquipoElectronico();
 
-            hoy.setHours(0, 0, 0, 0);
+            /* ==========================================================
+            ENVIAR FORMULARIO
+            ========================================================== */
+
+            $form.on("submit", function(e) {
+
+                /*
+                 * Si ya fue confirmado,
+                 * dejamos que el navegador envíe el formulario.
+                 */
+                if (enviandoFormulario) {
+
+                    return;
+                }
 
 
-            if (fechaSeleccionada > hoy) {
+                e.preventDefault();
+
+
+                /* ======================================================
+                   VALIDACIÓN HTML5
+                ====================================================== */
+
+                if (!this.checkValidity()) {
+
+                    this.reportValidity();
+
+                    return;
+                }
+
+
+                const formulario = this;
+
+                const $botonGuardar =
+                    $form.find('button[type="submit"]');
+
+
+                /* ======================================================
+                   CONFIRMAR
+                ====================================================== */
 
                 Swal.fire({
 
-                    icon: "warning",
+                    title: "¿Guardar registro?",
 
-                    title: "Fecha inválida",
+                    text: "Se registrará el colaborador en la base de datos.",
 
-                    text: "No se permiten fechas futuras.",
+                    icon: "question",
+
+                    showCancelButton: true,
+
+                    confirmButtonColor: "#dc3545",
+
+                    cancelButtonColor: "#6c757d",
+
+                    confirmButtonText: "Sí, guardar",
+
+                    cancelButtonText: "Cancelar",
+
+                    reverseButtons: true
+
+                }).then(function(result) {
+
+                    if (!result.isConfirmed) {
+
+                        return;
+                    }
+
+
+                    enviandoFormulario = true;
+
+
+                    /* ==================================================
+                    DESACTIVAR BOTÓN
+                    ================================================== */
+
+                    $botonGuardar
+
+                        .prop("disabled", true)
+
+                        .html(
+                            '<span class="spinner-border spinner-border-sm me-2"></span>' +
+                            'Guardando...'
+                        );
+
+
+                    /*
+                     * submit() nativo.
+                     *
+                     * Esto evita volver a disparar
+                     * nuestro evento submit.
+                     */
+                    HTMLFormElement.prototype.submit.call(
+                        formulario
+                    );
+
+                });
+
+            });
+
+            /* ==========================================================
+               MENSAJE DE ÉXITO
+            ========================================================== */
+
+            <?php if ($guardado): ?>
+
+                Swal.fire({
+
+                    icon: "success",
+
+                    title: "¡Registro exitoso!",
+
+                    text: "El colaborador fue registrado correctamente.",
+
+                    confirmButtonColor: "#198754",
+
+                    confirmButtonText: "Aceptar"
+
+                }).then(function() {
+
+                    /*
+                     * Eliminar ?guardado=1 de la URL.
+                     *
+                     * Así al actualizar la página no vuelve a aparecer
+                     * el mensaje.
+                     */
+
+                    const url = new URL(
+                        window.location.href
+                    );
+
+                    url.searchParams.delete("guardado");
+
+                    window.history.replaceState({},
+                        document.title,
+                        url.pathname +
+                        url.search
+                    );
+
+                });
+
+            <?php endif; ?>
+
+            /* ==========================================================
+            MENSAJE DE ERROR
+            ========================================================= */
+
+            <?php if ($error !== ''): ?>
+
+                Swal.fire({
+
+                    icon: "error",
+
+                    title: "No fue posible guardar",
+
+                    text: <?= json_encode($error, JSON_UNESCAPED_UNICODE) ?>,
 
                     confirmButtonColor: "#dc3545",
 
                     confirmButtonText: "Aceptar"
 
-                });
-
-
-                this.value = "";
-
-            }
-
-        });
-
-
-        /* ==========================================================
-           MOSTRAR / OCULTAR EQUIPO ELECTRÓNICO
-        ========================================================== */
-
-        $("#equipoElectronicoCheckbox").on(
-            "change",
-            function() {
-
-                if (this.checked) {
-
-                    $("#inputsEquipoElectronico").slideDown(200);
-
-                } else {
-
-                    $("#inputsEquipoElectronico").slideUp(200);
+                }).then(function() {
 
                     /*
-                     * Limpiar datos del equipo cuando
-                     * se desmarca.
+                     * Eliminar ?error=... de la URL.
                      */
 
-                    $("#marca").val("");
+                    const url = new URL(
+                        window.location.href
+                    );
 
-                    $("#serial").val("");
+                    url.searchParams.delete("error");
 
-                }
+                    window.history.replaceState({},
+                        document.title,
+                        url.pathname +
+                        url.search
+                    );
 
-            }
-        );
+                });
 
+            <?php endif; ?>
 
-        /* ==========================================================
-           MENSAJE DE ÉXITO DESDE PHP
-        ========================================================== */
-
-        <?php if (isset($_SESSION['success'])): ?>
-
-            Swal.fire({
-
-                icon: "success",
-
-                title: "¡Éxito!",
-
-                text: <?= json_encode(
-                            $_SESSION['success'],
-                            JSON_UNESCAPED_UNICODE
-                        ) ?>,
-
-                confirmButtonColor: "#198754",
-
-                confirmButtonText: "Aceptar"
-
-            });
-
-            <?php unset($_SESSION['success']); ?>
-
-        <?php endif; ?>
-
-
-        /* ==========================================================
-           MENSAJE DE ERROR DESDE PHP
-        ========================================================== */
-
-        <?php if (isset($_SESSION['error'])): ?>
-
-            Swal.fire({
-
-                icon: "error",
-
-                title: "¡Error!",
-
-                text: <?= json_encode(
-                            $_SESSION['error'],
-                            JSON_UNESCAPED_UNICODE
-                        ) ?>,
-
-                confirmButtonColor: "#dc3545",
-
-                confirmButtonText: "Aceptar"
-
-            });
-
-            <?php unset($_SESSION['error']); ?>
-
-        <?php endif; ?>
-
-    });
-</script>
+        });
+    </script>
 
 </body>
 

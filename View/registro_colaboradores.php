@@ -685,7 +685,7 @@ $Area = cargarArea($connection);
         $(function() {
 
             /* ==========================================================
-               CONFIGURACIÓN
+            CONFIGURACIÓN
             ========================================================== */
 
             const $form = $("#formulario_colaboradores");
@@ -697,7 +697,7 @@ $Area = cargarArea($connection);
             let enviandoFormulario = false;
 
             /* ==========================================================
-               LIMPIAR DATOS DEL COLABORADOR
+            LIMPIAR DATOS DEL COLABORADOR
             ========================================================== */
 
             function limpiarDatosColaborador() {
@@ -712,9 +712,8 @@ $Area = cargarArea($connection);
                 $("#numero_emergencia").val("");
             }
 
-
             /* ==========================================================
-               EQUIPO ELECTRÓNICO
+            EQUIPO ELECTRÓNICO
             ========================================================== */
 
             function actualizarEquipoElectronico() {
@@ -739,9 +738,8 @@ $Area = cargarArea($connection);
                 }
             }
 
-
             /* ==========================================================
-               SOLO NÚMEROS
+            SOLO NÚMEROS
             ========================================================== */
 
             $("#cedula, #telefono, #numero_emergencia").on(
@@ -753,10 +751,9 @@ $Area = cargarArea($connection);
                 }
             );
 
-
             /* ==========================================
-   CONSULTAR COLABORADOR
-========================================== */
+            CONSULTAR COLABORADOR
+            ========================================== */
             $("#cedula").off("blur").on("blur", function() {
 
                 const cedula = $(this).val().trim();
@@ -783,40 +780,31 @@ $Area = cargarArea($connection);
 
                     success: function(response) {
 
-                        console.log(response);
+                        console.log("RESPUESTA:", response);
 
-                        if (response.error) {
+                        if (!response.error) {
 
-                            $("#nombre").val("");
-                            $("#telefono").val("");
-                            $("#arl").val("");
-                            $("#eps").val("");
-                            $("#area").val("");
-                            $("#rh").val("");
-                            $("#contacto").val("");
-                            $("#numero_emergencia").val("");
+                            $("#nombre").val(response.nombre);
+                            $("#telefono").val(response.telefono);
+                            $("#arl").val(response.arl);
+                            $("#eps").val(response.eps);
+                            $("#rh").val(response.rh);
+                            $("#contacto").val(response.contacto);
+                            $("#numero_emergencia").val(response.numero_emergencia);
+                            $("#area").val(response.area);
 
                             $("#mensajeCedula")
-                                .removeClass("text-success text-danger")
-                                .addClass("text-primary fw-semibold")
-                                .text("Nuevo colaborador. Complete la información.");
+                                .html("✅ Colaborador encontrado")
+                                .css("color", "green");
 
-                            return;
+                        } else {
+
+                            $("#mensajeCedula")
+                                .html("⚠️ Colaborador no encontrado. Complete los datos.")
+                                .css("color", "orange");
+
                         }
 
-                        $("#nombre").val(response.nombre || "");
-                        $("#telefono").val(response.telefono || "");
-                        $("#arl").val(response.arl || "");
-                        $("#eps").val(response.eps || "");
-                        $("#area").val(response.area || "");
-                        $("#rh").val(response.rh || "");
-                        $("#contacto").val(response.contacto || "");
-                        $("#numero_emergencia").val(response.numero_emergencia || "");
-
-                        $("#mensajeCedula")
-                            .removeClass("text-primary text-danger")
-                            .addClass("text-success fw-semibold")
-                            .text("Colaborador encontrado. Datos cargados.");
                     },
 
                     error: function(xhr, status, error) {
@@ -825,10 +813,6 @@ $Area = cargarArea($connection);
                         console.error(status);
                         console.error(error);
 
-                        $("#mensajeCedula")
-                            .removeClass("text-success text-primary")
-                            .addClass("text-danger fw-semibold")
-                            .text("Error al consultar el colaborador.");
                     }
                 });
 
@@ -836,8 +820,8 @@ $Area = cargarArea($connection);
 
 
             /* ==========================================================
-               SI CAMBIA LA CÉDULA
-               INVALIDAR CONSULTAS ANTERIORES
+            SI CAMBIA LA CÉDULA
+            INVALIDAR CONSULTAS ANTERIORES
             ========================================================== */
 
             $cedula.on("input", function() {
@@ -848,7 +832,7 @@ $Area = cargarArea($connection);
 
 
             /* ==========================================================
-               VALIDAR FECHA
+            VALIDAR FECHA
             ========================================================== */
 
             $("#fecha").on("change", function() {
@@ -904,7 +888,7 @@ $Area = cargarArea($connection);
 
 
             /* ==========================================================
-               EQUIPO ELECTRÓNICO
+            EQUIPO ELECTRÓNICO
             ========================================================== */
 
             $equipo.on(
@@ -918,7 +902,7 @@ $Area = cargarArea($connection);
 
 
             /* ==========================================================
-               ENVIAR FORMULARIO
+            ENVIAR FORMULARIO
             ========================================================== */
 
             $form.on("submit", function(e) {

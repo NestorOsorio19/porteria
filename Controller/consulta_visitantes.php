@@ -32,8 +32,9 @@
                     <!-- Encabezados de la tabla con los nombres de las columnas que se mostrarán -->
                     <th>ID</th>
                     <th>Fecha</th>
-                    <th>Nombre</th>
                     <th>Cédula</th>
+                    <th>Nombre</th>
+                    <th>Telefono</th>
                     <th>ARL</th>
                     <th>EPS</th>
                     <th>RH</th>
@@ -73,9 +74,10 @@
                         <tr>
                             <!-- Se muestran los datos de cada visitante en las celdas de la tabla -->
                             <th><?= $row['id'] ?></th>
-                            <th><?= $row['fecha'] ?></th> 
+                            <th><?= $row['fecha'] ?></th>
+                            <th><?= $row['cedula'] ?></th> 
                             <th><?= $row['nombre'] ?></th> 
-                            <th><?= $row['cedula'] ?></th>  
+                            <th><?= $row['telefono'] ?></th> 
                             <th><?= $row['arl'] ?></th>                                                 
                             <th><?= $row['eps'] ?></th>
                             <th><?= $row['rh'] ?></th> 

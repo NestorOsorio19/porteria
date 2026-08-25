@@ -39,9 +39,7 @@ try {
     ";
 
     $stmt = $con->prepare($sql);
-
-    $stmt->bindValue(':cedula', $cedula, PDO::PARAM_STR);
-
+    $stmt->bindValue(':cedula', (int)$cedula, PDO::PARAM_INT);
     $stmt->execute();
 
     $colaborador = $stmt->fetch(PDO::FETCH_ASSOC);

@@ -33,8 +33,9 @@
                         <!-- Encabezados de las columnas de la tabla -->
                         <th>ID</th>
                         <th>Fecha</th> 
-                        <th>Nombre</th> 
                         <th>Cedula</th>
+                        <th>Nombre</th> 
+                        <th>Telefono</th>
                         <th>Arl</th> 
                         <th>EPS</th>
                         <th>Nom Emer</th> 
@@ -77,9 +78,10 @@
                         <tr>
                             <!-- Mostrar los valores de cada columna en las filas de la tabla -->
                             <th><?= $row['id'] ?></th>
-                            <th><?= $row['fecha'] ?></th> 
+                            <th><?= $row['fecha'] ?></th>
+                            <th><?= $row['cedula'] ?></th>
                             <th><?= $row['nombre'] ?></th> 
-                            <th><?= $row['cedula'] ?></th>  
+                            <th><?= $row['telefono'] ?></th>
                             <th><?= $row['arl'] ?></th>                                                 
                             <th><?= $row['eps'] ?></th>
                             <th><?= $row['nombre_emergencia'] ?></th>
