@@ -23,6 +23,7 @@ $modulos = [
         "color" => "gradient-1",
         "link" => "View/registro_colaboradores.php"
     ],
+
     [
         "titulo" => "Visitantes",
         "subtitulo" => "Formulario",
@@ -30,6 +31,7 @@ $modulos = [
         "color" => "gradient-2",
         "link" => "View/registro_visitantes.php"
     ],
+
     [
         "titulo" => "Contratistas",
         "subtitulo" => "Formulario",
@@ -37,13 +39,23 @@ $modulos = [
         "color" => "gradient-3",
         "link" => "View/registro_contratistas.php"
     ],
+
     [
-        "titulo" => "Vehiculos",
+        "titulo" => "Vehiculos Externos",
         "subtitulo" => "Formulario",
         "icono" => "fa-truck",
         "color" => "gradient-4",
         "link" => "View/registro_vehiculos.php"
     ],
+
+    [
+        "titulo" => "Vehiculos Internos",
+        "subtitulo" => "Formulario",
+        "icono" => "fa-truck-front",
+        "color" => "gradient-8",
+        "link" => "View/registro_vehiculos_internos.php"
+    ],
+
     [
         "titulo" => "Tabla de Registros",
         "subtitulo" => "Formulario",

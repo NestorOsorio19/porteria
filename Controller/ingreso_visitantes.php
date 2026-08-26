@@ -101,26 +101,26 @@ if ($empresa_post === "otra") {
 
     $sql_check = "SELECT id_registro FROM empresas WHERE nom_empresa = ?";
     $stmt_check = $con->prepare($sql_check);
-    $stmt_check->bind_param("s", $nueva_empresa);
-    $stmt_check->execute();
-    $result = $stmt_check->get_result();
+    $stmt_check->execute([$nueva_empresa]);
 
-    if ($row = $result->fetch_assoc()) {
-        $empresa = intval($row['id_registro']);
+    $row = $stmt_check->fetch(PDO::FETCH_ASSOC);
+
+    if ($row) {
+
+        $empresa = (int)$row['id_registro'];
+
     } else {
+
         $sql_insert_empresa = "INSERT INTO empresas (nom_empresa) VALUES (?)";
         $stmt_insert = $con->prepare($sql_insert_empresa);
-        $stmt_insert->bind_param("s", $nueva_empresa);
-        $stmt_insert->execute();
+        $stmt_insert->execute([$nueva_empresa]);
 
-        $empresa = $con->insert_id;
-        $stmt_insert->close();
+        $empresa = $con->lastInsertId();
     }
 
-    $stmt_check->close();
-
 } else {
-    $empresa = intval($empresa_post);
+
+    $empresa = (int)$empresa_post;
 }
 
 if (!$empresa) {
@@ -130,12 +130,31 @@ if (!$empresa) {
 /* =====================================================
  INSERT
 ===================================================== */
-$stmt = $con->prepare("INSERT INTO visitantes 
-(fecha, cedula, nombre, id_arl, id_eps, rh, telefono, empresa_fk, motivo, marca, serial, carnet, ingreso)
-VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
 
-$stmt->bind_param(
-    "sisiississsis",
+$sql = "INSERT INTO visitantes
+(
+    fecha,
+    cedula,
+    nombre,
+    id_arl,
+    id_eps,
+    rh,
+    telefono,
+    empresa_fk,
+    motivo,
+    marca,
+    serial,
+    carnet,
+    ingreso
+)
+VALUES
+(
+    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+)";
+
+$stmt = $con->prepare($sql);
+
+$stmt->execute([
     $fecha,
     $cedula,
     $nombre,
@@ -149,17 +168,9 @@ $stmt->bind_param(
     $serial,
     $carnet,
     $ingreso
-);
-
-$stmt->execute();
+]);
 
 $_SESSION['success'] = "Visitante registrado correctamente.";
-
-/* =====================================================
- CIERRE
-===================================================== */
-$stmt->close();
-$con->close();
 
 header("Location: ../index.php");
 exit;

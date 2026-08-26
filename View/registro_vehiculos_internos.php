@@ -1,5 +1,4 @@
 <?php
-session_start();
 
 /* ==========================================================
 EVITAR CACHE DEL NAVEGADOR
@@ -87,38 +86,11 @@ function cargarEPS(PDO $connection): string
 }
 
 /* ==========================================================
-CARGAR EMPRESA PARA EL SELECT
-========================================================== */
-function cargarEmpresa(PDO $connection): string
-{
-    $stmt = $connection->prepare("
-        SELECT id_registro, nom_empresa
-        FROM empresas
-        ORDER BY nom_empresa ASC
-    ");
-
-    $stmt->execute();
-
-    $options = '';
-
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-
-        $id = htmlspecialchars($row['id_registro'], ENT_QUOTES, 'UTF-8');
-        $nombre = htmlspecialchars($row['nom_empresa'], ENT_QUOTES, 'UTF-8');
-
-        $options .= "<option value=\"$id\">$nombre</option>";
-    }
-
-    return $options;
-}
-
-/* ==========================================================
 VALORES INICIALES
 ========================================================== */
 $fecha_inicial = date('Y-m-d');
 $ARL = cargarARL($connection);
 $EPS = cargarEPS($connection);
-$empresa = cargarEmpresa($connection);
 
 ?>
 
@@ -129,7 +101,7 @@ $empresa = cargarEmpresa($connection);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Registro Visirantes</title>
+    <title>Registro Vehiculos Internos</title>
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css">
@@ -202,14 +174,6 @@ $empresa = cargarEmpresa($connection);
         /* ======================================
     HEADER PRINCIPAL
     ====================================== */
-
-        .form-label {
-            min-height: 48px;
-            display: flex;
-            align-items: flex-end;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
 
         .page-header {
             text-align: center;
@@ -314,8 +278,16 @@ $empresa = cargarEmpresa($connection);
         }
 
         /* ======================================
-       INPUTS
+    INPUTS
     ====================================== */
+
+        .form-label {
+            min-height: 48px;
+            display: flex;
+            align-items: flex-end;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
 
         .form-control,
         .form-select {
@@ -416,8 +388,8 @@ $empresa = cargarEmpresa($connection);
         <div class="container">
 
             <span class="navbar-brand">
-                <i class="fas fa-person me-2"></i>
-                Registro Visitantes
+                <i class="fas fa-truck me-2"></i>
+                Registro Vehiculos Internos
             </span>
 
         </div>
@@ -439,7 +411,7 @@ $empresa = cargarEmpresa($connection);
                     </a>
                 </li>
                 <li class="breadcrumb-item active">
-                    Visitantes
+                    Vehiculos Internos
                 </li>
             </ol>
         </nav>
@@ -452,18 +424,18 @@ $empresa = cargarEmpresa($connection);
             <div class="page-header">
 
                 <div class="icon-circle mb-4">
-                    <i class="fas fa-person"></i>
+                    <i class="fas fa-truck"></i>
                 </div>
 
-                <h1>Formulario Registro Visitantes</h1>
+                <h1>Formulario Registro</h1>
 
                 <p>
-                    Registro y Seguimiento de los Visitantes que Ingresan a Planta
+                    Registro de Visitantes, Contratistas y Proveedores con Vehiculo
                 </p>
 
             </div>
-            <!-- Formulario para agregar un visitante -->
-            <form id="formulario_visitantes" action="../Controller/ingreso_visitantes.php" method="POST">
+
+            <form id="formulario_vehiculos" action="../Controller/ingreso_vehiculos.php" method="POST">
 
                 <!-- MINI CARDS -->
                 <div class="row g-4 mb-4 justify-content-center">
@@ -471,7 +443,7 @@ $empresa = cargarEmpresa($connection);
                     <div class="col-md-4">
                         <div class="mini-card">
                             <h6>Formulario</h6>
-                            <strong>VISITANTES</strong>
+                            <strong>PERSONAL CON VEHICULO</strong>
                         </div>
                     </div>
 
@@ -484,6 +456,7 @@ $empresa = cargarEmpresa($connection);
 
                 </div>
 
+                <!-- DATOS GENERALES -->
                 <div class="form-section">
 
                     <div class="section-title">
@@ -523,11 +496,6 @@ $empresa = cargarEmpresa($connection);
                         </div>
 
                         <div class="col-12 col-md-3">
-                            <label for="telefono" class="form-label">Telefono:</label>
-                            <input type="text" name="telefono" id="telefono" class="form-control" min="1" required>
-                        </div>
-
-                        <div class="col-12 col-md-3">
                             <label for="arl" class="form-label">ARL:</label>
 
                             <select name="arl" id="arl" class="form-select" required>
@@ -550,127 +518,108 @@ $empresa = cargarEmpresa($connection);
                         </div>
 
                         <div class="col-12 col-md-3">
-                            <label for="rh" class="form-label">Tipo de Sangre:</label>
-                            <select name="rh" id="rh" class="form-select" required>
-                                <option value="" disabled selected>Tipo de Sangre...</option>
-                                <option value="O-">O -</option>
-                                <option value="O+">O +</option>
-                                <option value="A-">A -</option>
-                                <option value="A+">A +</option>
-                                <option value="B-">B -</option>
-                                <option value="B+">B +</option>
-                                <option value="AB-">AB -</option>
-                                <option value="AB+">AB +</option>
+                            <label for="induccion_sgsst" class="form-label">Tipo de Vehiculo:</label>
+                            <select name="induccion_sgsst" id="induccion_sgsst" class="form-select" required>
+                                <option value="" disabled selected>Seleccione su respuesta</option>
+                                <option value="1">Pollo en Pie</option>
+                                <option value="0">Pollo en Canal</option>
                             </select>
                         </div>
 
-                        <div class="col-12 col-md-3">
-                            <label for="contacto" class="form-label">Contacto de Emergencia:</label>
-                            <input type="text" name="contacto" id="contacto" class="form-control" min="1" required>
+                        <!-- <div class="col-12 col-md-3">
+                            <label for="procedencia" class="form-label">Procedencia:</label>
+                            <input type="text" name="procedencia" id="procedencia" class="form-control" min="1" required>
                         </div>
 
                         <div class="col-12 col-md-3">
-                            <label for="numero_emergencia" class="form-label">Numero de Emergencia:</label>
-                            <input type="text" name="numero_emergencia" id="numero_emergencia" class="form-control" min="1" required>
+                            <label for="destino" class="form-label">Destino:</label>
+                            <input type="text" name="destino" id="destino" class="form-control" min="1" required>
+                        </div> -->
+
+                    </div>
+
+                </div>
+
+                <div class="form-section">
+
+                    <div class="section-title">
+                        <i class="fa-solid fa-circle-info"></i>
+                        Control Ingreso Vehiculo
+                    </div>
+
+                    <div class="row g-3">
+
+                        <div class="col-12 col-md-3">
+                            <label for="placa_vehiculo" class="form-label">Placa:</label>
+                            <input type="text" name="placa_vehiculo" id="placa_vehiculo" class="form-control" min="1" required>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="fecha_soat" class="form-label">Fecha Vigencia SOAT:</label>
+                            <input
+                                type="date"
+                                name="fecha_soat"
+                                id="fecha_soat"
+                                class="form-control"
+                                value=""
+                                max=""
+                                required>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="fecha_revision" class="form-label">
+                                FV Revision Tecnicomecanica:
+                            </label>
+                            <input type="date" name="fecha_revision" id="fecha_revision"
+                                class="form-control" required>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="fecha_licencia" class="form-label">
+                                FV Licencia de Conduccion:
+                            </label>
+                            <input type="date" name="fecha_licencia" id="fecha_licencia"
+                                class="form-control" required>
                         </div>
 
                         <div class="col-12 col-md-3">
-                            <label for="empresa" class="form-label">Empresa:</label>
-
-                            <select name="empresa" id="empresa" class="form-select" required>
-                                <option value="" disabled selected>
-                                    Seleccione la Empresa...
-                                </option>
-                                <?= $empresa ?>
-                                <option value="otra">OTRA...</option>
+                            <label for="induccion_sgsst">Recibió inducción de SG-SST:</label>
+                            <select name="induccion_sgsst" id="induccion_sgsst" class="form-select" required>
+                                <option value="" disabled selected>Seleccione su respuesta</option>
+                                <option value="1">SI</option>
+                                <option value="0">NO</option>
                             </select>
                         </div>
 
-                        <!-- Input oculto -->
-                        <div id="nuevaEmpresaContainer" style="display:none;">
-                            <label for="nueva_empresa">Nombre de la nueva empresa:</label>
-                            <input type="text" name="nueva_empresa" id="nueva_empresa" placeholder="Ingrese el nombre de la empresa">
-                        </div>
-
-                        <!-- Campo para ingresar el motivo del ingreso -->
-                        <label for="motivo">Motivo de Ingreso:</label>
-                        <textarea class="form-control" name="motivo" id="motivo" placeholder="Motivo de ingreso..." required></textarea>
-
-                        <!-- EQUIPO ELECTRÓNICO -->
-                        <div class="col-12">
-
-                            <div class="form-check form-switch mt-3">
-                                <input
-                                    class="form-check-input"
-                                    type="checkbox"
-                                    name="equipo"
-                                    id="equipoElectronicoCheckbox"
-                                    value="SI">
-
-                                <label class="form-check-label fw-semibold" for="equipoElectronicoCheckbox">
-                                    <i class="fas fa-laptop me-2 text-danger"></i>
-                                    Ingreso de equipo electrónico
-                                </label>
+                        <!-- ======================================================
+                FIRMAS
+                ======================================================= -->
+                        <div class="form-section">
+                            <div class="section-title">
+                                <i class="fa-solid fa-signature"></i>
+                                Firmas
                             </div>
 
-                        </div>
+                            <div class="row g-3 mb-4">
 
-                        <div id="inputsEquipoElectronico"
-                            class="row g-3 mt-1"
-                            style="display:none;">
-
-                            <div class="col-12">
-                                <div class="mini-card text-start w-100" style="max-width:700px;">
-
-                                    <h6 class="mb-3">
-                                        <i class="fas fa-laptop me-2 text-danger"></i>
-                                        Información del Equipo
-                                    </h6>
-
-                                    <div class="row g-3">
-
-                                        <div class="col-md-6">
-                                            <label for="marca" class="form-label">
-                                                Marca
-                                            </label>
-
-                                            <input
-                                                type="text"
-                                                name="marca"
-                                                id="marca"
-                                                class="form-control">
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <label for="serial" class="form-label">
-                                                Serial
-                                            </label>
-
-                                            <input
-                                                type="text"
-                                                name="serial"
-                                                id="serial"
-                                                class="form-control">
-                                        </div>
-
-                                    </div>
-
+                                <div class="col-12 col-md-6">
+                                    <label for="elaborado" class="form-label">Realizó:</label>
+                                    <input
+                                        type="text"
+                                        name="registro"
+                                        id="registro"
+                                        class="form-control"
+                                        placeholder="Nombre de quien realiza el registro"
+                                        maxlength="50"
+                                        required>
                                 </div>
+
                             </div>
-
-                        </div>
-
-                        <div class="col-12 col-md-3">
-                            <label for="carnet" class="form-label">Número del Carnet:</label>
-                            <input type="text" name="carnet" id="carnet" class="form-control" placeholder="N° Carnet" required>
-                        </div>
-
-                        <div class="col-12 col-md-3">
-                            <label for="ingreso" class="form-label">Hora de ingreso:</label>
-                            <input type="time" name="ingreso" id="ingreso" class="form-control" required>
                         </div>
 
                     </div>
+
+
 
                 </div>
 
@@ -688,11 +637,12 @@ $empresa = cargarEmpresa($connection);
 
                         </button>
 
-                        <a href="tabla_visitantes.php"
+                        <a href="tabla_vehiculos.php"
                             class="btn btn-danger btn-lg px-5">
 
                             <i class="fas fa-eye me-2"></i>
                             Ver Registros
+
                         </a>
 
                     </div>
@@ -700,160 +650,284 @@ $empresa = cargarEmpresa($connection);
                 </div>
 
             </form>
+
         </div>
     </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" defer></script>
     <script>
         $(function() {
-            /* ==========================================================
-            CONFIGURACIÓN
-            ========================================================== */
-            const $form = $("#formulario_visitantes");
-            const $cedula = $("#cedula");
-            const $equipo = $("#equipoElectronicoCheckbox");
-            const $inputsEquipo = $("#inputsEquipoElectronico");
 
-            let consultaActual = 0;
+            /* ==========================================================
+               CONFIGURACIÓN
+            ========================================================== */
+
+            const $form = $("#formulario_vehiculos");
+            const $cedula = $("#cedula");
             let enviandoFormulario = false;
 
             /* ==========================================================
-            LIMPIAR DATOS DEL VISITANTES
+               LIMPIAR DATOS DEL VEHICULO
             ========================================================== */
 
-            function limpiarDatosVisitantes() {
+            function limpiarDatosVehiculo() {
 
                 $("#nombre").val("");
-                $("#telefono").val("");
                 $("#arl").val("");
                 $("#eps").val("");
-                $("#area").val("");
-                $("#rh").val("");
-                $("#contacto").val("");
-                $("#numero_emergencia").val("");
-            }
+                $("#placa_vehiculo").val("");
 
-            /* ==========================================================
-            EQUIPO ELECTRÓNICO
-            ========================================================== */
-
-            function actualizarEquipoElectronico() {
-
-                const activo = $equipo.is(":checked");
-
-                $("#marca, #serial").prop("required", activo);
-
-                if (activo) {
-
-                    $inputsEquipo
-                        .stop(true, true)
-                        .slideDown(250);
-
-                } else {
-
-                    $inputsEquipo
-                        .stop(true, true)
-                        .slideUp(250);
-
-                    $("#marca, #serial").val("");
-                }
             }
 
             /* ==========================================================
             SOLO NÚMEROS
             ========================================================== */
 
-            $("#cedula, #telefono, #numero_emergencia").on(
+            $("#cedula").on(
                 "input",
                 function() {
-
                     this.value = this.value.replace(/\D/g, "");
-
                 }
             );
 
-            /* ==========================================
-            CONSULTAR VISITANTE
-            ========================================== */
+            // ==========================================================
+            // CONSULTAR VEHICULO POR CÉDULA
+            // ==========================================================
+
+            let ultimaCedulaConsultada = "";
+
             $("#cedula").off("blur").on("blur", function() {
 
                 const cedula = $(this).val().trim();
 
+
+                // ======================================================
+                // CÉDULA VACÍA
+                // ======================================================
+
                 if (!cedula) {
-                    $("#mensajeCedula").text("");
+
+                    $("#mensajeCedula")
+                        .removeClass("text-success text-danger text-primary text-warning")
+                        .text("");
+
                     return;
                 }
+
+
+                // ======================================================
+                // VALIDACIÓN MÍNIMA
+                // ======================================================
 
                 if (cedula.length < 5) {
-                    $("#mensajeCedula").text("");
+
+                    $("#mensajeCedula")
+                        .removeClass("text-success text-danger text-primary")
+                        .addClass("text-warning fw-semibold")
+                        .text("Ingrese una cédula válida.");
+
                     return;
                 }
 
-                console.log("Página actual:", window.location.href);
-                console.log("Ruta AJAX:", "../Controller/buscar_visitante.php");
 
-                // ultimaCedulaConsultada = cedula;
+                // ======================================================
+                // EVITAR CONSULTAR LA MISMA CÉDULA
+                // ======================================================
+
+                if (ultimaCedulaConsultada === cedula) {
+                    return;
+                }
+
+                ultimaCedulaConsultada = cedula;
+
+
+                // ======================================================
+                // MENSAJE DE CONSULTA
+                // ======================================================
+
+                $("#mensajeCedula")
+                    .removeClass("text-success text-danger text-warning")
+                    .addClass("text-primary fw-semibold")
+                    .text("Consultando...");
+
+
+                // ======================================================
+                // AJAX
+                // ======================================================
 
                 $.ajax({
 
-                    url: "../Controller/buscar_visitantes.php",
+                    url: "../Controller/buscar_vehiculo.php",
+
                     type: "POST",
+
                     data: {
                         cedula: cedula
                     },
+
                     dataType: "json",
+
+
+                    // ==================================================
+                    // RESPUESTA CORRECTA
+                    // ==================================================
 
                     success: function(response) {
 
-                        console.log("RESPUESTA:", response);
+                        console.log(
+                            "RESPUESTA BUSCAR VEHICULO:",
+                            response
+                        );
 
-                        if (!response.error) {
 
-                            $("#nombre").val(response.nombre);
-                            $("#telefono").val(response.telefono);
-                            $("#arl").val(response.arl);
-                            $("#eps").val(response.eps);
-                            $("#rh").val(response.rh);
-                            $("#contacto").val(response.contacto);
-                            $("#numero_emergencia").val(response.numero_emergencia);
-                            $("#area").val(response.area);
+                        // ==============================================
+                        // NO ENCONTRADO
+                        // ==============================================
+
+                        if (response.error === true) {
+
+                            $("#nombre").val("");
+                            $("#arl").val("");
+                            $("#eps").val("");
+                            $("#placa_vehiculo").val("");
+
 
                             $("#mensajeCedula")
-                                .html("✅ Visitante encontrado")
-                                .css("color", "green");
+                                .removeClass(
+                                    "text-success text-danger text-primary"
+                                )
+                                .addClass(
+                                    "text-warning fw-semibold"
+                                )
+                                .text(
+                                    response.mensaje ||
+                                    "Cédula no encontrada. Complete la información."
+                                );
 
-                        } else {
-
-                            $("#mensajeCedula")
-                                .html("⚠️ Visitante no encontrado. Complete los datos.")
-                                .css("color", "orange");
-
+                            return;
                         }
 
+
+                        // ==============================================
+                        // DATOS DE LA PERSONA
+                        // ==============================================
+
+                        $("#nombre").val(
+                            response.nombre || ""
+                        );
+
+                        $("#arl").val(
+                            response.arl || ""
+                        );
+
+                        $("#eps").val(
+                            response.eps || ""
+                        );
+
+
+                        // ==============================================
+                        // DATOS DEL VEHÍCULO
+                        //
+                        // LA BD SE LLAMA "placa"
+                        // EL INPUT SE LLAMA "placa_vehiculo"
+                        // ==============================================
+
+                        $("#placa_vehiculo").val(
+                            response.placa || ""
+                        );
+
+
+                        // ==============================================
+                        // MENSAJE
+                        // ==============================================
+
+                        $("#mensajeCedula")
+                            .removeClass(
+                                "text-primary text-danger text-warning"
+                            )
+                            .addClass(
+                                "text-success fw-semibold"
+                            )
+                            .text(
+                                "Vehículo encontrado. Datos cargados."
+                            );
                     },
+
+
+                    // ==================================================
+                    // ERROR AJAX
+                    // ==================================================
 
                     error: function(xhr, status, error) {
 
-                        console.error(xhr.responseText);
-                        console.error(status);
-                        console.error(error);
+                        console.error(
+                            "========== ERROR AJAX =========="
+                        );
 
+                        console.error(
+                            "HTTP:",
+                            xhr.status
+                        );
+
+                        console.error(
+                            "STATUS:",
+                            status
+                        );
+
+                        console.error(
+                            "ERROR:",
+                            error
+                        );
+
+                        console.error(
+                            "RESPUESTA:",
+                            xhr.responseText
+                        );
+
+                        console.error(
+                            "================================"
+                        );
+
+
+                        $("#mensajeCedula")
+                            .removeClass(
+                                "text-success text-primary text-warning"
+                            )
+                            .addClass(
+                                "text-danger fw-semibold"
+                            )
+                            .text(
+                                "Error al consultar el vehículo."
+                            );
                     }
+
                 });
 
             });
 
             /* ==========================================================
-            SI CAMBIA LA CÉDULA
-            INVALIDAR CONSULTAS ANTERIORES
+               SI CAMBIA LA CÉDULA
+               INVALIDAR CONSULTAS ANTERIORES
             ========================================================== */
 
             $cedula.on("input", function() {
 
-                consultaActual++;
+                // Permitir únicamente números
+                this.value = this.value.replace(/\D/g, "");
 
+                // Permitir una nueva consulta
+                ultimaCedulaConsultada = "";
+
+                $("#mensajeCedula")
+                    .removeClass(
+                        "text-success text-danger text-primary text-warning"
+                    )
+                    .text("");
             });
 
+
             /* ==========================================================
-            VALIDAR FECHA
+               VALIDAR FECHA
             ========================================================== */
 
             $("#fecha").on("change", function() {
@@ -908,20 +982,7 @@ $empresa = cargarEmpresa($connection);
             });
 
             /* ==========================================================
-            EQUIPO ELECTRÓNICO
-            ========================================================== */
-
-            $equipo.on(
-                "change",
-                actualizarEquipoElectronico
-            );
-
-
-            /* Inicializar */
-            actualizarEquipoElectronico();
-
-            /* ==========================================================
-            ENVIAR FORMULARIO
+               ENVIAR FORMULARIO
             ========================================================== */
 
             $form.on("submit", function(e) {
@@ -965,7 +1026,7 @@ $empresa = cargarEmpresa($connection);
 
                     title: "¿Guardar registro?",
 
-                    text: "Se registrará el colaborador en la base de datos.",
+                    text: "Se registrará el vehiculo en la base de datos.",
 
                     icon: "question",
 
@@ -993,7 +1054,7 @@ $empresa = cargarEmpresa($connection);
 
 
                     /* ==================================================
-                    DESACTIVAR BOTÓN
+                       DESACTIVAR BOTÓN
                     ================================================== */
 
                     $botonGuardar
@@ -1020,6 +1081,7 @@ $empresa = cargarEmpresa($connection);
 
             });
 
+
             /* ==========================================================
                MENSAJE DE ÉXITO
             ========================================================== */
@@ -1032,7 +1094,7 @@ $empresa = cargarEmpresa($connection);
 
                     title: "¡Registro exitoso!",
 
-                    text: "El colaborador fue registrado correctamente.",
+                    text: "El vehiculo fue registrado correctamente.",
 
                     confirmButtonColor: "#198754",
 
@@ -1063,9 +1125,10 @@ $empresa = cargarEmpresa($connection);
 
             <?php endif; ?>
 
+
             /* ==========================================================
-            MENSAJE DE ERROR
-            ========================================================= */
+               MENSAJE DE ERROR
+            ========================================================== */
 
             <?php if ($error !== ''): ?>
 
