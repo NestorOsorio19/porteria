@@ -8,6 +8,7 @@ try {
 
     // Solo permitir POST
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+
         http_response_code(405);
 
         echo json_encode([
@@ -22,6 +23,7 @@ try {
     $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
 
     if ($id <= 0) {
+
         http_response_code(400);
 
         echo json_encode([
@@ -32,7 +34,7 @@ try {
         exit;
     }
 
-    // Conexión
+    // Conexión PDO
     $con = connection();
 
     // Buscar registro
@@ -64,10 +66,9 @@ try {
         exit;
     }
 
-    // Ya tiene salida
+    // Ya tiene salida registrada
     if (
-        isset($vehiculo['hora_salida']) &&
-        $vehiculo['hora_salida'] !== '' &&
+        !empty($vehiculo['hora_salida']) &&
         $vehiculo['hora_salida'] !== '00:00:00'
     ) {
 
@@ -80,10 +81,10 @@ try {
         exit;
     }
 
-    // Hora del servidor
+    // Hora actual
     $horaSalida = date('H:i:s');
 
-    // Actualizar
+    // Actualizar salida
     $sql = "
         UPDATE vehiculos
         SET hora_salida = :hora_salida
@@ -94,10 +95,13 @@ try {
 
     $stmt->execute([
         ':hora_salida' => $horaSalida,
-        ':id' => $id
+        ':id'          => $id
     ]);
 
-    // Confirmar
+    // Cerrar PDO (opcional)
+    $stmt = null;
+    $con  = null;
+
     echo json_encode([
         'ok' => true,
         'mensaje' => 'Salida registrada correctamente.',

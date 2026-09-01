@@ -696,7 +696,7 @@ $empresa = cargarEmpresa($connection);
             ================================================== -->
 
             <form
-                action="Controller/ingreso_contratistas.php"
+                action="../Controller/ingreso_contratistas.php"
                 method="POST"
                 id="formContratista">
 

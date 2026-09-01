@@ -388,7 +388,7 @@ $EPS = cargarEPS($connection);
         <div class="container">
 
             <span class="navbar-brand">
-                <i class="fas fa-truck me-2"></i>
+                <i class="fas fa-truck-front me-2"></i>
                 Registro Vehiculos Internos
             </span>
 
@@ -424,7 +424,7 @@ $EPS = cargarEPS($connection);
             <div class="page-header">
 
                 <div class="icon-circle mb-4">
-                    <i class="fas fa-truck"></i>
+                    <i class="fas fa-truck-front"></i>
                 </div>
 
                 <h1>Formulario Registro</h1>
@@ -435,7 +435,7 @@ $EPS = cargarEPS($connection);
 
             </div>
 
-            <form id="formulario_vehiculos" action="../Controller/ingreso_vehiculos.php" method="POST">
+            <form id="formulario_vehiculos" action="../Controller/ingreso_vehiculos_internos.php" method="POST">
 
                 <!-- MINI CARDS -->
                 <div class="row g-4 mb-4 justify-content-center">
@@ -518,23 +518,13 @@ $EPS = cargarEPS($connection);
                         </div>
 
                         <div class="col-12 col-md-3">
-                            <label for="induccion_sgsst" class="form-label">Tipo de Vehiculo:</label>
-                            <select name="induccion_sgsst" id="induccion_sgsst" class="form-select" required>
+                            <label for="tipo_vehiculo" class="form-label">Tipo de Vehiculo:</label>
+                            <select name="tipo_vehiculo" id="tipo_vehiculo" class="form-select" required>
                                 <option value="" disabled selected>Seleccione su respuesta</option>
                                 <option value="1">Pollo en Pie</option>
                                 <option value="0">Pollo en Canal</option>
                             </select>
                         </div>
-
-                        <!-- <div class="col-12 col-md-3">
-                            <label for="procedencia" class="form-label">Procedencia:</label>
-                            <input type="text" name="procedencia" id="procedencia" class="form-control" min="1" required>
-                        </div>
-
-                        <div class="col-12 col-md-3">
-                            <label for="destino" class="form-label">Destino:</label>
-                            <input type="text" name="destino" id="destino" class="form-control" min="1" required>
-                        </div> -->
 
                     </div>
 

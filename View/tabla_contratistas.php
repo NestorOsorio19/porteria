@@ -584,7 +584,7 @@ try {
                     <!-- NUEVO -->
 
                     <a
-                        href="registrocontratistas.php"
+                        href="registro_contratistas.php"
                         class="btn-nuevo">
 
                         <i class="fas fa-plus"></i>
@@ -1362,7 +1362,6 @@ try {
                                     .html() +
 
                                 "</pre>",
-
                             icon:
                                 "error"
 

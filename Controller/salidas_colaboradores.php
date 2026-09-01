@@ -10,17 +10,14 @@ try {
 
     $con = connection();
 
-
     /* ==========================================================
        RECIBIR ID
     ========================================================== */
-
     $id = filter_input(
         INPUT_POST,
         'id_registro',
         FILTER_VALIDATE_INT
     );
-
 
     if (!$id || $id <= 0) {
 
@@ -32,26 +29,25 @@ try {
         exit;
     }
 
-
     /* ==========================================================
        BUSCAR REGISTRO
     ========================================================== */
-
-    $stmt = $con->prepare("
+    $sql = "
         SELECT
             id_registro,
             salida
         FROM colaboradores
         WHERE id_registro = :id
         LIMIT 1
-    ");
+    ";
+
+    $stmt = $con->prepare($sql);
 
     $stmt->execute([
         ':id' => $id
     ]);
 
     $registro = $stmt->fetch(PDO::FETCH_ASSOC);
-
 
     if (!$registro) {
 
@@ -63,11 +59,9 @@ try {
         exit;
     }
 
-
     /* ==========================================================
        VERIFICAR SI YA TIENE SALIDA
     ========================================================== */
-
     if (
         !empty($registro['salida']) &&
         $registro['salida'] !== '00:00:00'
@@ -75,73 +69,59 @@ try {
 
         echo json_encode([
             'ok' => false,
-            'mensaje' =>
-                'El colaborador ya tiene registrada una hora de salida.'
+            'mensaje' => 'El colaborador ya tiene registrada una hora de salida.'
         ]);
 
         exit;
     }
 
-
     /* ==========================================================
        HORA ACTUAL
     ========================================================== */
-
     $horaSalida = date('H:i:s');
-
 
     /* ==========================================================
        ACTUALIZAR SALIDA
     ========================================================== */
-
-    $stmt = $con->prepare("
+    $sql = "
         UPDATE colaboradores
         SET salida = :salida
         WHERE id_registro = :id
-    ");
+    ";
+
+    $stmt = $con->prepare($sql);
 
     $stmt->execute([
         ':salida' => $horaSalida,
-        ':id' => $id
+        ':id'     => $id
     ]);
 
+    /* ==========================================================
+       CERRAR CONEXIÓN PDO (OPCIONAL)
+    ========================================================== */
+    $stmt = null;
+    $con = null;
 
     /* ==========================================================
        RESPUESTA
     ========================================================== */
-
     echo json_encode([
-
         'ok' => true,
-
         'hora_salida' => $horaSalida,
-
-        'mensaje' =>
-            'Salida registrada correctamente.'
-
+        'mensaje' => 'Salida registrada correctamente.'
     ]);
 
     exit;
-
 
 } catch (PDOException $e) {
 
-
     http_response_code(500);
 
-
     echo json_encode([
-
         'ok' => false,
-
-        'mensaje' =>
-            'Error de base de datos.',
-
-        'error' =>
-            $e->getMessage()
-
+        'mensaje' => 'Error de base de datos.',
+        'error' => $e->getMessage()
     ]);
 
     exit;
-
 }
