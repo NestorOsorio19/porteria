@@ -2,12 +2,21 @@
 
 header('Content-Type: application/json; charset=utf-8');
 
-// Evitar cache
+/* ==========================================================
+   EVITAR CACHE
+========================================================== */
+
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 header('Pragma: no-cache');
 header('Expires: 0');
 
+
+/* ==========================================================
+   CONEXIÓN
+========================================================== */
+
 require_once '../Config/database.php';
+
 
 try {
 
@@ -45,8 +54,13 @@ try {
     }
 
 
-    // Convertir siempre a texto y quitar espacios
-    $cedula = trim((string) $_POST['cedula']);
+    /* ==========================================================
+       LIMPIAR CÉDULA
+    ========================================================== */
+
+    $cedula = trim(
+        (string) $_POST['cedula']
+    );
 
 
     if ($cedula === '') {
@@ -63,7 +77,7 @@ try {
 
 
     /* ==========================================================
-       VALIDAR QUE SOLO CONTENGA NÚMEROS
+       VALIDAR SOLO NÚMEROS
     ========================================================== */
 
     if (!preg_match('/^\d+$/', $cedula)) {
@@ -80,7 +94,7 @@ try {
 
 
     /* ==========================================================
-       CONEXIÓN
+       CREAR CONEXIÓN
     ========================================================== */
 
     $connection = connection();
@@ -89,18 +103,26 @@ try {
     /* ==========================================================
        CONSULTAR VEHÍCULO
        
-       CAST permite comparar correctamente la cédula aunque
-       la columna en MySQL sea numérica o de texto.
+       Se toma el registro más reciente de la cédula.
+       
+       También se consulta:
+       - frecuencia_ingreso
+       - induccion_sst
+       
+       para poder utilizar estos datos en el formulario.
     ========================================================== */
 
     $sql = "
         SELECT
+            id_registro,
             nombre,
             cedula,
             arl,
             eps,
-            placa
-        FROM vehiculos_internos
+            placa,
+            frecuencia_ingreso,
+            induccion_sst
+        FROM vehiculos
         WHERE CAST(cedula AS CHAR) = :cedula
         ORDER BY id_registro DESC
         LIMIT 1
@@ -134,6 +156,49 @@ try {
 
 
     /* ==========================================================
+       NORMALIZAR FRECUENCIA
+    ========================================================== */
+
+    $frecuencia = strtolower(
+        trim(
+            (string) ($row['frecuencia_ingreso'] ?? '')
+        )
+    );
+
+
+    /*
+     * Si por algún motivo el registro antiguo
+     * no tiene frecuencia, se considera ocasional.
+     */
+
+    if (
+        $frecuencia !== 'frecuente' &&
+        $frecuencia !== 'ocasional'
+    ) {
+
+        $frecuencia = 'ocasional';
+    }
+
+
+    /* ==========================================================
+       NORMALIZAR INDUCCIÓN SG-SST
+    ========================================================== */
+
+    $induccionSST =
+        (string) ($row['induccion_sst'] ?? '0');
+
+
+    /*
+     * Garantizar que solamente devuelva 0 o 1.
+     */
+
+    $induccionSST =
+        $induccionSST === '1'
+            ? '1'
+            : '0';
+
+
+    /* ==========================================================
        RESPUESTA EXITOSA
     ========================================================== */
 
@@ -141,15 +206,29 @@ try {
 
         'error' => false,
 
-        'nombre' => $row['nombre'] ?? '',
+        'id_registro' =>
+            (int) ($row['id_registro'] ?? 0),
 
-        'cedula' => $row['cedula'] ?? '',
+        'nombre' =>
+            $row['nombre'] ?? '',
 
-        'arl' => $row['arl'] ?? '',
+        'cedula' =>
+            $row['cedula'] ?? '',
 
-        'eps' => $row['eps'] ?? '',
+        'arl' =>
+            $row['arl'] ?? '',
 
-        'placa' => $row['placa'] ?? ''
+        'eps' =>
+            $row['eps'] ?? '',
+
+        'placa' =>
+            $row['placa'] ?? '',
+
+        'frecuencia_ingreso' =>
+            $frecuencia,
+
+        'induccion_sst' =>
+            $induccionSST
 
     ], JSON_UNESCAPED_UNICODE);
 
@@ -158,10 +237,24 @@ try {
 
 } catch (PDOException $e) {
 
+    /* ==========================================================
+       ERROR BASE DE DATOS
+    ========================================================== */
+
+    http_response_code(500);
+
     echo json_encode([
+
         'error' => true,
-        'mensaje' => 'Error al consultar la base de datos.'
-    ]);
+
+        'mensaje' =>
+            'Error al consultar la base de datos.'
+
+    ], JSON_UNESCAPED_UNICODE);
+
+    exit;
+
+
 } catch (Throwable $e) {
 
     /* ==========================================================
@@ -171,8 +264,12 @@ try {
     http_response_code(500);
 
     echo json_encode([
+
         'error' => true,
-        'mensaje' => 'Error interno del servidor.'
+
+        'mensaje' =>
+            'Error interno del servidor.'
+
     ], JSON_UNESCAPED_UNICODE);
 
     exit;

@@ -45,7 +45,7 @@ $modulos = [
         "subtitulo" => "Formulario",
         "icono" => "fa-truck",
         "color" => "gradient-4",
-        "link" => "tabla_vehiculos.php"
+        "link" => "tabla_vehiculos_externos.php"
     ],
 
     [
