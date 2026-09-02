@@ -27,7 +27,7 @@ try {
         LEFT JOIN empresas emp
             ON v.empresa_fk = emp.id_registro
 
-        ORDER BY v.fecha DESC
+        ORDER BY v.fecha DESC, v.id DESC
     ";
 
     $stmt = $con->prepare($sql);
@@ -68,7 +68,7 @@ try {
 
     <meta
         name="keywords"
-        content="php, pdo, base de datos, contratistas, sistema">
+        content="contratistas, SST, SG-SST, portería, ingreso, salida">
 
     <title>Consulta Contratistas</title>
 
@@ -105,10 +105,23 @@ try {
 
 
     <!-- =====================================================
+         FONT AWESOME
+    ====================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+
+    <!-- =====================================================
          ESTILOS
     ====================================================== -->
 
     <style>
+
+        /* =====================================================
+           GENERAL
+        ====================================================== */
 
         body {
 
@@ -126,12 +139,12 @@ try {
 
 
         /* =====================================================
-           CONTENEDOR
+           CONTENEDOR PRINCIPAL
         ====================================================== */
 
         .users-table {
 
-            max-width: 1500px;
+            max-width: 1600px;
 
             margin: 30px auto;
 
@@ -192,7 +205,7 @@ try {
 
 
         /* =====================================================
-           BOTONES
+           BOTONES DEL ENCABEZADO
         ====================================================== */
 
         .header-buttons {
@@ -271,12 +284,12 @@ try {
 
 
         /* =====================================================
-           TABLA
+           CONTENEDOR TABLA
         ====================================================== */
 
         .table-container {
 
-            background: #fff;
+            background: #ffffff;
 
             padding: 20px;
 
@@ -288,6 +301,15 @@ try {
         }
 
 
+        .table-responsive {
+
+            width: 100%;
+
+            overflow-x: auto;
+
+        }
+
+
         table.dataTable {
 
             width: 100% !important;
@@ -295,11 +317,15 @@ try {
         }
 
 
+        /* =====================================================
+           ENCABEZADO TABLA
+        ====================================================== */
+
         table.dataTable thead th {
 
             background-color: #273c75 !important;
 
-            color: #fff !important;
+            color: #ffffff !important;
 
             font-weight: 600;
 
@@ -311,6 +337,10 @@ try {
 
         }
 
+
+        /* =====================================================
+           CELDAS
+        ====================================================== */
 
         table.dataTable tbody td {
 
@@ -331,10 +361,105 @@ try {
 
 
         /* =====================================================
+           INDUCCIÓN OBLIGATORIA
+        ====================================================== */
+
+        .induccion-obligatoria {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 6px;
+
+            background: #fff3cd;
+
+            color: #856404;
+
+            border: 1px solid #ffc107;
+
+            padding: 6px 10px;
+
+            border-radius: 7px;
+
+            font-weight: 700;
+
+            font-size: 12px;
+
+        }
+
+
+        /* =====================================================
+           INDUCCIÓN CUMPLIDA
+        ====================================================== */
+
+        .induccion-cumplida {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 6px;
+
+            background: #d1e7dd;
+
+            color: #0f5132;
+
+            border: 1px solid #198754;
+
+            padding: 6px 10px;
+
+            border-radius: 7px;
+
+            font-weight: 700;
+
+            font-size: 12px;
+
+        }
+
+
+        /* =====================================================
+           INDUCCIÓN NO CUMPLIDA
+        ====================================================== */
+
+        .induccion-no {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 6px;
+
+            background: #f8d7da;
+
+            color: #842029;
+
+            border: 1px solid #dc3545;
+
+            padding: 6px 10px;
+
+            border-radius: 7px;
+
+            font-weight: 700;
+
+            font-size: 12px;
+
+        }
+
+
+        /* =====================================================
            SALIDA PENDIENTE
         ====================================================== */
 
         .pendiente {
+
+            display: inline-block;
 
             background: #ffc107;
 
@@ -354,6 +479,8 @@ try {
         ====================================================== */
 
         .hora-salida {
+
+            display: inline-block;
 
             background: #17a2b8;
 
@@ -419,6 +546,8 @@ try {
 
         .finalizado {
 
+            display: inline-block;
+
             background: #28a745;
 
             color: white;
@@ -435,6 +564,14 @@ try {
         /* =====================================================
            DATATABLES
         ====================================================== */
+
+        .dataTables_wrapper
+        .dataTables_filter {
+
+            margin-bottom: 15px;
+
+        }
+
 
         .dataTables_wrapper
         .dataTables_filter input {
@@ -458,6 +595,25 @@ try {
             border-radius: 6px;
 
             padding: 5px;
+
+        }
+
+
+        /* =====================================================
+           BADGE ID
+        ====================================================== */
+
+        .badge-id {
+
+            background: #273c75;
+
+            color: #ffffff;
+
+            padding: 5px 8px;
+
+            border-radius: 6px;
+
+            font-weight: 600;
 
         }
 
@@ -516,8 +672,6 @@ try {
 
                 padding: 10px;
 
-                overflow-x: auto;
-
             }
 
         }
@@ -558,7 +712,7 @@ try {
 
                     <small>
 
-                        Consulta y control de ingreso y salida
+                        Consulta y control de ingreso, salida e inducción SG-SST
 
                     </small>
 
@@ -581,7 +735,7 @@ try {
                     </a>
 
 
-                    <!-- NUEVO -->
+                    <!-- NUEVO REGISTRO -->
 
                     <a
                         href="registro_contratistas.php"
@@ -608,6 +762,7 @@ try {
         <div class="table-container">
 
             <div class="table-responsive">
+
 
                 <table
                     id="tablaContratistas"
@@ -640,6 +795,8 @@ try {
 
                             <th>Tel. Emergencia</th>
 
+                            <th>Inducción SG-SST</th>
+
                             <th>Marca</th>
 
                             <th>Serial</th>
@@ -663,29 +820,56 @@ try {
 
                             <?php
 
-                            /*
-                             * Identificador principal
-                             */
+                            /* =================================================
+                               ID
+                            ================================================== */
 
                             $id = (int) ($row['id'] ?? 0);
 
 
-                            /*
-                             * Hora de salida
-                             */
+                            /* =================================================
+                               HORA DE SALIDA
+                            ================================================== */
 
                             $horaSalida = trim(
                                 $row['salida'] ?? ''
                             );
 
 
-                            /*
-                             * Verificar si ya tiene salida
-                             */
+                            /* =================================================
+                               VERIFICAR SALIDA
+                            ================================================== */
 
                             $tieneSalida =
                                 $horaSalida !== '' &&
                                 $horaSalida !== '00:00:00';
+
+
+                            /* =================================================
+                               INDUCCIÓN SG-SST
+                            ================================================== */
+
+                            $induccion = trim(
+                                (string) (
+                                    $row['induccion_sgsst'] ?? ''
+                                )
+                            );
+
+
+                            /*
+                             * Consideramos cumplida la inducción
+                             * cuando el valor almacenado es 1.
+                             *
+                             * También soportamos valores como:
+                             * SI, Sí, SÍ, CUMPLIDA.
+                             */
+
+                            $induccionCumplida =
+                                $induccion === '1' ||
+                                strtoupper($induccion) === 'SI' ||
+                                strtoupper($induccion) === 'SÍ' ||
+                                strtoupper($induccion) === 'CUMPLIDA';
+
 
                             ?>
 
@@ -693,16 +877,24 @@ try {
                             <tr>
 
 
-                                <!-- ID -->
+                                <!-- =================================================
+                                     ID
+                                ================================================== -->
 
                                 <td data-label="ID">
 
-                                    <?= $id ?>
+                                    <span class="badge-id">
+
+                                        <?= $id ?>
+
+                                    </span>
 
                                 </td>
 
 
-                                <!-- FECHA -->
+                                <!-- =================================================
+                                     FECHA
+                                ================================================== -->
 
                                 <td data-label="Fecha">
 
@@ -715,7 +907,9 @@ try {
                                 </td>
 
 
-                                <!-- NOMBRE -->
+                                <!-- =================================================
+                                     NOMBRE
+                                ================================================== -->
 
                                 <td data-label="Nombre">
 
@@ -728,7 +922,9 @@ try {
                                 </td>
 
 
-                                <!-- CÉDULA -->
+                                <!-- =================================================
+                                     CÉDULA
+                                ================================================== -->
 
                                 <td data-label="Cédula">
 
@@ -741,7 +937,9 @@ try {
                                 </td>
 
 
-                                <!-- RH -->
+                                <!-- =================================================
+                                     RH
+                                ================================================== -->
 
                                 <td data-label="RH">
 
@@ -754,7 +952,9 @@ try {
                                 </td>
 
 
-                                <!-- ARL -->
+                                <!-- =================================================
+                                     ARL
+                                ================================================== -->
 
                                 <td data-label="ARL">
 
@@ -767,7 +967,9 @@ try {
                                 </td>
 
 
-                                <!-- EPS -->
+                                <!-- =================================================
+                                     EPS
+                                ================================================== -->
 
                                 <td data-label="EPS">
 
@@ -780,12 +982,14 @@ try {
                                 </td>
 
 
-                                <!-- EMPRESA -->
+                                <!-- =================================================
+                                     EMPRESA
+                                ================================================== -->
 
                                 <td data-label="Empresa">
 
                                     <?= htmlspecialchars(
-                                        $row['nom_empresa'] ?? '',
+                                        $row['nom_empresa'] ?? 'Sin empresa',
                                         ENT_QUOTES,
                                         'UTF-8'
                                     ) ?>
@@ -793,7 +997,9 @@ try {
                                 </td>
 
 
-                                <!-- ENFERMEDAD / ALERGIA -->
+                                <!-- =================================================
+                                     ENFERMEDAD / ALERGIA
+                                ================================================== -->
 
                                 <td data-label="Enfermedad / Alergia">
 
@@ -806,7 +1012,9 @@ try {
                                 </td>
 
 
-                                <!-- CONTACTO EMERGENCIA -->
+                                <!-- =================================================
+                                     CONTACTO EMERGENCIA
+                                ================================================== -->
 
                                 <td data-label="Contacto Emergencia">
 
@@ -819,7 +1027,9 @@ try {
                                 </td>
 
 
-                                <!-- TELEFONO EMERGENCIA -->
+                                <!-- =================================================
+                                     TELEFONO EMERGENCIA
+                                ================================================== -->
 
                                 <td data-label="Tel. Emergencia">
 
@@ -832,7 +1042,54 @@ try {
                                 </td>
 
 
-                                <!-- MARCA -->
+                                <!-- =================================================
+                                     INDUCCIÓN SG-SST
+                                ================================================== -->
+
+                                <td data-label="Inducción SG-SST">
+
+
+                                    <?php if ($induccionCumplida): ?>
+
+
+                                        <span
+                                            class="induccion-cumplida"
+                                            title="Inducción SG-SST cumplida">
+
+                                            <i
+                                                class="fas fa-check-circle">
+                                            </i>
+
+                                            CUMPLIDA
+
+                                        </span>
+
+
+                                    <?php else: ?>
+
+
+                                        <span
+                                            class="induccion-no"
+                                            title="El contratista no tiene registrada la inducción SG-SST">
+
+                                            <i
+                                                class="fas fa-exclamation-triangle">
+                                            </i>
+
+                                            OBLIGATORIA
+
+                                        </span>
+
+
+                                    <?php endif; ?>
+
+
+                                </td>
+
+
+                                <!-- =================================================
+                                     MARCA
+                                ================================================== -->
 
                                 <td data-label="Marca">
 
@@ -845,7 +1102,9 @@ try {
                                 </td>
 
 
-                                <!-- SERIAL -->
+                                <!-- =================================================
+                                     SERIAL
+                                ================================================== -->
 
                                 <td data-label="Serial">
 
@@ -858,11 +1117,15 @@ try {
                                 </td>
 
 
-                                <!-- INGRESO -->
+                                <!-- =================================================
+                                     INGRESO
+                                ================================================== -->
 
                                 <td data-label="Ingreso">
 
+
                                     <?php if (!empty($row['ingreso'])): ?>
+
 
                                         <span
                                             style="
@@ -881,18 +1144,27 @@ try {
 
                                         </span>
 
+
                                     <?php else: ?>
 
-                                        <span class="text-muted">
+
+                                        <span
+                                            style="color:#6c757d;">
+
                                             —
+
                                         </span>
 
+
                                     <?php endif; ?>
+
 
                                 </td>
 
 
-                                <!-- SALIDA -->
+                                <!-- =================================================
+                                     SALIDA
+                                ================================================== -->
 
                                 <td
                                     data-label="Salida"
@@ -901,13 +1173,16 @@ try {
 
                                     <?php if (!$tieneSalida): ?>
 
+
                                         <span class="pendiente">
 
                                             Pendiente
 
                                         </span>
 
+
                                     <?php else: ?>
+
 
                                         <span class="hora-salida">
 
@@ -919,13 +1194,16 @@ try {
 
                                         </span>
 
+
                                     <?php endif; ?>
 
 
                                 </td>
 
 
-                                <!-- ACCIONES -->
+                                <!-- =================================================
+                                     ACCIONES
+                                ================================================== -->
 
                                 <td
                                     data-label="Acciones"
@@ -988,15 +1266,6 @@ try {
 
 
     <!-- =====================================================
-         FONT AWESOME
-    ====================================================== -->
-
-    <script
-        src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js">
-    </script>
-
-
-    <!-- =====================================================
          JAVASCRIPT
     ====================================================== -->
 
@@ -1025,6 +1294,8 @@ try {
 
                 searching: true,
 
+                responsive: false,
+
                 language: {
 
                     search: "Buscar:",
@@ -1043,6 +1314,9 @@ try {
 
                     zeroRecords:
                         "No se encontraron registros",
+
+                    emptyTable:
+                        "No hay contratistas registrados",
 
                     paginate: {
 
@@ -1114,7 +1388,10 @@ try {
 
                 $boton
 
-                    .prop("disabled", true)
+                    .prop(
+                        "disabled",
+                        true
+                    )
 
                     .html(
                         '<i class="fas fa-spinner fa-spin"></i> ' +
@@ -1261,7 +1538,10 @@ try {
                                     "No se pudo registrar la salida.",
 
                                 icon:
-                                    "warning"
+                                    "warning",
+
+                                confirmButtonColor:
+                                    "#ffc107"
 
                             });
 
@@ -1362,8 +1642,12 @@ try {
                                     .html() +
 
                                 "</pre>",
+
                             icon:
-                                "error"
+                                "error",
+
+                            confirmButtonColor:
+                                "#dc3545"
 
                         });
 

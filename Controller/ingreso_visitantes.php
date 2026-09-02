@@ -5,13 +5,9 @@ require_once '../Config/config.php';
 require_once '../Config/database.php';
 
 /* =====================================================
- ACTIVAR ERRORES MYSQL (IMPORTANTE)
+   CONEXIÓN
 ===================================================== */
-mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-/* =====================================================
- CONEXIÓN
-===================================================== */
 $con = connection();
 
 if (!$con) {
@@ -21,8 +17,9 @@ if (!$con) {
 }
 
 /* =====================================================
- FUNCIÓN ERROR
+   FUNCIÓN ERROR
 ===================================================== */
+
 function responderError($mensaje)
 {
     $_SESSION['error'] = $mensaje;
@@ -31,39 +28,65 @@ function responderError($mensaje)
 }
 
 /* =====================================================
- SANITIZACIÓN
+   SANITIZACIÓN
 ===================================================== */
+
 function clean_text(string $value): string
 {
     $value = trim(strip_tags($value));
-    return preg_replace('/[^A-Za-z0-9 áéíóúÁÉÍÓÚñÑ.+-]/', '', $value);
+
+    return preg_replace(
+        '/[^A-Za-z0-9 áéíóúÁÉÍÓÚñÑ.+-]/',
+        '',
+        $value
+    );
 }
 
 /* =====================================================
- DATOS
+   DATOS
 ===================================================== */
-$fecha      = $_POST['fecha'] ?? '';
-$cedula     = intval($_POST['cedula'] ?? 0);
-$nombre     = clean_text($_POST['nombre'] ?? '');
-$rh         = clean_text($_POST['rh'] ?? '');
-$telefono   = clean_text($_POST['telefono'] ?? '');
-$motivo     = clean_text($_POST['motivo'] ?? '');
-$marca      = clean_text($_POST['marca'] ?? '');
-$serial     = clean_text($_POST['serial'] ?? '');
-$carnet     = intval($_POST['carnet'] ?? 0);
 
-$ingreso    = $_POST['ingreso'] ?? '';
-$arl        = intval($_POST['arl'] ?? 0);
-$eps        = intval($_POST['eps'] ?? 0);
-$empresa_post = $_POST['empresa'] ?? null;
-$equipo     = isset($_POST['equipo']) ? 'SI' : 'NO';
+$fecha         = $_POST['fecha'] ?? '';
+$cedula        = intval($_POST['cedula'] ?? 0);
+$nombre        = clean_text($_POST['nombre'] ?? '');
+$rh            = clean_text($_POST['rh'] ?? '');
+$telefono      = clean_text($_POST['telefono'] ?? '');
+$motivo        = clean_text($_POST['motivo'] ?? '');
+$marca         = clean_text($_POST['marca'] ?? '');
+$serial        = clean_text($_POST['serial'] ?? '');
+$carnet        = intval($_POST['carnet'] ?? 0);
+
+$ingreso       = $_POST['ingreso'] ?? '';
+$arl           = intval($_POST['arl'] ?? 0);
+$eps           = intval($_POST['eps'] ?? 0);
+
+$empresa_post  = $_POST['empresa'] ?? null;
+
+$equipo = isset($_POST['equipo']) ? 'SI' : 'NO';
 
 /* =====================================================
- VALIDACIONES
+   VALIDACIONES
 ===================================================== */
-if (!$fecha || !$cedula || !$nombre || !$rh || !$telefono || !$motivo || !$ingreso || !$empresa_post || !$carnet || !$arl || !$eps) {
+
+if (
+    !$fecha ||
+    !$cedula ||
+    !$nombre ||
+    !$rh ||
+    !$telefono ||
+    !$motivo ||
+    !$ingreso ||
+    !$empresa_post ||
+    !$carnet ||
+    !$arl ||
+    !$eps
+) {
     responderError("Todos los campos obligatorios deben completarse.");
 }
+
+/* =====================================================
+   VALIDAR FECHA
+===================================================== */
 
 if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha)) {
     responderError("Formato de fecha inválido.");
@@ -73,104 +96,201 @@ if (strtotime($fecha) > strtotime(date('Y-m-d'))) {
     responderError("No se permite fecha futura.");
 }
 
-/* Validar hora */
+/* =====================================================
+   VALIDAR HORA
+===================================================== */
+
 if (!preg_match('/^\d{2}:\d{2}(:\d{2})?$/', $ingreso)) {
     responderError("Formato de hora inválido.");
 }
 
-/* Equipo */
+/* =====================================================
+   EQUIPO
+===================================================== */
+
 if ($equipo === 'NO') {
+
     $marca = '';
     $serial = '';
+
 } else {
+
     if (!$marca || !$serial) {
         responderError("Debe completar marca y serial del equipo.");
     }
 }
 
 /* =====================================================
- EMPRESA
+   EMPRESA
 ===================================================== */
+
 if ($empresa_post === "otra") {
 
-    $nueva_empresa = clean_text($_POST['nueva_empresa'] ?? '');
+    $nueva_empresa = clean_text(
+        $_POST['nueva_empresa'] ?? ''
+    );
 
     if (!$nueva_empresa) {
-        responderError('Debe ingresar la nueva empresa');
+        responderError("Debe ingresar la nueva empresa.");
     }
 
-    $sql_check = "SELECT id_registro FROM empresas WHERE nom_empresa = ?";
-    $stmt_check = $con->prepare($sql_check);
-    $stmt_check->execute([$nueva_empresa]);
+    try {
 
-    $row = $stmt_check->fetch(PDO::FETCH_ASSOC);
+        /* Buscar empresa existente */
 
-    if ($row) {
+        $sql_check = "
+            SELECT id_registro
+            FROM empresas
+            WHERE nom_empresa = ?
+        ";
 
-        $empresa = (int)$row['id_registro'];
+        $stmt_check = $con->prepare($sql_check);
 
-    } else {
+        $stmt_check->execute([
+            $nueva_empresa
+        ]);
 
-        $sql_insert_empresa = "INSERT INTO empresas (nom_empresa) VALUES (?)";
-        $stmt_insert = $con->prepare($sql_insert_empresa);
-        $stmt_insert->execute([$nueva_empresa]);
+        $row = $stmt_check->fetch(PDO::FETCH_ASSOC);
 
-        $empresa = $con->lastInsertId();
+        /* Si existe */
+
+        if ($row) {
+
+            $empresa = (int) $row['id_registro'];
+
+        } else {
+
+            /* Crear empresa */
+
+            $sql_insert_empresa = "
+                INSERT INTO empresas (nom_empresa)
+                VALUES (?)
+            ";
+
+            $stmt_insert = $con->prepare(
+                $sql_insert_empresa
+            );
+
+            $stmt_insert->execute([
+                $nueva_empresa
+            ]);
+
+            $empresa = (int) $con->lastInsertId();
+        }
+
+    } catch (PDOException $e) {
+
+        responderError(
+            "No fue posible registrar la empresa: " .
+            $e->getMessage()
+        );
     }
 
 } else {
 
-    $empresa = (int)$empresa_post;
+    $empresa = (int) $empresa_post;
 }
+
+/* =====================================================
+   VALIDAR EMPRESA
+===================================================== */
 
 if (!$empresa) {
     responderError("Empresa inválida.");
 }
 
 /* =====================================================
- INSERT
+   INSERTAR VISITANTE
 ===================================================== */
 
-$sql = "INSERT INTO visitantes
-(
-    fecha,
-    cedula,
-    nombre,
-    id_arl,
-    id_eps,
-    rh,
-    telefono,
-    empresa_fk,
-    motivo,
-    marca,
-    serial,
-    carnet,
-    ingreso
-)
-VALUES
-(
-    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
-)";
+try {
 
-$stmt = $con->prepare($sql);
+    $sql = "
+        INSERT INTO visitantes (
+            fecha,
+            cedula,
+            nombre,
+            id_arl,
+            id_eps,
+            rh,
+            contacto,
+            telefono,
+            empresa_fk,
+            motivo,
+            marca,
+            serial,
+            carnet,
+            ingreso
+        )
+        VALUES (
+            :fecha,
+            :cedula,
+            :nombre,
+            :id_arl,
+            :id_eps,
+            :rh,
+            :contacto,
+            :telefono,
+            :empresa_fk,
+            :motivo,
+            :marca,
+            :serial,
+            :carnet,
+            :ingreso
+        )
+    ";
 
-$stmt->execute([
-    $fecha,
-    $cedula,
-    $nombre,
-    $arl,
-    $eps,
-    $rh,
-    $telefono,
-    $empresa,
-    $motivo,
-    $marca,
-    $serial,
-    $carnet,
-    $ingreso
-]);
+    /* Preparar consulta */
 
-$_SESSION['success'] = "Visitante registrado correctamente.";
+    $stmt = $con->prepare($sql);
 
-header("Location: ../index.php");
-exit;
+    /* Ejecutar UNA SOLA VEZ */
+
+    $stmt->execute([
+
+        ':fecha' => $fecha,
+
+        ':cedula' => $cedula,
+
+        ':nombre' => $nombre,
+
+        ':id_arl' => $arl,
+
+        ':id_eps' => $eps,
+
+        ':rh' => $rh,
+
+        ':contacto' => $nombre,
+
+        ':telefono' => $telefono,
+
+        ':empresa_fk' => $empresa,
+
+        ':motivo' => $motivo,
+
+        ':marca' => $marca,
+
+        ':serial' => $serial,
+
+        ':carnet' => $carnet,
+
+        ':ingreso' => $ingreso
+    ]);
+
+    /* =================================================
+       GUARDADO CORRECTO
+    ================================================= */
+
+    header(
+        "Location: ../View/registro_visitantes.php?guardado=1"
+    );
+
+    exit;
+
+} catch (PDOException $e) {
+
+    responderError(
+        "No fue posible guardar el registro: " .
+        $e->getMessage()
+    );
+}

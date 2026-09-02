@@ -965,7 +965,7 @@ $empresa = cargarEmpresa($connection);
 
                     title: "¿Guardar registro?",
 
-                    text: "Se registrará el colaborador en la base de datos.",
+                    text: "Se registrará el visitante en la base de datos.",
 
                     icon: "question",
 
@@ -1032,7 +1032,7 @@ $empresa = cargarEmpresa($connection);
 
                     title: "¡Registro exitoso!",
 
-                    text: "El colaborador fue registrado correctamente.",
+                    text: "El visitante fue registrado correctamente.",
 
                     confirmButtonColor: "#198754",
 

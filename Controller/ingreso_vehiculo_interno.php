@@ -134,13 +134,13 @@ try {
 
     ]);
 
-    header('Location: ../View/registro_vehiculos.php?guardado=1');
+    header('Location: ../View/registro_vehiculos_internos.php?guardado=1');
     exit;
 } catch (PDOException $e) {
 
     $mensaje = urlencode($e->getMessage());
 
-    header("Location: ../View/registro_vehiculos.php?error={$mensaje}");
+    header("Location: ../View/registro_vehiculos_internos.php?error={$mensaje}");
     exit;
 } catch (Exception $e) {
 

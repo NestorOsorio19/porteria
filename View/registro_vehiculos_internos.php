@@ -435,7 +435,7 @@ $EPS = cargarEPS($connection);
 
             </div>
 
-            <form id="formulario_vehiculos" action="../Controller/ingreso_vehiculos_internos.php" method="POST">
+            <form id="formulario_vehiculos" action="../Controller/ingreso_vehiculo_internos.php" method="POST">
 
                 <!-- MINI CARDS -->
                 <div class="row g-4 mb-4 justify-content-center">
@@ -747,7 +747,7 @@ $EPS = cargarEPS($connection);
 
                 $.ajax({
 
-                    url: "../Controller/buscar_vehiculo.php",
+                    url: "../Controller/buscar_vehiculo_interno.php",
 
                     type: "POST",
 

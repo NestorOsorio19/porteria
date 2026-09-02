@@ -486,6 +486,116 @@ $empresa = cargarEmpresa($connection);
             resize: vertical;
         }
 
+        /* =====================================================
+   INDUCCIÓN SST
+===================================================== */
+
+        .induccion-card {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+
+            padding: 22px;
+
+            background: linear-gradient(135deg,
+                    #fff8e1,
+                    #fff3cd);
+
+            border: 2px solid #ffc107;
+
+            border-left: 6px solid #dc3545;
+
+            border-radius: 18px;
+
+            box-shadow:
+                0 8px 20px rgba(0, 0, 0, .08);
+
+            margin-top: 15px;
+        }
+
+        .induccion-icon {
+            min-width: 65px;
+            height: 65px;
+
+            border-radius: 50%;
+
+            background: #dc3545;
+
+            color: white;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 28px;
+
+            box-shadow:
+                0 5px 15px rgba(220, 53, 69, .25);
+        }
+
+        .induccion-content {
+            flex: 1;
+        }
+
+        .induccion-content h5 {
+            margin-bottom: 8px;
+
+            font-weight: 700;
+
+            color: #343a40;
+        }
+
+        .induccion-content p {
+            margin-bottom: 15px;
+
+            color: #6c757d;
+        }
+
+        .induccion-content .badge {
+            font-size: .7rem;
+
+            margin-left: 8px;
+
+            vertical-align: middle;
+        }
+
+        .induccion-content .form-check {
+            background: white;
+
+            padding: 12px 15px;
+
+            border-radius: 10px;
+
+            border: 1px solid #dee2e6;
+        }
+
+        .induccion-content .form-check-input {
+            cursor: pointer;
+        }
+
+        .induccion-content .form-check-label {
+            cursor: pointer;
+
+            font-weight: 600;
+
+            color: #495057;
+        }
+
+        @media (max-width: 576px) {
+
+            .induccion-card {
+                flex-direction: column;
+
+                text-align: center;
+            }
+
+            .induccion-content .form-check {
+                text-align: left;
+            }
+
+        }
+
+
 
         /* ==================================================
         EQUIPO ELECTRÓNICO
@@ -1137,45 +1247,51 @@ $empresa = cargarEmpresa($connection);
 
                         <!-- INDUCCIÓN SG-SST -->
 
-                        <div class="col-12 col-md-3">
+                        <div class="col-12">
 
-                            <label
-                                for="induccion_sgsst"
-                                class="form-label">
+                            <div class="induccion-card">
 
-                                Recibió inducción de SG-SST:
+                                <div class="induccion-icon">
+                                    <i class="fas fa-hard-hat"></i>
+                                </div>
 
-                            </label>
+                                <div class="induccion-content">
 
+                                    <h5>
+                                        Inducción de Seguridad y Salud en el Trabajo
+                                        <span class="badge bg-danger">OBLIGATORIA</span>
+                                    </h5>
 
-                            <select
-                                name="induccion_sgsst"
-                                id="induccion_sgsst"
-                                class="form-select"
-                                required>
+                                    <p>
+                                        Antes de ingresar a las instalaciones, el contratista
+                                        debe haber realizado la inducción SST.
+                                    </p>
 
-                                <option
-                                    value=""
-                                    disabled
-                                    selected>
+                                    <div class="form-check form-switch">
 
-                                    Seleccione su respuesta
+                                        <input
+                                            class="form-check-input"
+                                            type="checkbox"
+                                            name="induccion_sgsst"
+                                            id="induccion_sgsst"
+                                            value="1">
 
-                                </option>
+                                        <label
+                                            class="form-check-label"
+                                            for="induccion_sgsst">
 
+                                            Confirmo que la inducción SST fue realizada.
 
-                                <option value="1">
-                                    SI
-                                </option>
+                                        </label>
 
+                                    </div>
 
-                                <option value="0">
-                                    NO
-                                </option>
+                                </div>
 
-                            </select>
+                            </div>
 
                         </div>
+
 
 
                         <!-- ==================================================
@@ -1371,6 +1487,7 @@ $empresa = cargarEmpresa($connection);
     ================================================== -->
 
     <script rc="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" defer></script>
+
     <script>
         $(function() {
 
@@ -1429,18 +1546,7 @@ $empresa = cargarEmpresa($connection);
                 this.value =
                     this.value.replace(/\D/g, "");
 
-
-                /*
-                 * Al modificar la cédula,
-                 * permitimos realizar una nueva consulta.
-                 */
-
                 ultimaCedulaConsultada = "";
-
-
-                /*
-                 * Limpiar mensaje anterior.
-                 */
 
                 $("#mensajeCedula")
                     .removeClass(
@@ -1511,10 +1617,6 @@ $empresa = cargarEmpresa($connection);
                 }
 
 
-                /*
-                 * Guardamos la cédula consultada.
-                 */
-
                 ultimaCedulaConsultada = cedula;
 
 
@@ -1571,17 +1673,7 @@ $empresa = cargarEmpresa($connection);
                             response.error === true
                         ) {
 
-
-                            /*
-                             * Limpiar datos anteriores.
-                             */
-
                             limpiarDatosContratista();
-
-
-                            /*
-                             * Mostrar mensaje debajo de la cédula.
-                             */
 
                             $("#mensajeCedula")
                                 .removeClass(
@@ -1594,14 +1686,6 @@ $empresa = cargarEmpresa($connection);
                                     response.mensaje ||
                                     "Cédula no encontrada. Complete la información."
                                 );
-
-
-                            /*
-                             * NO mostramos SweetAlert.
-                             *
-                             * El mensaje queda directamente
-                             * debajo de la cédula.
-                             */
 
                             return;
                         }
@@ -1669,10 +1753,33 @@ $empresa = cargarEmpresa($connection);
                            INDUCCIÓN SG-SST
                         ============================================== */
 
-                        $("#induccion_sgsst")
-                            .val(
+                        /*
+                         * Si induccion_sgsst es un checkbox,
+                         * usamos checked.
+                         *
+                         * Si es un select/input normal,
+                         * usamos val().
+                         */
+
+                        const $induccion =
+                            $("#induccion_sgsst");
+
+                        if (
+                            $induccion.is(":checkbox")
+                        ) {
+
+                            $induccion.prop(
+                                "checked",
+                                response.induccion_sgsst == "1"
+                            );
+
+                        } else {
+
+                            $induccion.val(
                                 response.induccion_sgsst || ""
                             );
+
+                        }
 
 
                         /* ==============================================
@@ -1786,11 +1893,6 @@ $empresa = cargarEmpresa($connection);
                         );
 
 
-                        /*
-                         * Permitir volver a consultar
-                         * la misma cédula si hubo error.
-                         */
-
                         ultimaCedulaConsultada = "";
 
 
@@ -1882,16 +1984,9 @@ $empresa = cargarEmpresa($connection);
 
 
                 if (!valor) {
-
                     return;
-
                 }
 
-
-                /*
-                 * Evitamos problemas de zona horaria
-                 * usando directamente año, mes y día.
-                 */
 
                 const partes =
                     valor.split("-");
@@ -2121,14 +2216,210 @@ $empresa = cargarEmpresa($connection);
 
 
                 /* ======================================================
-                   CONFIRMACIÓN
+                   VALIDAR INDUCCIÓN SST
+                ====================================================== */
+
+                const $induccion =
+                    $("#induccion_sgsst");
+
+                let induccionRealizada = false;
+
+
+                /*
+                 * Si el campo es checkbox.
+                 */
+
+                if (
+                    $induccion.is(":checkbox")
+                ) {
+
+                    induccionRealizada =
+                        $induccion.is(":checked");
+
+                } else {
+
+                    /*
+                     * Si el campo es select,
+                     * consideramos válido solamente
+                     * el valor 1.
+                     */
+
+                    induccionRealizada =
+                        $induccion.val() === "1";
+
+                }
+
+
+                /* ======================================================
+                   INDUCCIÓN NO REALIZADA
+                ====================================================== */
+
+                if (!induccionRealizada) {
+
+                    Swal.fire({
+
+                        icon: "warning",
+
+                        title: `
+                        <span style="
+                            color:#dc3545;
+                            font-weight:700;
+                        ">
+                            Inducción SST obligatoria
+                        </span>
+                    `,
+
+                        html: `
+
+                        <div style="
+                            text-align:center;
+                            padding:5px 10px;
+                        ">
+
+                            <div style="
+                                width:75px;
+                                height:75px;
+                                margin:0 auto 18px;
+                                border-radius:50%;
+                                background:#fff3cd;
+                                border:3px solid #ffc107;
+                                display:flex;
+                                align-items:center;
+                                justify-content:center;
+                                color:#dc3545;
+                                font-size:34px;
+                                box-shadow:0 5px 15px rgba(0,0,0,.10);
+                            ">
+                                <i class="fas fa-hard-hat"></i>
+                            </div>
+
+                            <h5 style="
+                                font-weight:700;
+                                color:#343a40;
+                                margin-bottom:12px;
+                            ">
+                                La inducción de SST es obligatoria
+                            </h5>
+
+                            <p style="
+                                font-size:16px;
+                                line-height:1.6;
+                                color:#495057;
+                                margin-bottom:12px;
+                            ">
+                                Para registrar el ingreso del contratista
+                                es necesario haber realizado la
+                                <strong>
+                                    Inducción de Seguridad y Salud
+                                    en el Trabajo (SST)
+                                </strong>.
+                            </p>
+
+                            <div style="
+                                background:#f8f9fa;
+                                border-left:4px solid #dc3545;
+                                border-radius:8px;
+                                padding:12px;
+                                margin-top:15px;
+                                text-align:left;
+                            ">
+
+                                <strong style="color:#dc3545;">
+                                    <i class="fas fa-circle-exclamation me-1"></i>
+                                    Importante
+                                </strong>
+
+                                <div style="
+                                    margin-top:5px;
+                                    color:#6c757d;
+                                    font-size:14px;
+                                ">
+                                    No es posible continuar con el registro
+                                    hasta completar y confirmar la inducción.
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    `,
+
+                        confirmButtonText: `
+                        <i class="fas fa-check me-2"></i>
+                        Entendido
+                    `,
+
+                        confirmButtonColor: "#dc3545",
+
+                        allowOutsideClick: false,
+
+                        allowEscapeKey: false,
+
+                        width: "500px"
+
+                    }).then(function() {
+
+                        /*
+                         * Llevar al usuario directamente
+                         * al campo de inducción.
+                         */
+
+                        const elemento =
+                            document.getElementById(
+                                "induccion_sgsst"
+                            );
+
+                        if (elemento) {
+
+                            elemento.scrollIntoView({
+                                behavior: "smooth",
+                                block: "center"
+                            });
+
+                            setTimeout(function() {
+
+                                elemento.focus();
+
+                            }, 500);
+
+                        }
+
+                    });
+
+                    return;
+
+                }
+
+
+                /* ======================================================
+                   CONFIRMACIÓN FINAL
                 ====================================================== */
 
                 Swal.fire({
 
                     title: "¿Guardar registro?",
 
-                    text: "Se registrará el contratista en la base de datos.",
+                    html: `
+                    <p style="
+                        font-size:16px;
+                        color:#495057;
+                    ">
+                        Se registrará el contratista
+                        en la base de datos.
+                    </p>
+
+                    <div style="
+                        margin-top:15px;
+                        padding:10px;
+                        background:#e8f5e9;
+                        border-radius:10px;
+                        color:#198754;
+                        font-weight:600;
+                    ">
+                        <i class="fas fa-circle-check me-2"></i>
+                        Inducción SST confirmada
+                    </div>
+                `,
 
                     icon: "question",
 
@@ -2138,7 +2429,10 @@ $empresa = cargarEmpresa($connection);
 
                     cancelButtonColor: "#6c757d",
 
-                    confirmButtonText: "Sí, guardar",
+                    confirmButtonText: `
+                    <i class="fas fa-save me-2"></i>
+                    Sí, guardar
+                `,
 
                     cancelButtonText: "Cancelar",
 
@@ -2176,9 +2470,6 @@ $empresa = cargarEmpresa($connection);
 
                     /*
                      * Submit nativo.
-                     *
-                     * Evita volver a disparar
-                     * nuestro evento submit.
                      */
 
                     HTMLFormElement.prototype.submit.call(
@@ -2219,34 +2510,191 @@ $empresa = cargarEmpresa($connection);
 
 
             /* ==========================================================
-               MENSAJE DE ERROR DESDE PHP
+               MENSAJES DE ERROR DESDE PHP
             ========================================================== */
 
             <?php if (isset($_SESSION['error'])): ?>
 
-                Swal.fire({
-
-                    icon: "error",
-
-                    title: "¡Error!",
-
-                    text: <?= json_encode(
-                                $_SESSION['error'],
-                                JSON_UNESCAPED_UNICODE
-                            ) ?>,
-
-                    confirmButtonColor: "#dc3545",
-
-                    confirmButtonText: "Aceptar"
-
-                });
+                const errorServidor =
+                    <?= json_encode(
+                        $_SESSION['error'],
+                        JSON_UNESCAPED_UNICODE
+                    ) ?>;
 
                 <?php unset($_SESSION['error']); ?>
 
-            <?php endif; ?>
 
+                /* ======================================================
+                   INDUCCIÓN SST OBLIGATORIA
+                ====================================================== */
+
+                if (
+                    errorServidor === "induccion_obligatoria"
+                ) {
+
+                    Swal.fire({
+
+                        icon: "warning",
+
+                        title: `
+                        <span style="
+                            color:#dc3545;
+                            font-weight:700;
+                        ">
+                            Inducción SST obligatoria
+                        </span>
+                    `,
+
+                        html: `
+
+                        <div style="
+                            text-align:center;
+                            padding:5px 10px;
+                        ">
+
+                            <div style="
+                                width:85px;
+                                height:85px;
+                                margin:0 auto 20px;
+                                border-radius:50%;
+                                background:#fff3cd;
+                                border:3px solid #ffc107;
+                                display:flex;
+                                align-items:center;
+                                justify-content:center;
+                                color:#dc3545;
+                                font-size:40px;
+                                box-shadow:
+                                    0 6px 18px rgba(0,0,0,.12);
+                            ">
+                                <i class="fas fa-hard-hat"></i>
+                            </div>
+
+                            <h4 style="
+                                font-weight:700;
+                                color:#343a40;
+                                margin-bottom:15px;
+                            ">
+                                No se puede registrar el ingreso
+                            </h4>
+
+                            <p style="
+                                font-size:17px;
+                                line-height:1.6;
+                                color:#495057;
+                            ">
+                                La
+                                <strong>
+                                    Inducción de Seguridad y Salud
+                                    en el Trabajo (SST)
+                                </strong>
+                                es
+                                <span style="
+                                    color:#dc3545;
+                                    font-weight:700;
+                                ">
+                                    obligatoria
+                                </span>
+                                para realizar el registro.
+                            </p>
+
+                            <div style="
+                                background:#fff8e1;
+                                border:1px solid #ffc107;
+                                border-radius:10px;
+                                padding:14px;
+                                margin-top:18px;
+                                text-align:left;
+                            ">
+
+                                <div style="
+                                    color:#856404;
+                                    font-weight:700;
+                                    margin-bottom:5px;
+                                ">
+                                    <i class="fas fa-triangle-exclamation me-2"></i>
+                                    Acción requerida
+                                </div>
+
+                                <div style="
+                                    color:#6c757d;
+                                    font-size:14px;
+                                ">
+                                    Realice la inducción SST y confirme
+                                    su realización en el formulario
+                                    antes de continuar.
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    `,
+
+                        confirmButtonText: `
+                        <i class="fas fa-check me-2"></i>
+                        Entendido
+                    `,
+
+                        confirmButtonColor: "#dc3545",
+
+                        allowOutsideClick: false,
+
+                        allowEscapeKey: false,
+
+                        width: "520px"
+
+                    }).then(function() {
+
+                        const elemento =
+                            document.getElementById(
+                                "induccion_sgsst"
+                            );
+
+                        if (elemento) {
+
+                            elemento.scrollIntoView({
+                                behavior: "smooth",
+                                block: "center"
+                            });
+
+                            setTimeout(function() {
+
+                                elemento.focus();
+
+                            }, 500);
+
+                        }
+
+                    });
+
+                } else {
+
+                    /* ==================================================
+                       ERROR GENERAL
+                    ================================================== */
+
+                    Swal.fire({
+
+                        icon: "error",
+
+                        title: "¡Error!",
+
+                        text: errorServidor,
+
+                        confirmButtonColor: "#dc3545",
+
+                        confirmButtonText: "Aceptar"
+
+                    });
+
+                }
+
+            <?php endif; ?>
 
         });
     </script>
+
 </body>
+
 </html>

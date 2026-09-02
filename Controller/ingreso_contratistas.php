@@ -8,7 +8,7 @@ require_once '../Config/database.php';
 function responderError(string $codigo): void
 {
     $_SESSION['error'] = $codigo;
-    header("Location: ../View/registrocontratistas.php");
+    header("Location: ../View/registro_contratistas.php");
     exit;
 }
 

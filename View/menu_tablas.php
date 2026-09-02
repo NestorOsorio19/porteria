@@ -17,51 +17,43 @@ Cada módulo genera automáticamente una tarjeta
 
 $modulos = [
     [
-        "titulo" => "Colaboradores",
+        "titulo" => "Tabla de Colaboradores",
         "subtitulo" => "Formulario",
         "icono" => "fa-house",
         "color" => "gradient-1",
-        "link" => "View/registro_colaboradores.php"
+        "link" => "tabla_colaboradores.php"
     ],
 
     [
-        "titulo" => "Visitantes",
+        "titulo" => " Tabla de Visitantes",
         "subtitulo" => "Formulario",
         "icono" => "fa-person",
         "color" => "gradient-2",
-        "link" => "View/registro_visitantes.php"
+        "link" => "tabla_visitantes.php"
     ],
 
     [
-        "titulo" => "Contratistas",
+        "titulo" => " Tabla de Contratistas",
         "subtitulo" => "Formulario",
         "icono" => "fa-briefcase",
         "color" => "gradient-3",
-        "link" => "View/registro_contratistas.php"
+        "link" => "tabla_contratistas.php"
     ],
 
     [
-        "titulo" => "Vehiculos Externos",
+        "titulo" => " Tabla de Vehiculos Externos",
         "subtitulo" => "Formulario",
         "icono" => "fa-truck",
         "color" => "gradient-4",
-        "link" => "View/registro_vehiculos.php"
+        "link" => "tabla_vehiculos.php"
     ],
 
     [
-        "titulo" => "Vehiculos Internos",
+        "titulo" => " Tabla de Vehiculos Internos",
         "subtitulo" => "Formulario",
         "icono" => "fa-truck-front",
         "color" => "gradient-8",
-        "link" => "View/registro_vehiculos_internos.php"
-    ],
-
-    [
-        "titulo" => "Tabla de Registros",
-        "subtitulo" => "Formulario",
-        "icono" => "fa-table",
-        "color" => "gradient-7",
-        "link" => "View/menu_tablas.php"
+        "link" => "tabla_vehiculos_internos.php"
     ]
 ];
 ?>
