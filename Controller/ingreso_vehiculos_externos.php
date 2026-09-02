@@ -11,7 +11,7 @@ require_once '../Config/database.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
-    header('Location: ../View/registro_vehiculos.php');
+    header('Location: ../View/registro_vehiculos_externos.php');
     exit;
 }
 
@@ -362,7 +362,7 @@ try {
     ========================================================== */
 
     header(
-        'Location: ../View/registro_vehiculos.php?guardado=1'
+        'Location: ../View/registro_vehiculos_externos.php?guardado=1'
     );
 
     exit;
@@ -383,7 +383,7 @@ catch (PDOException $e) {
     );
 
     header(
-        "Location: ../View/registro_vehiculos.php?error={$mensaje}"
+        "Location: ../View/registro_vehiculos_externos.php?error={$mensaje}"
     );
 
     exit;
@@ -402,7 +402,7 @@ catch (Exception $e) {
     );
 
     header(
-        "Location: ../View/registro_vehiculos.php?error={$mensaje}"
+        "Location: ../View/registro_vehiculos_externos.php?error={$mensaje}"
     );
 
     exit;

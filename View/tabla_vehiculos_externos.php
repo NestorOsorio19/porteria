@@ -1234,7 +1234,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
 
                 <a
-                    href="registro_vehiculos.php"
+                    href="registro_vehiculos_externos.php"
                     class="btn-nuevo"
                 >
 

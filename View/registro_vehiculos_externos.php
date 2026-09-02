@@ -585,7 +585,7 @@ $EPS = cargarEPS($connection);
                     </a>
                 </li>
                 <li class="breadcrumb-item active">
-                    Vehiculos
+                    Vehiculos Externos
                 </li>
             </ol>
         </nav>
@@ -609,7 +609,7 @@ $EPS = cargarEPS($connection);
 
             </div>
 
-            <form id="formulario_vehiculos" action="../Controller/ingreso_vehiculos.php" method="POST">
+            <form id="formulario_vehiculos" action="../Controller/ingreso_vehiculos_externos.php" method="POST">
 
                 <!-- MINI CARDS -->
                 <div class="row g-4 mb-4 justify-content-center">
