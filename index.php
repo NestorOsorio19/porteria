@@ -1,69 +1,42 @@
 <?php
+
 session_start();
 
-/* ======================================================
-CONFIGURACIÓN DE SEGURIDAD Y SESIÓN
-====================================================== */
-
-// Evitar caché del navegador
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Pragma: no-cache");
 header("Expires: 0");
 
-/* ======================================================
-MÓDULOS DEL SISTEMA
-Cada módulo genera automáticamente una tarjeta
-====================================================== */
+// Si ya inició sesión
+if (
+    isset($_SESSION['usuario']) &&
+    isset($_SESSION['role'])
+) {
 
-$modulos = [
-    [
-        "titulo" => "Colaboradores",
-        "subtitulo" => "Formulario",
-        "icono" => "fa-house",
-        "color" => "gradient-1",
-        "link" => "View/registro_colaboradores.php"
-    ],
+    $role = strtolower(trim($_SESSION['role']));
 
-    [
-        "titulo" => "Visitantes",
-        "subtitulo" => "Formulario",
-        "icono" => "fa-person",
-        "color" => "gradient-2",
-        "link" => "View/registro_visitantes.php"
-    ],
+    switch ($role) {
 
-    [
-        "titulo" => "Contratistas",
-        "subtitulo" => "Formulario",
-        "icono" => "fa-briefcase",
-        "color" => "gradient-3",
-        "link" => "View/registro_contratistas.php"
-    ],
+        case 'super':
+            header("Location: View/menu_administrador.php");
+            exit;
 
-    [
-        "titulo" => "Vehiculos Externos",
-        "subtitulo" => "Formulario",
-        "icono" => "fa-truck",
-        "color" => "gradient-4",
-        "link" => "View/registro_vehiculos_externos.php"
-    ],
+        case 'porteria1':
+            header("Location: View/menu_operario.php");
+            exit;
 
-    [
-        "titulo" => "Vehiculos Internos",
-        "subtitulo" => "Formulario",
-        "icono" => "fa-truck-front",
-        "color" => "gradient-8",
-        "link" => "View/registro_vehiculos_internos.php"
-    ],
+        case 'porteria2':
+            header("Location: View/menu_consulta.php");
+            exit;
 
-    [
-        "titulo" => "Tabla de Registros",
-        "subtitulo" => "Formulario",
-        "icono" => "fa-table",
-        "color" => "gradient-7",
-        "link" => "View/menu_tablas.php"
-    ]
-];
+        default:
+
+            $_SESSION = [];
+            session_destroy();
+
+            break;
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -72,252 +45,354 @@ $modulos = [
 <head>
 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Panel Principal</title>
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1">
+
+    <title>Inicio de Sesión</title>
 
     <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css">
 
-    <!-- FontAwesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-    <!-- ESTILOS PERSONALIZADOS -->
+    <!-- SweetAlert2 -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+    </script>
+
     <style>
         :root {
-            --bg: #edf4ff;
-            --card: #f8fbff;
-            --text: #1e293b;
-            --muted: #64748b;
+
+            --primary: #0d6efd;
+            --danger: #dc3545;
+            --dark: #212529;
+
         }
+
+        /* =====================================================
+           GENERAL
+        ===================================================== */
 
         body {
+
             min-height: 100vh;
-            background: linear-gradient(135deg,
-                    #dbeafe,
-                    #eef6ff,
-                    #ffffff);
-            font-family: 'Segoe UI', sans-serif;
+
+            background:
+                linear-gradient(135deg,
+                    #eef2f7,
+                    #d9e7ff);
+
+            font-family:
+                'Segoe UI',
+                sans-serif;
+
+            display: flex;
+            flex-direction: column;
+
         }
 
-        /* NAVBAR */
 
-        .clay-navbar {
-            margin: 20px;
-            padding: 15px 25px;
-            border-radius: 25px;
-            background: rgba(255, 255, 255, .75);
-            backdrop-filter: blur(15px);
+        /* =====================================================
+           NAVBAR
+        ===================================================== */
+
+        .navbar {
 
             box-shadow:
-                12px 12px 30px rgba(0, 0, 0, .08),
-                -12px -12px 30px rgba(255, 255, 255, .95);
+                0 4px 12px rgba(0, 0, 0, .12);
+
         }
+
 
         .navbar-brand {
+
             font-weight: 700;
-            color: #1e293b;
-        }
-
-        .user-info {
-            color: #334155;
-            font-weight: 500;
-        }
-
-        /* TITULO */
-
-        .welcome-box {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
-        .welcome-box h1 {
-            color: var(--text);
-            font-size: 2.7rem;
-            font-weight: 800;
-        }
-
-        .welcome-box p {
-            color: var(--muted);
             font-size: 1.1rem;
+
         }
 
-        /* INFO */
 
-        .info-card {
-            border: none;
-            border-radius: 30px;
-            background: var(--card);
+        /* =====================================================
+           CONTENEDOR
+        ===================================================== */
 
-            box-shadow:
-                15px 15px 40px rgba(0, 0, 0, .08),
-                -15px -15px 40px rgba(255, 255, 255, .95);
+        .login-container {
 
-            padding: 25px;
-            text-align: center;
+            flex: 1;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding:
+                30px 15px;
+
         }
 
-        .info-card h3 {
-            color: #2563eb;
-            font-weight: 800;
-        }
 
-        .info-card p {
-            margin-bottom: 0;
-            color: #64748b;
-        }
+        /* =====================================================
+           TARJETA
+        ===================================================== */
 
-        /* MODULOS */
+        .login-card {
 
-        .info-card {
-            height: 100%;
-            padding: 20px;
-            border-radius: 12px;
+            width: 100%;
+
+            max-width: 430px;
+
             background: #fff;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            text-align: center;
-        }
 
-        .info-card h3 {
-            color: #2563eb;
-            font-weight: 800;
-        }
+            border-radius: 25px;
 
-        .info-card p {
-            margin-bottom: 0;
-            color: #64748b;
-        }
-
-        .menu-card {
-            border: none;
-            border-radius: 30px;
-            background: #f8fbff;
+            padding: 40px;
 
             box-shadow:
-                15px 15px 40px rgba(0, 0, 0, .08),
-                -15px -15px 40px rgba(255, 255, 255, .95);
+                0 15px 40px rgba(0, 0, 0, .12);
 
-            transition: all .35s ease;
+            transition:
+                all .3s ease;
+
         }
 
-        .menu-card:hover {
-            transform: translateY(-10px);
+
+        .login-card:hover {
+
+            transform:
+                translateY(-3px);
 
             box-shadow:
-                25px 25px 50px rgba(0, 0, 0, .12),
-                -15px -15px 40px rgba(255, 255, 255, 1);
+                0 20px 45px rgba(0, 0, 0, .16);
+
         }
 
-        .card-body {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
+
+        /* =====================================================
+           ICONO
+        ===================================================== */
 
         .icon-circle {
+
             width: 100px;
+
             height: 100px;
 
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            border-radius: 50%;
 
-            margin: auto;
-
-            border-radius: 28px;
+            background:
+                var(--danger);
 
             color: white;
-            font-size: 38px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            margin: 0 auto 25px;
+
+            font-size: 40px;
 
             box-shadow:
-                0 15px 25px rgba(0, 0, 0, .15);
+                0 10px 25px rgba(220, 53, 69, .25);
+
         }
 
-        .card-title {
-            font-weight: 800;
-            margin-top: 20px;
-            color: #1e293b;
-        }
 
-        .card-text {
-            color: #64748b;
-        }
+        /* =====================================================
+           TITULO
+        ===================================================== */
 
-        /* GRADIENTES */
+        .login-title {
 
-        .gradient-1 {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-        }
+            text-align: center;
 
-        .gradient-2 {
-            background: linear-gradient(135deg, #ff7e5f, #feb47b);
-        }
-
-        .gradient-3 {
-            background: linear-gradient(135deg, #00c6ff, #0072ff);
-        }
-
-        .gradient-4 {
-            background: linear-gradient(135deg, #ff512f, #dd2476);
-        }
-
-        .gradient-5 {
-            background: linear-gradient(135deg, #00c6ff, #0072ff);
-        }
-
-        .gradient-6 {
-            background: linear-gradient(135deg, #f7971e, #ffd200);
-        }
-
-        .gradient-7 {
-            background: linear-gradient(135deg, #a18cd1, #fbc2eb);
-        }
-
-        .gradient-8 {
-            background: linear-gradient(135deg, #11998e, #38ef7d);
-        }
-
-        .gradient-9 {
-            background: linear-gradient(135deg, #fc466b, #3f5efb);
-        }
-
-        /* BOTONES */
-
-        .btn-clay {
-            border: none;
-            border-radius: 18px;
-            padding: 12px 28px;
-
-            color: white !important;
             font-weight: 700;
 
+            color: #2c3e50;
+
+            margin-bottom: 8px;
+
+        }
+
+
+        .login-subtitle {
+
+            text-align: center;
+
+            color: #6c757d;
+
+            margin-bottom: 30px;
+
+        }
+
+
+        /* =====================================================
+           LABEL
+        ===================================================== */
+
+        .form-label {
+
+            font-weight: 600;
+
+            margin-bottom: 8px;
+
+        }
+
+
+        /* =====================================================
+           INPUTS
+        ===================================================== */
+
+        .form-control {
+
+            min-height: 50px;
+
+            border-radius: 12px;
+
+            border:
+                1px solid #dee2e6;
+
+            padding:
+                12px 15px;
+
+            transition:
+                .2s;
+
+        }
+
+
+        .form-control:focus {
+
+            border-color:
+                var(--danger);
+
             box-shadow:
-                0 10px 20px rgba(0, 0, 0, .15);
+                0 0 0 .15rem rgba(220, 53, 69, .15);
 
-            transition: .3s;
         }
 
-        .btn-clay:hover {
-            transform: translateY(-3px);
+
+        /* =====================================================
+           INPUT CON ICONO
+        ===================================================== */
+
+        .input-group-text {
+
+            background: #f8f9fa;
+
+            border:
+                1px solid #dee2e6;
+
+            border-radius:
+                12px 0 0 12px;
+
         }
 
-        .logout-btn {
-            border-radius: 15px;
+
+        .input-group .form-control {
+
+            border-radius:
+                0 12px 12px 0;
+
         }
 
-        @media(max-width:768px) {
 
-            .welcome-box h1 {
-                font-size: 2rem;
+        /* =====================================================
+           BOTON
+        ===================================================== */
+
+        .btn-login {
+
+            width: 100%;
+
+            min-height: 52px;
+
+            border-radius: 30px;
+
+            font-weight: 600;
+
+            font-size: 1rem;
+
+            background:
+                var(--danger);
+
+            border:
+                none;
+
+            transition:
+                all .2s ease;
+
+        }
+
+
+        .btn-login:hover {
+
+            background:
+                #bb2d3b;
+
+            transform:
+                translateY(-1px);
+
+        }
+
+
+        .btn-login:disabled {
+
+            opacity: .75;
+
+            transform: none;
+
+        }
+
+
+        /* =====================================================
+           PIE
+        ===================================================== */
+
+        .login-footer {
+
+            text-align: center;
+
+            color: #6c757d;
+
+            font-size: .85rem;
+
+            margin-top: 25px;
+
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 576px) {
+
+            .login-card {
+
+                padding: 30px 22px;
+
             }
 
             .icon-circle {
-                width: 80px;
-                height: 80px;
-                font-size: 30px;
+
+                width: 85px;
+
+                height: 85px;
+
+                font-size: 32px;
+
             }
+
         }
     </style>
 
@@ -325,97 +400,409 @@ $modulos = [
 
 <body>
 
-    <!-- =========================================
-        NAVBAR SUPERIOR
-    ========================================== -->
-    <nav class="clay-navbar">
+    <!-- ==========================================================
+    NAVBAR
+    =========================================================== -->
 
-        <div class="d-flex justify-content-between align-items-center">
+    <nav class="navbar navbar-dark bg-dark py-3">
 
-            <div class="navbar-brand">
-                <i class="fas fa-layer-group me-2"></i>
-                Plataforma Ingresos - Planta Lebrija
-            </div>
+        <div class="container">
 
-            <div>
+            <span class="navbar-brand">
 
-                <span class="user-info me-3">
-                    Bienvenido
-                </span>
+                <i class="fas fa-boxes-stacked me-2"></i>
 
-            </div>
+                Sistema de Ingreso Porteria
+
+            </span>
 
         </div>
 
     </nav>
 
-    <!-- =========================================
-        CONTENIDO PRINCIPAL
-    ========================================== -->
-    <div class="container py-5">
+    <!-- ==========================================================
+    LOGIN
+    =========================================================== -->
 
-        <!-- BIENVENIDA -->
-        <div class="welcome-box">
+    <main class="login-container">
 
-            <h1>Menu Principal</h1>
+        <div class="login-card">
 
-            <p>
-                Ingreso Modulos de Registro
-            </p>
+            <!-- ICONO -->
 
-        </div>
+            <div class="icon-circle">
 
-        <!-- GRID DE MÓDULOS -->
-
-        <div class="row g-4">
-
-            <!-- GRID DE TARJETAS -->
-            <div class="row g-4">
-
-                <?php foreach ($modulos as $modulo): ?>
-
-                    <div class="col-12 col-sm-6 col-lg-4">
-
-                        <div class="card menu-card shadow-sm h-100">
-
-                            <div class="card-body text-center p-4">
-
-                                <!-- ICONO -->
-
-                                <div class="icon-circle <?= $modulo['color'] ?>">
-                                    <i class="fas <?= $modulo['icono'] ?>"></i>
-                                </div>
-
-                                <!-- TITULO -->
-                                <h5 class="card-title">
-                                    <?= strtoupper($modulo['titulo']) ?>
-                                </h5>
-
-                                <!-- SUBTITULO -->
-                                <p class="text-muted">
-                                    <?= $modulo['subtitulo'] ?>
-                                </p>
-
-                                <!-- BOTÓN -->
-                                <a href="<?= $modulo['link'] ?>"
-                                    class="btn btn-clay <?= $modulo['color'] ?>">
-                                    Abrir módulo
-                                </a>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                <?php endforeach; ?>
+                <i class="fas fa-user-lock"></i>
 
             </div>
 
+            <!-- TITULO -->
+
+            <h1 class="login-title">
+
+                Inicio de Sesión
+
+            </h1>
+
+            <p class="login-subtitle">
+
+                Acceso al sistema de ingreso portería
+
+            </p>
+
+
+            <!-- ==================================================
+            FORMULARIO
+            =================================================== -->
+
+            <form
+                id="loginForm"
+                autocomplete="off">
+
+
+                <!-- USUARIO -->
+
+                <div class="mb-4">
+
+                    <label
+                        for="usuario"
+                        class="form-label">
+
+                        Usuario
+
+                    </label>
+
+                    <div class="input-group">
+
+                        <span class="input-group-text">
+
+                            <i class="fas fa-user"></i>
+
+                        </span>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="usuario"
+                            name="username"
+                            placeholder="Ingrese su usuario"
+                            autocomplete="username"
+                            required>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CONTRASEÑA -->
+
+                <div class="mb-4">
+
+                    <label
+                        for="password"
+                        class="form-label">
+
+                        Contraseña
+
+                    </label>
+
+                    <div class="input-group">
+
+                        <span class="input-group-text">
+
+                            <i class="fas fa-lock"></i>
+
+                        </span>
+
+                        <input
+                            type="password"
+                            class="form-control"
+                            id="password"
+                            name="password"
+                            placeholder="Ingrese su contraseña"
+                            autocomplete="current-password"
+                            required>
+
+                        <button
+                            type="button"
+                            class="btn btn-outline-secondary"
+                            id="mostrarPassword">
+
+                            <i class="fas fa-eye"></i>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- BOTON -->
+
+                <button
+                    type="submit"
+                    class="btn btn-danger btn-login"
+                    id="btnLogin">
+
+                    <i class="fas fa-right-to-bracket me-2"></i>
+
+                    Ingresar
+
+                </button>
+
+
+            </form>
+
+
+            <!-- PIE -->
+
+            <div class="login-footer">
+
+                <i class="fas fa-shield-halved me-1"></i>
+
+                Acceso autorizado al sistema
+
+            </div>
+
+
         </div>
 
-        <!-- Bootstrap JS -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    </main>
+
+
+    <!-- ==========================================================
+     JAVASCRIPT
+=========================================================== -->
+
+    <script>
+        document.addEventListener(
+            "DOMContentLoaded",
+            function() {
+
+
+                const form =
+                    document.getElementById("loginForm");
+
+                const usuario =
+                    document.getElementById("usuario");
+
+                const password =
+                    document.getElementById("password");
+
+                const boton =
+                    document.getElementById("btnLogin");
+
+                const mostrarPassword =
+                    document.getElementById("mostrarPassword");
+
+
+                /* =====================================================
+                   MOSTRAR / OCULTAR CONTRASEÑA
+                ===================================================== */
+
+                mostrarPassword.addEventListener(
+                    "click",
+                    function() {
+
+                        if (
+                            password.type === "password"
+                        ) {
+
+                            password.type =
+                                "text";
+
+                            this.innerHTML =
+                                '<i class="fas fa-eye-slash"></i>';
+
+                        } else {
+
+                            password.type =
+                                "password";
+
+                            this.innerHTML =
+                                '<i class="fas fa-eye"></i>';
+
+                        }
+
+                    }
+                );
+
+
+                /* =====================================================
+                   LOGIN
+                ===================================================== */
+
+                form.addEventListener(
+                    "submit",
+                    async function(event) {
+
+                        event.preventDefault();
+
+
+                        const user =
+                            usuario.value.trim();
+
+                        const pass =
+                            password.value;
+
+
+                        if (!user || !pass) {
+
+                            Swal.fire({
+
+                                icon: "warning",
+
+                                title: "Datos incompletos",
+
+                                text: "Ingrese usuario y contraseña.",
+
+                                confirmButtonColor: "#dc3545"
+
+                            });
+
+                            return;
+
+                        }
+
+
+                        /* =============================================
+                           ESTADO DEL BOTON
+                        ============================================= */
+
+                        boton.disabled = true;
+
+                        boton.innerHTML =
+                            '<span class="spinner-border spinner-border-sm me-2"></span>' +
+                            'Verificando...';
+
+
+                        try {
+
+
+                            /* =========================================
+                               PETICION AL PHP
+                            ========================================= */
+
+                            const response =
+                                await fetch(
+                                    "Controller/login.php", {
+                                        method: "POST",
+
+                                        headers: {
+                                            "Content-Type": "application/json"
+                                        },
+
+                                        body: JSON.stringify({
+
+                                            username: user,
+
+                                            password: pass
+
+                                        })
+                                    }
+                                );
+
+                            /* =========================================
+                               COMPROBAR RESPUESTA HTTP
+                            ========================================= */
+
+                            if (!response.ok) {
+
+                                throw new Error(
+                                    "HTTP " +
+                                    response.status
+                                );
+
+                            }
+
+
+                            /* =========================================
+                               LEER JSON
+                            ========================================= */
+
+                            const texto = await response.text();
+
+                            console.log("RESPUESTA DEL SERVIDOR:");
+                            console.log(texto);
+
+                            const data = JSON.parse(texto);
+
+
+                            console.log(
+                                "Respuesta login:",
+                                data
+                            );
+
+                            if (data.success === true) {
+
+                                window.location.href = data.redirect;
+
+                                return;
+                            }
+
+                            /* =========================================
+                            CREDENCIALES INCORRECTAS
+                            ========================================= */
+
+                            Swal.fire({
+
+                                icon: "error",
+
+                                title: "Acceso denegado",
+
+                                text: data.message ||
+                                    "Usuario o contraseña incorrectos.",
+
+                                confirmButtonColor: "#dc3545",
+
+                                confirmButtonText: "Aceptar"
+
+                            });
+
+
+                        } catch (error) {
+
+
+                            console.error(
+                                "Error login:",
+                                error
+                            );
+
+
+                            Swal.fire({
+
+                                icon: "error",
+
+                                title: "Error de conexión",
+
+                                text: "No fue posible comunicarse con el servidor.",
+
+                                confirmButtonColor: "#dc3545",
+
+                                confirmButtonText: "Aceptar"
+
+                            });
+
+
+                        } finally {
+
+
+                            boton.disabled =
+                                false;
+
+                            boton.innerHTML =
+                                '<i class="fas fa-right-to-bracket me-2"></i>' +
+                                'Ingresar';
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+    </script>
+
 
 </body>
 

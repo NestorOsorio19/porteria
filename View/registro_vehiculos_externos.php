@@ -1,5 +1,7 @@
 <?php
 
+session_start();
+
 /* ==========================================================
 EVITAR CACHE DEL NAVEGADOR
 ========================================================== */
@@ -91,6 +93,8 @@ VALORES INICIALES
 $fecha_inicial = date('Y-m-d');
 $ARL = cargarARL($connection);
 $EPS = cargarEPS($connection);
+
+$realizo = $_SESSION['nombre'] ?? $_SESSION['usuario'] ?? '';
 
 ?>
 
@@ -944,21 +948,28 @@ $EPS = cargarEPS($connection);
                                 Firmas
                             </div>
 
-                            <div class="row g-3 mb-4">
+                            <div class="col-md-3">
+                                <label for="realizo" class="form-label">
+                                    Usuario que Registra:
+                                </label>
 
-                                <div class="col-12 col-md-6">
-                                    <label for="elaborado" class="form-label">Realizó:</label>
+                                <div class="input-group">
+
+                                    <span class="input-group-text">
+                                        <i class="fas fa-user-shield"></i>
+                                    </span>
+
                                     <input
                                         type="text"
-                                        name="registro"
-                                        id="registro"
-                                        class="form-control"
-                                        placeholder="Nombre de quien realiza el registro"
-                                        maxlength="50"
-                                        required>
-                                </div>
+                                        name="realizo"
+                                        id="realizo"
+                                        class="form-control bg-light"
+                                        value="<?= htmlspecialchars($realizo, ENT_QUOTES, 'UTF-8') ?>"
+                                        readonly>
 
+                                </div>
                             </div>
+
                         </div>
 
                     </div>

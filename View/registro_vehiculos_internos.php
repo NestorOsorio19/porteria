@@ -1,5 +1,7 @@
 <?php
 
+session_start();
+
 /* ==========================================================
 EVITAR CACHE DEL NAVEGADOR
 ========================================================== */
@@ -27,7 +29,6 @@ $error = htmlspecialchars(
     'UTF-8'
 );
 
-
 /* ==========================================================
 CREAR CONEXIÓN PDO
 ========================================================== */
@@ -50,8 +51,17 @@ function cargarARL(PDO $connection): string
 
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
-        $id = htmlspecialchars($row['id_arl'], ENT_QUOTES, 'UTF-8');
-        $nombre = htmlspecialchars($row['nom_arl'], ENT_QUOTES, 'UTF-8');
+        $id = htmlspecialchars(
+            $row['id_arl'],
+            ENT_QUOTES,
+            'UTF-8'
+        );
+
+        $nombre = htmlspecialchars(
+            $row['nom_arl'],
+            ENT_QUOTES,
+            'UTF-8'
+        );
 
         $options .= "<option value=\"$id\">$nombre</option>";
     }
@@ -76,8 +86,17 @@ function cargarEPS(PDO $connection): string
 
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
-        $id = htmlspecialchars($row['id_eps'], ENT_QUOTES, 'UTF-8');
-        $nombre = htmlspecialchars($row['nom_eps'], ENT_QUOTES, 'UTF-8');
+        $id = htmlspecialchars(
+            $row['id_eps'],
+            ENT_QUOTES,
+            'UTF-8'
+        );
+
+        $nombre = htmlspecialchars(
+            $row['nom_eps'],
+            ENT_QUOTES,
+            'UTF-8'
+        );
 
         $options .= "<option value=\"$id\">$nombre</option>";
     }
@@ -89,32 +108,48 @@ function cargarEPS(PDO $connection): string
 VALORES INICIALES
 ========================================================== */
 $fecha_inicial = date('Y-m-d');
+
 $ARL = cargarARL($connection);
+
 $EPS = cargarEPS($connection);
+
+$realizo = $_SESSION['nombre'] ?? $_SESSION['usuario'] ?? '';
 
 ?>
 
 <!DOCTYPE html>
+
 <html lang="es">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1">
 
     <title>Registro Vehiculos Internos</title>
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css">
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css">
 
     <!-- Font Awesome -->
-    <link rel="stylesheet"
+    <link
+        rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script
+        src="https://code.jquery.com/jquery-3.7.1.min.js">
+    </script>
 
     <!-- SweetAlert2 -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+    </script>
 
     <style>
         :root {
@@ -125,12 +160,16 @@ $EPS = cargarEPS($connection);
         }
 
         /* ======================================
-    GENERAL
-    ====================================== */
+        GENERAL
+        ====================================== */
 
         body {
-            background: linear-gradient(135deg, #eef2f7, #d9e7ff);
+            background: linear-gradient(135deg,
+                    #eef2f7,
+                    #d9e7ff);
+
             min-height: 100vh;
+
             font-family: 'Segoe UI', sans-serif;
         }
 
@@ -140,11 +179,12 @@ $EPS = cargarEPS($connection);
         }
 
         /* ======================================
-    NAVBAR
-    ====================================== */
+        NAVBAR
+        ====================================== */
 
         .navbar {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
+            box-shadow:
+                0 4px 12px rgba(0, 0, 0, .1);
         }
 
         .navbar-brand {
@@ -153,8 +193,8 @@ $EPS = cargarEPS($connection);
         }
 
         /* ======================================
-    BREADCRUMB
-    ====================================== */
+        BREADCRUMB
+        ====================================== */
 
         .breadcrumb {
             border-radius: 15px;
@@ -172,8 +212,8 @@ $EPS = cargarEPS($connection);
         }
 
         /* ======================================
-    HEADER PRINCIPAL
-    ====================================== */
+        HEADER PRINCIPAL
+        ====================================== */
 
         .page-header {
             text-align: center;
@@ -197,12 +237,17 @@ $EPS = cargarEPS($connection);
             border-radius: 50%;
             background: var(--danger);
             color: #fff;
+
             display: flex;
             align-items: center;
             justify-content: center;
+
             margin: auto;
+
             font-size: 40px;
-            box-shadow: 0 10px 25px rgba(220, 53, 69, .25);
+
+            box-shadow:
+                0 10px 25px rgba(220, 53, 69, .25);
         }
 
         .form-container {
@@ -210,31 +255,35 @@ $EPS = cargarEPS($connection);
         }
 
         /* ======================================
-       MINI TARJETAS
-    ====================================== */
+        MINI TARJETAS
+        ====================================== */
 
         .mini-card {
             background: #fff;
+
             border-radius: 20px;
+
             padding: 20px;
+
             text-align: center;
+
             min-height: 110px;
 
             display: flex;
             flex-direction: column;
             justify-content: center;
 
-            box-shadow: 0 6px 18px rgba(0, 0, 0, .08);
+            box-shadow:
+                0 6px 18px rgba(0, 0, 0, .08);
+
             transition: all .3s ease;
         }
 
         .mini-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 28px rgba(0, 0, 0, .12);
-        }
-
-        .mini-card:hover {
             transform: translateY(-3px);
+
+            box-shadow:
+                0 12px 28px rgba(0, 0, 0, .12);
         }
 
         .mini-card h6 {
@@ -248,44 +297,66 @@ $EPS = cargarEPS($connection);
         }
 
         /* ======================================
-    SECCIONES DEL FORMULARIO
-    ====================================== */
+        SECCIONES DEL FORMULARIO
+        ====================================== */
 
         .form-section {
             background: #fff;
+
             border-radius: 20px;
+
             padding: 30px;
+
             margin-bottom: 25px;
+
             border: none;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, .08);
+
+            box-shadow:
+                0 10px 25px rgba(0, 0, 0, .08);
+
             transition: all .3s ease;
         }
 
         .form-section:hover {
             transform: translateY(-2px);
+
+            box-shadow:
+                0 12px 30px rgba(0, 0, 0, .10);
         }
 
         .section-title {
             display: flex;
             align-items: center;
+
             gap: 10px;
+
             font-size: 1.1rem;
+
             font-weight: 700;
+
             color: var(--primary);
+
             margin-bottom: 25px;
+
             padding-bottom: 12px;
-            border-bottom: 2px solid var(--border-light);
+
+            border-bottom:
+                2px solid var(--border-light);
         }
 
         /* ======================================
-    INPUTS
-    ====================================== */
+        INPUTS
+        ====================================== */
 
         .form-label {
             min-height: 48px;
+
             display: flex;
+
             align-items: flex-end;
+
             font-weight: 600;
+
             margin-bottom: 8px;
         }
 
@@ -294,13 +365,9 @@ $EPS = cargarEPS($connection);
             min-height: 48px;
         }
 
-        .form-section:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, .10);
-        }
-
         #inputsEquipoElectronico .mini-card {
-            border-left: 4px solid var(--danger);
+            border-left:
+                4px solid var(--danger);
         }
 
         #inputsEquipoElectronico {
@@ -310,29 +377,37 @@ $EPS = cargarEPS($connection);
         .form-control,
         .form-select {
             border-radius: 12px;
-            border: 1px solid #dee2e6;
+
+            border:
+                1px solid #dee2e6;
+
             padding: 12px;
+
             transition: .2s;
         }
 
         .form-control:focus,
         .form-select:focus {
             border-color: var(--danger);
-            box-shadow: 0 0 0 .15rem rgba(220, 53, 69, .15);
+
+            box-shadow:
+                0 0 0 .15rem rgba(220, 53, 69, .15);
         }
 
         /* ======================================
-    EVIDENCIAS
-    ====================================== */
+        EVIDENCIAS
+        ====================================== */
 
         #previewContainer img {
             border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, .08);
+
+            box-shadow:
+                0 5px 15px rgba(0, 0, 0, .08);
         }
 
         /* ======================================
-    BOTONES
-    ====================================== */
+        BOTONES
+        ====================================== */
 
         .btn {
             border-radius: 12px;
@@ -341,29 +416,41 @@ $EPS = cargarEPS($connection);
 
         .btn-custom {
             border-radius: 30px;
+
             padding: 12px 25px;
+
             font-weight: 600;
         }
 
         /* ======================================
-    BARRA DE ACCIONES
-    ====================================== */
+        BARRA DE ACCIONES
+        ====================================== */
 
         .barra-acciones {
             position: sticky;
+
             bottom: 15px;
-            background: rgba(255, 255, 255, .97);
+
+            background:
+                rgba(255, 255, 255, .97);
+
             backdrop-filter: blur(10px);
+
             border-radius: 20px;
+
             padding: 18px;
+
             margin-top: 30px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, .10);
+
+            box-shadow:
+                0 10px 25px rgba(0, 0, 0, .10);
+
             z-index: 999;
         }
 
         /* ======================================
-    RESPONSIVE
-    ====================================== */
+        RESPONSIVE
+        ====================================== */
 
         @media (max-width: 768px) {
 
@@ -376,6 +463,7 @@ $EPS = cargarEPS($connection);
                 height: 80px;
                 font-size: 30px;
             }
+
         }
     </style>
 
@@ -383,13 +471,21 @@ $EPS = cargarEPS($connection);
 
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3">
+    <!-- ==================================================
+    NAVBAR
+    =================================================== -->
+
+    <nav
+        class="navbar navbar-expand-lg navbar-dark bg-dark py-3">
 
         <div class="container">
 
             <span class="navbar-brand">
+
                 <i class="fas fa-truck-front me-2"></i>
+
                 Registro Vehiculos Internos
+
             </span>
 
         </div>
@@ -397,37 +493,67 @@ $EPS = cargarEPS($connection);
     </nav>
 
     <!-- ==================================================
-        BREADCRUMB
+    BREADCRUMB
     =================================================== -->
+
     <div class="container mt-3">
 
         <nav aria-label="breadcrumb">
-            <ol class="breadcrumb bg-white p-3 shadow-sm">
+
+            <ol
+                class="breadcrumb bg-white p-3 shadow-sm">
 
                 <li class="breadcrumb-item">
+
                     <a href="../index.php">
+
                         <i class="fas fa-home"></i>
+
                         Menu de Registros
+
                     </a>
+
                 </li>
+
                 <li class="breadcrumb-item active">
+
                     Vehiculos Internos
+
                 </li>
+
             </ol>
+
         </nav>
 
     </div>
 
-    <main class="d-flex justify-content-center min-vh-100 py-4">
-        <div class="container" style="max-width:900px">
+    <!-- ==================================================
+    CONTENIDO PRINCIPAL
+    =================================================== -->
+
+    <main
+        class="d-flex justify-content-center min-vh-100 py-4">
+
+        <div
+            class="container"
+            style="max-width:900px">
+
+            <!-- ==================================================
+            HEADER
+            =================================================== -->
 
             <div class="page-header">
 
-                <div class="icon-circle mb-4">
+                <div
+                    class="icon-circle mb-4">
+
                     <i class="fas fa-truck-front"></i>
+
                 </div>
 
-                <h1>Formulario Registro</h1>
+                <h1>
+                    Formulario Registro
+                </h1>
 
                 <p>
                     Registro de Visitantes, Contratistas y Proveedores con Vehiculo
@@ -435,117 +561,313 @@ $EPS = cargarEPS($connection);
 
             </div>
 
-            <form id="formulario_vehiculos" action="../Controller/ingreso_vehiculo_internos.php" method="POST">
+            <!-- ==================================================
+            FORMULARIO
+            =================================================== -->
 
-                <!-- MINI CARDS -->
-                <div class="row g-4 mb-4 justify-content-center">
+            <form
+                id="formulario_vehiculos"
+                action="../Controller/ingreso_vehiculo_internos.php"
+                method="POST">
+
+                <!-- ==================================================
+                MINI CARDS
+                =================================================== -->
+
+                <div
+                    class="row g-4 mb-4 justify-content-center">
 
                     <div class="col-md-4">
+
                         <div class="mini-card">
-                            <h6>Formulario</h6>
-                            <strong>PERSONAL CON VEHICULO</strong>
+
+                            <h6>
+                                Formulario
+                            </h6>
+
+                            <strong>
+                                PERSONAL CON VEHICULO
+                            </strong>
+
                         </div>
+
                     </div>
 
                     <div class="col-md-4">
+
                         <div class="mini-card">
-                            <h6>Fecha Sistema</h6>
-                            <strong><?= date('d/m/Y') ?></strong>
+
+                            <h6>
+                                Fecha Sistema
+                            </h6>
+
+                            <strong>
+                                <?= date('d/m/Y') ?>
+                            </strong>
+
                         </div>
+
                     </div>
 
                 </div>
 
-                <!-- DATOS GENERALES -->
+                <!-- ==================================================
+                DATOS GENERALES
+                =================================================== -->
+
                 <div class="form-section">
 
                     <div class="section-title">
-                        <i class="fa-solid fa-circle-info"></i>
+
+                        <i
+                            class="fa-solid fa-circle-info">
+                        </i>
+
                         Datos Generales
+
                     </div>
 
                     <div class="row g-3">
 
+                        <!-- FECHA -->
+
                         <div class="col-md-3">
-                            <label for="fecha" class="form-label">Fecha</label>
+
+                            <label
+                                for="fecha"
+                                class="form-label">
+
+                                Fecha
+
+                            </label>
+
                             <input
                                 type="date"
                                 name="fecha"
                                 id="fecha"
                                 class="form-control"
-                                value="<?= htmlspecialchars($fecha_inicial, ENT_QUOTES, 'UTF-8') ?>"
-                                max="<?= htmlspecialchars($fecha_inicial, ENT_QUOTES, 'UTF-8') ?>"
+                                value="<?= htmlspecialchars(
+                                            $fecha_inicial,
+                                            ENT_QUOTES,
+                                            'UTF-8'
+                                        ) ?>"
+                                max="<?= htmlspecialchars(
+                                            $fecha_inicial,
+                                            ENT_QUOTES,
+                                            'UTF-8'
+                                        ) ?>"
                                 required>
+
                         </div>
 
-                        <div class="col-12 col-md-3">
-                            <label for="cedula" class="form-label">Cedula:</label>
+                        <!-- CEDULA -->
 
-                            <input type="text"
+                        <div class="col-12 col-md-3">
+
+                            <label
+                                for="cedula"
+                                class="form-label">
+
+                                Cedula:
+
+                            </label>
+
+                            <input
+                                type="text"
                                 name="cedula"
                                 id="cedula"
                                 class="form-control"
                                 required>
 
-                            <small id="mensajeCedula"></small>
+                            <small
+                                id="mensajeCedula">
+                            </small>
+
                         </div>
 
+                        <!-- NOMBRE -->
+
                         <div class="col-12 col-md-3">
-                            <label for="nombre" class="form-label">Nombre:</label>
-                            <input type="text" name="nombre" id="nombre" class="form-control" min="1" required>
+
+                            <label
+                                for="nombre"
+                                class="form-label">
+
+                                Nombre:
+
+                            </label>
+
+                            <input
+                                type="text"
+                                name="nombre"
+                                id="nombre"
+                                class="form-control"
+                                min="1"
+                                required>
+
                         </div>
 
-                        <div class="col-12 col-md-3">
-                            <label for="arl" class="form-label">ARL:</label>
+                        <!-- ARL -->
 
-                            <select name="arl" id="arl" class="form-select" required>
-                                <option value="" disabled selected>
+                        <div class="col-12 col-md-3">
+
+                            <label
+                                for="arl"
+                                class="form-label">
+
+                                ARL:
+
+                            </label>
+
+                            <select
+                                name="arl"
+                                id="arl"
+                                class="form-select"
+                                required>
+
+                                <option
+                                    value=""
+                                    disabled
+                                    selected>
+
                                     Seleccione la ARL...
+
                                 </option>
+
                                 <?= $ARL ?>
+
                             </select>
+
                         </div>
 
-                        <div class="col-12 col-md-3">
-                            <label for="eps" class="form-label">EPS:</label>
+                        <!-- EPS -->
 
-                            <select name="eps" id="eps" class="form-select" required>
-                                <option value="" disabled selected>
+                        <div class="col-12 col-md-3">
+
+                            <label
+                                for="eps"
+                                class="form-label">
+
+                                EPS:
+
+                            </label>
+
+                            <select
+                                name="eps"
+                                id="eps"
+                                class="form-select"
+                                required>
+
+                                <option
+                                    value=""
+                                    disabled
+                                    selected>
+
                                     Seleccione la EPS...
+
                                 </option>
+
                                 <?= $EPS ?>
+
                             </select>
+
                         </div>
 
+                        <!-- TIPO DE VEHICULO -->
+
                         <div class="col-12 col-md-3">
-                            <label for="tipo_vehiculo" class="form-label">Tipo de Vehiculo:</label>
-                            <select name="tipo_vehiculo" id="tipo_vehiculo" class="form-select" required>
-                                <option value="" disabled selected>Seleccione su respuesta</option>
-                                <option value="1">Pollo en Pie</option>
-                                <option value="0">Pollo en Canal</option>
+
+                            <label
+                                for="tipo_vehiculo"
+                                class="form-label">
+
+                                Tipo de Vehiculo:
+
+                            </label>
+
+                            <select
+                                name="tipo_vehiculo"
+                                id="tipo_vehiculo"
+                                class="form-select"
+                                required>
+
+                                <option
+                                    value=""
+                                    disabled
+                                    selected>
+
+                                    Seleccione su respuesta
+
+                                </option>
+
+                                <option value="1">
+                                    Pollo en Pie
+                                </option>
+
+                                <option value="0">
+                                    Pollo en Canal
+                                </option>
+
                             </select>
+
                         </div>
 
                     </div>
 
                 </div>
 
+                <!-- ==================================================
+                CONTROL INGRESO VEHICULO
+                =================================================== -->
+
                 <div class="form-section">
 
                     <div class="section-title">
-                        <i class="fa-solid fa-circle-info"></i>
+
+                        <i
+                            class="fa-solid fa-circle-info">
+                        </i>
+
                         Control Ingreso Vehiculo
+
                     </div>
 
                     <div class="row g-3">
 
+                        <!-- PLACA -->
+
                         <div class="col-12 col-md-3">
-                            <label for="placa_vehiculo" class="form-label">Placa:</label>
-                            <input type="text" name="placa_vehiculo" id="placa_vehiculo" class="form-control" min="1" required>
+
+                            <label
+                                for="placa_vehiculo"
+                                class="form-label">
+
+                                Placa:
+
+                            </label>
+
+                            <input
+                                type="text"
+                                name="placa_vehiculo"
+                                id="placa_vehiculo"
+                                class="form-control"
+                                min="1"
+                                required>
+
                         </div>
 
+                        <!-- SOAT -->
+
                         <div class="col-md-3">
-                            <label for="fecha_soat" class="form-label">Fecha Vigencia SOAT:</label>
+
+                            <label
+                                for="fecha_soat"
+                                class="form-label">
+
+                                Fecha Vigencia SOAT:
+
+                            </label>
+
                             <input
                                 type="date"
                                 name="fecha_soat"
@@ -554,66 +876,99 @@ $EPS = cargarEPS($connection);
                                 value=""
                                 max=""
                                 required>
+
                         </div>
 
+                        <!-- TECNICOMECANICA -->
+
                         <div class="col-md-3">
-                            <label for="fecha_revision" class="form-label">
+
+                            <label
+                                for="fecha_revision"
+                                class="form-label">
+
                                 FV Revision Tecnicomecanica:
+
                             </label>
-                            <input type="date" name="fecha_revision" id="fecha_revision"
-                                class="form-control" required>
+
+                            <input
+                                type="date"
+                                name="fecha_revision"
+                                id="fecha_revision"
+                                class="form-control"
+                                required>
+
                         </div>
+
+                        <!-- LICENCIA -->
 
                         <div class="col-md-3">
-                            <label for="fecha_licencia" class="form-label">
+
+                            <label
+                                for="fecha_licencia"
+                                class="form-label">
+
                                 FV Licencia de Conduccion:
+
                             </label>
-                            <input type="date" name="fecha_licencia" id="fecha_licencia"
-                                class="form-control" required>
-                        </div>
 
-                        <div class="col-12 col-md-3">
-                            <label for="induccion_sgsst">Recibió inducción de SG-SST:</label>
-                            <select name="induccion_sgsst" id="induccion_sgsst" class="form-select" required>
-                                <option value="" disabled selected>Seleccione su respuesta</option>
-                                <option value="1">SI</option>
-                                <option value="0">NO</option>
-                            </select>
-                        </div>
+                            <input
+                                type="date"
+                                name="fecha_licencia"
+                                id="fecha_licencia"
+                                class="form-control"
+                                required>
 
-                        <!-- ======================================================
-                FIRMAS
-                ======================================================= -->
-                        <div class="form-section">
-                            <div class="section-title">
-                                <i class="fa-solid fa-signature"></i>
-                                Firmas
-                            </div>
-
-                            <div class="row g-3 mb-4">
-
-                                <div class="col-12 col-md-6">
-                                    <label for="elaborado" class="form-label">Realizó:</label>
-                                    <input
-                                        type="text"
-                                        name="registro"
-                                        id="registro"
-                                        class="form-control"
-                                        placeholder="Nombre de quien realiza el registro"
-                                        maxlength="50"
-                                        required>
-                                </div>
-
-                            </div>
                         </div>
 
                     </div>
 
+                </div>
 
+                <!-- ==================================================
+                FIRMAS
+                =================================================== -->
+
+                <div class="form-section">
+
+                    <div class="section-title">
+
+                        <i
+                            class="fa-solid fa-signature">
+                        </i>
+
+                        Firmas
+
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="realizo" class="form-label">
+                            Usuario que Registra:
+                        </label>
+
+                        <div class="input-group">
+
+                            <span class="input-group-text">
+                                <i class="fas fa-user-shield"></i>
+                            </span>
+
+                            <input
+                                type="text"
+                                name="realizo"
+                                id="realizo"
+                                class="form-control bg-light"
+                                value="<?= htmlspecialchars($realizo, ENT_QUOTES, 'UTF-8') ?>"
+                                readonly>
+
+                        </div>
+                    </div>
 
                 </div>
 
-                <!-- BOTONES -->
+                <!-- ==================================================
+                BOTONES
+                =================================================== -->
+
                 <div class="barra-acciones">
 
                     <div class="text-center">
@@ -622,15 +977,22 @@ $EPS = cargarEPS($connection);
                             type="submit"
                             class="btn btn-danger btn-lg px-5">
 
-                            <i class="fas fa-save me-2"></i>
+                            <i
+                                class="fas fa-save me-2">
+                            </i>
+
                             Guardar Registro
 
                         </button>
 
-                        <a href="tabla_vehiculos.php"
+                        <a
+                            href="tabla_vehiculos_internos.php"
                             class="btn btn-danger btn-lg px-5">
 
-                            <i class="fas fa-eye me-2"></i>
+                            <i
+                                class="fas fa-eye me-2">
+                            </i>
+
                             Ver Registros
 
                         </a>
@@ -642,32 +1004,48 @@ $EPS = cargarEPS($connection);
             </form>
 
         </div>
+
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" defer></script>
+    <!-- Bootstrap JS -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+        defer>
+    </script>
+
     <script>
         $(function() {
 
             /* ==========================================================
-               CONFIGURACIÓN
+            CONFIGURACIÓN
             ========================================================== */
 
-            const $form = $("#formulario_vehiculos");
-            const $cedula = $("#cedula");
+            const $form =
+                $("#formulario_vehiculos");
+
+            const $cedula =
+                $("#cedula");
+
             let enviandoFormulario = false;
 
+
             /* ==========================================================
-               LIMPIAR DATOS DEL VEHICULO
+            LIMPIAR DATOS DEL VEHICULO
             ========================================================== */
 
             function limpiarDatosVehiculo() {
 
                 $("#nombre").val("");
+
                 $("#arl").val("");
+
                 $("#eps").val("");
+
                 $("#placa_vehiculo").val("");
 
             }
+
 
             /* ==========================================================
             SOLO NÚMEROS
@@ -676,404 +1054,523 @@ $EPS = cargarEPS($connection);
             $("#cedula").on(
                 "input",
                 function() {
-                    this.value = this.value.replace(/\D/g, "");
+
+                    this.value =
+                        this.value.replace(
+                            /\D/g,
+                            ""
+                        );
+
                 }
             );
 
-            // ==========================================================
-            // CONSULTAR VEHICULO POR CÉDULA
-            // ==========================================================
+
+            /* ==========================================================
+            CONSULTAR VEHICULO POR CÉDULA
+            ========================================================== */
 
             let ultimaCedulaConsultada = "";
 
-            $("#cedula").off("blur").on("blur", function() {
 
-                const cedula = $(this).val().trim();
+            $("#cedula")
+                .off("blur")
+                .on("blur", function() {
+
+                    const cedula =
+                        $(this)
+                        .val()
+                        .trim();
 
 
-                // ======================================================
-                // CÉDULA VACÍA
-                // ======================================================
+                    /* ==================================================
+                    CÉDULA VACÍA
+                    ================================================== */
 
-                if (!cedula) {
+                    if (!cedula) {
+
+                        $("#mensajeCedula")
+                            .removeClass(
+                                "text-success text-danger text-primary text-warning"
+                            )
+                            .text("");
+
+                        return;
+
+                    }
+
+
+                    /* ==================================================
+                    VALIDACIÓN MÍNIMA
+                    ================================================== */
+
+                    if (cedula.length < 5) {
+
+                        $("#mensajeCedula")
+                            .removeClass(
+                                "text-success text-danger text-primary"
+                            )
+                            .addClass(
+                                "text-warning fw-semibold"
+                            )
+                            .text(
+                                "Ingrese una cédula válida."
+                            );
+
+                        return;
+
+                    }
+
+
+                    /* ==================================================
+                    EVITAR CONSULTAR LA MISMA CÉDULA
+                    ================================================== */
+
+                    if (
+                        ultimaCedulaConsultada ===
+                        cedula
+                    ) {
+
+                        return;
+
+                    }
+
+                    ultimaCedulaConsultada =
+                        cedula;
+
+
+                    /* ==================================================
+                    MENSAJE DE CONSULTA
+                    ================================================== */
 
                     $("#mensajeCedula")
-                        .removeClass("text-success text-danger text-primary text-warning")
-                        .text("");
-
-                    return;
-                }
-
-
-                // ======================================================
-                // VALIDACIÓN MÍNIMA
-                // ======================================================
-
-                if (cedula.length < 5) {
-
-                    $("#mensajeCedula")
-                        .removeClass("text-success text-danger text-primary")
-                        .addClass("text-warning fw-semibold")
-                        .text("Ingrese una cédula válida.");
-
-                    return;
-                }
-
-
-                // ======================================================
-                // EVITAR CONSULTAR LA MISMA CÉDULA
-                // ======================================================
-
-                if (ultimaCedulaConsultada === cedula) {
-                    return;
-                }
-
-                ultimaCedulaConsultada = cedula;
-
-
-                // ======================================================
-                // MENSAJE DE CONSULTA
-                // ======================================================
-
-                $("#mensajeCedula")
-                    .removeClass("text-success text-danger text-warning")
-                    .addClass("text-primary fw-semibold")
-                    .text("Consultando...");
-
-
-                // ======================================================
-                // AJAX
-                // ======================================================
-
-                $.ajax({
-
-                    url: "../Controller/buscar_vehiculo_interno.php",
-
-                    type: "POST",
-
-                    data: {
-                        cedula: cedula
-                    },
-
-                    dataType: "json",
-
-
-                    // ==================================================
-                    // RESPUESTA CORRECTA
-                    // ==================================================
-
-                    success: function(response) {
-
-                        console.log(
-                            "RESPUESTA BUSCAR VEHICULO:",
-                            response
+                        .removeClass(
+                            "text-success text-danger text-warning"
+                        )
+                        .addClass(
+                            "text-primary fw-semibold"
+                        )
+                        .text(
+                            "Consultando..."
                         );
 
 
-                        // ==============================================
-                        // NO ENCONTRADO
-                        // ==============================================
+                    /* ==================================================
+                    AJAX
+                    ================================================== */
 
-                        if (response.error === true) {
+                    $.ajax({
 
-                            $("#nombre").val("");
-                            $("#arl").val("");
-                            $("#eps").val("");
-                            $("#placa_vehiculo").val("");
+                        url: "../Controller/buscar_vehiculo_interno.php",
+
+                        type: "POST",
+
+                        data: {
+
+                            cedula: cedula
+
+                        },
+
+                        dataType: "json",
+
+
+                        /* ==============================================
+                        RESPUESTA CORRECTA
+                        ============================================== */
+
+                        success: function(response) {
+
+                            console.log(
+                                "RESPUESTA BUSCAR VEHICULO:",
+                                response
+                            );
+
+
+                            /* ======================================
+                            NO ENCONTRADO
+                            ====================================== */
+
+                            if (
+                                response.error === true
+                            ) {
+
+                                $("#nombre")
+                                    .val("");
+
+                                $("#arl")
+                                    .val("");
+
+                                $("#eps")
+                                    .val("");
+
+                                $("#placa_vehiculo")
+                                    .val("");
+
+
+                                $("#mensajeCedula")
+                                    .removeClass(
+                                        "text-success text-danger text-primary"
+                                    )
+                                    .addClass(
+                                        "text-warning fw-semibold"
+                                    )
+                                    .text(
+                                        response.mensaje ||
+                                        "Cédula no encontrada. Complete la información."
+                                    );
+
+                                return;
+
+                            }
+
+
+                            /* ======================================
+                            DATOS DE LA PERSONA
+                            ====================================== */
+
+                            $("#nombre")
+                                .val(
+                                    response.nombre ||
+                                    ""
+                                );
+
+
+                            $("#arl")
+                                .val(
+                                    response.arl ||
+                                    ""
+                                );
+
+
+                            $("#eps")
+                                .val(
+                                    response.eps ||
+                                    ""
+                                );
+
+
+                            /* ======================================
+                            DATOS DEL VEHÍCULO
+                            ====================================== */
+
+                            $("#placa_vehiculo")
+                                .val(
+                                    response.placa ||
+                                    ""
+                                );
+
+
+                            /* ======================================
+                            MENSAJE
+                            ====================================== */
+
+                            $("#mensajeCedula")
+                                .removeClass(
+                                    "text-primary text-danger text-warning"
+                                )
+                                .addClass(
+                                    "text-success fw-semibold"
+                                )
+                                .text(
+                                    "Vehículo encontrado. Datos cargados."
+                                );
+
+                        },
+
+
+                        /* ==================================================
+                        ERROR AJAX
+                        ================================================== */
+
+                        error: function(
+                            xhr,
+                            status,
+                            error
+                        ) {
+
+                            console.error(
+                                "========== ERROR AJAX =========="
+                            );
+
+                            console.error(
+                                "HTTP:",
+                                xhr.status
+                            );
+
+                            console.error(
+                                "STATUS:",
+                                status
+                            );
+
+                            console.error(
+                                "ERROR:",
+                                error
+                            );
+
+                            console.error(
+                                "RESPUESTA:",
+                                xhr.responseText
+                            );
+
+                            console.error(
+                                "================================"
+                            );
 
 
                             $("#mensajeCedula")
                                 .removeClass(
-                                    "text-success text-danger text-primary"
+                                    "text-success text-primary text-warning"
                                 )
                                 .addClass(
-                                    "text-warning fw-semibold"
+                                    "text-danger fw-semibold"
                                 )
                                 .text(
-                                    response.mensaje ||
-                                    "Cédula no encontrada. Complete la información."
+                                    "Error al consultar el vehículo."
                                 );
 
-                            return;
                         }
-
-
-                        // ==============================================
-                        // DATOS DE LA PERSONA
-                        // ==============================================
-
-                        $("#nombre").val(
-                            response.nombre || ""
-                        );
-
-                        $("#arl").val(
-                            response.arl || ""
-                        );
-
-                        $("#eps").val(
-                            response.eps || ""
-                        );
-
-
-                        // ==============================================
-                        // DATOS DEL VEHÍCULO
-                        //
-                        // LA BD SE LLAMA "placa"
-                        // EL INPUT SE LLAMA "placa_vehiculo"
-                        // ==============================================
-
-                        $("#placa_vehiculo").val(
-                            response.placa || ""
-                        );
-
-
-                        // ==============================================
-                        // MENSAJE
-                        // ==============================================
-
-                        $("#mensajeCedula")
-                            .removeClass(
-                                "text-primary text-danger text-warning"
-                            )
-                            .addClass(
-                                "text-success fw-semibold"
-                            )
-                            .text(
-                                "Vehículo encontrado. Datos cargados."
-                            );
-                    },
-
-
-                    // ==================================================
-                    // ERROR AJAX
-                    // ==================================================
-
-                    error: function(xhr, status, error) {
-
-                        console.error(
-                            "========== ERROR AJAX =========="
-                        );
-
-                        console.error(
-                            "HTTP:",
-                            xhr.status
-                        );
-
-                        console.error(
-                            "STATUS:",
-                            status
-                        );
-
-                        console.error(
-                            "ERROR:",
-                            error
-                        );
-
-                        console.error(
-                            "RESPUESTA:",
-                            xhr.responseText
-                        );
-
-                        console.error(
-                            "================================"
-                        );
-
-
-                        $("#mensajeCedula")
-                            .removeClass(
-                                "text-success text-primary text-warning"
-                            )
-                            .addClass(
-                                "text-danger fw-semibold"
-                            )
-                            .text(
-                                "Error al consultar el vehículo."
-                            );
-                    }
-
-                });
-
-            });
-
-            /* ==========================================================
-               SI CAMBIA LA CÉDULA
-               INVALIDAR CONSULTAS ANTERIORES
-            ========================================================== */
-
-            $cedula.on("input", function() {
-
-                // Permitir únicamente números
-                this.value = this.value.replace(/\D/g, "");
-
-                // Permitir una nueva consulta
-                ultimaCedulaConsultada = "";
-
-                $("#mensajeCedula")
-                    .removeClass(
-                        "text-success text-danger text-primary text-warning"
-                    )
-                    .text("");
-            });
-
-
-            /* ==========================================================
-               VALIDAR FECHA
-            ========================================================== */
-
-            $("#fecha").on("change", function() {
-
-                const valor = this.value;
-
-                if (!valor) {
-
-                    return;
-                }
-
-
-                const partes = valor.split("-");
-
-                if (partes.length !== 3) {
-
-                    this.value = "";
-
-                    return;
-                }
-
-
-                const fechaSeleccionada = new Date(
-                    Number(partes[0]),
-                    Number(partes[1]) - 1,
-                    Number(partes[2])
-                );
-
-
-                const hoy = new Date();
-
-                hoy.setHours(0, 0, 0, 0);
-
-
-                if (fechaSeleccionada > hoy) {
-
-                    Swal.fire({
-
-                        icon: "warning",
-
-                        title: "Fecha inválida",
-
-                        text: "No se permiten fechas futuras."
 
                     });
 
+                });
 
-                    this.value = "";
-
-                }
-
-            });
 
             /* ==========================================================
-               ENVIAR FORMULARIO
+            SI CAMBIA LA CÉDULA
+            INVALIDAR CONSULTAS ANTERIORES
             ========================================================== */
 
-            $form.on("submit", function(e) {
+            $cedula.on(
+                "input",
+                function() {
 
-                /*
-                 * Si ya fue confirmado,
-                 * dejamos que el navegador envíe el formulario.
-                 */
-                if (enviandoFormulario) {
-
-                    return;
-                }
-
-
-                e.preventDefault();
-
-
-                /* ======================================================
-                   VALIDACIÓN HTML5
-                ====================================================== */
-
-                if (!this.checkValidity()) {
-
-                    this.reportValidity();
-
-                    return;
-                }
-
-
-                const formulario = this;
-
-                const $botonGuardar =
-                    $form.find('button[type="submit"]');
-
-
-                /* ======================================================
-                   CONFIRMAR
-                ====================================================== */
-
-                Swal.fire({
-
-                    title: "¿Guardar registro?",
-
-                    text: "Se registrará el vehiculo en la base de datos.",
-
-                    icon: "question",
-
-                    showCancelButton: true,
-
-                    confirmButtonColor: "#dc3545",
-
-                    cancelButtonColor: "#6c757d",
-
-                    confirmButtonText: "Sí, guardar",
-
-                    cancelButtonText: "Cancelar",
-
-                    reverseButtons: true
-
-                }).then(function(result) {
-
-                    if (!result.isConfirmed) {
-
-                        return;
-                    }
-
-
-                    enviandoFormulario = true;
-
-
-                    /* ==================================================
-                       DESACTIVAR BOTÓN
-                    ================================================== */
-
-                    $botonGuardar
-
-                        .prop("disabled", true)
-
-                        .html(
-                            '<span class="spinner-border spinner-border-sm me-2"></span>' +
-                            'Guardando...'
+                    this.value =
+                        this.value.replace(
+                            /\D/g,
+                            ""
                         );
 
 
-                    /*
-                     * submit() nativo.
-                     *
-                     * Esto evita volver a disparar
-                     * nuestro evento submit.
-                     */
-                    HTMLFormElement.prototype.submit.call(
-                        formulario
-                    );
+                    ultimaCedulaConsultada =
+                        "";
 
-                });
 
-            });
+                    $("#mensajeCedula")
+                        .removeClass(
+                            "text-success text-danger text-primary text-warning"
+                        )
+                        .text("");
+
+                }
+            );
 
 
             /* ==========================================================
-               MENSAJE DE ÉXITO
+            VALIDAR FECHA
+            ========================================================== */
+
+            $("#fecha").on(
+                "change",
+                function() {
+
+                    const valor =
+                        this.value;
+
+
+                    if (!valor) {
+
+                        return;
+
+                    }
+
+
+                    const partes =
+                        valor.split("-");
+
+
+                    if (
+                        partes.length !== 3
+                    ) {
+
+                        this.value = "";
+
+                        return;
+
+                    }
+
+
+                    const fechaSeleccionada =
+                        new Date(
+                            Number(partes[0]),
+                            Number(partes[1]) - 1,
+                            Number(partes[2])
+                        );
+
+
+                    const hoy =
+                        new Date();
+
+
+                    hoy.setHours(
+                        0,
+                        0,
+                        0,
+                        0
+                    );
+
+
+                    if (
+                        fechaSeleccionada >
+                        hoy
+                    ) {
+
+                        Swal.fire({
+
+                            icon: "warning",
+
+                            title: "Fecha inválida",
+
+                            text: "No se permiten fechas futuras."
+
+                        });
+
+
+                        this.value =
+                            "";
+
+                    }
+
+                }
+            );
+
+
+            /* ==========================================================
+            ENVIAR FORMULARIO
+            ========================================================== */
+
+            $form.on(
+                "submit",
+                function(e) {
+
+                    /*
+                     * Si ya fue confirmado,
+                     * dejamos que el navegador envíe el formulario.
+                     */
+
+                    if (
+                        enviandoFormulario
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    e.preventDefault();
+
+
+                    /* ==================================================
+                    VALIDACIÓN HTML5
+                    ================================================== */
+
+                    if (
+                        !this.checkValidity()
+                    ) {
+
+                        this.reportValidity();
+
+                        return;
+
+                    }
+
+
+                    const formulario =
+                        this;
+
+
+                    const $botonGuardar =
+                        $form.find(
+                            'button[type="submit"]'
+                        );
+
+
+                    /* ==================================================
+                    CONFIRMAR
+                    ================================================== */
+
+                    Swal.fire({
+
+                        title: "¿Guardar registro?",
+
+                        text: "Se registrará el vehiculo en la base de datos.",
+
+                        icon: "question",
+
+                        showCancelButton: true,
+
+                        confirmButtonColor: "#dc3545",
+
+                        cancelButtonColor: "#6c757d",
+
+                        confirmButtonText: "Sí, guardar",
+
+                        cancelButtonText: "Cancelar",
+
+                        reverseButtons: true
+
+                    }).then(
+                        function(result) {
+
+                            if (
+                                !result.isConfirmed
+                            ) {
+
+                                return;
+
+                            }
+
+
+                            enviandoFormulario =
+                                true;
+
+
+                            /* ==========================================
+                            DESACTIVAR BOTÓN
+                            ========================================== */
+
+                            $botonGuardar
+                                .prop(
+                                    "disabled",
+                                    true
+                                )
+                                .html(
+                                    '<span class="spinner-border spinner-border-sm me-2"></span>' +
+                                    'Guardando...'
+                                );
+
+
+                            /*
+                             * submit() nativo.
+                             *
+                             * Esto evita volver a disparar
+                             * nuestro evento submit.
+                             */
+
+                            HTMLFormElement
+                                .prototype
+                                .submit
+                                .call(
+                                    formulario
+                                );
+
+                        }
+                    );
+
+                }
+            );
+
+
+            /* ==========================================================
+            MENSAJE DE ÉXITO
             ========================================================== */
 
             <?php if ($guardado): ?>
@@ -1090,34 +1587,38 @@ $EPS = cargarEPS($connection);
 
                     confirmButtonText: "Aceptar"
 
-                }).then(function() {
+                }).then(
+                    function() {
 
-                    /*
-                     * Eliminar ?guardado=1 de la URL.
-                     *
-                     * Así al actualizar la página no vuelve a aparecer
-                     * el mensaje.
-                     */
+                        /*
+                         * Eliminar ?guardado=1 de la URL.
+                         */
 
-                    const url = new URL(
-                        window.location.href
-                    );
+                        const url =
+                            new URL(
+                                window.location.href
+                            );
 
-                    url.searchParams.delete("guardado");
 
-                    window.history.replaceState({},
-                        document.title,
-                        url.pathname +
-                        url.search
-                    );
+                        url.searchParams.delete(
+                            "guardado"
+                        );
 
-                });
+
+                        window.history.replaceState({},
+                            document.title,
+                            url.pathname +
+                            url.search
+                        );
+
+                    }
+                );
 
             <?php endif; ?>
 
 
             /* ==========================================================
-               MENSAJE DE ERROR
+            MENSAJE DE ERROR
             ========================================================== */
 
             <?php if ($error !== ''): ?>
@@ -1128,31 +1629,41 @@ $EPS = cargarEPS($connection);
 
                     title: "No fue posible guardar",
 
-                    text: <?= json_encode($error, JSON_UNESCAPED_UNICODE) ?>,
+                    text: <?= json_encode(
+                                $error,
+                                JSON_UNESCAPED_UNICODE
+                            ) ?>,
 
                     confirmButtonColor: "#dc3545",
 
                     confirmButtonText: "Aceptar"
 
-                }).then(function() {
+                }).then(
+                    function() {
 
-                    /*
-                     * Eliminar ?error=... de la URL.
-                     */
+                        /*
+                         * Eliminar ?error=... de la URL.
+                         */
 
-                    const url = new URL(
-                        window.location.href
-                    );
+                        const url =
+                            new URL(
+                                window.location.href
+                            );
 
-                    url.searchParams.delete("error");
 
-                    window.history.replaceState({},
-                        document.title,
-                        url.pathname +
-                        url.search
-                    );
+                        url.searchParams.delete(
+                            "error"
+                        );
 
-                });
+
+                        window.history.replaceState({},
+                            document.title,
+                            url.pathname +
+                            url.search
+                        );
+
+                    }
+                );
 
             <?php endif; ?>
 

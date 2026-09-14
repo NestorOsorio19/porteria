@@ -375,7 +375,7 @@ try {
 
                         <i class="fas fa-truck text-danger"></i>
 
-                        Registro General de Vehículos
+                        Registro General de Vehículos Internos
 
                     </h2>
 

@@ -24,7 +24,7 @@ CREAR CONEXIÓN PDO
 $connection = connection();
 
 /* ==========================================================
-CARGAR ARL PARA EL SELECT
+CARGAR ARL
 ========================================================== */
 function cargarARL(PDO $connection): string
 {
@@ -59,7 +59,7 @@ function cargarARL(PDO $connection): string
 }
 
 /* ==========================================================
-CARGAR EPS PARA EL SELECT
+CARGAR EPS
 ========================================================== */
 function cargarEPS(PDO $connection): string
 {
@@ -94,7 +94,7 @@ function cargarEPS(PDO $connection): string
 }
 
 /* ==========================================================
-CARGAR ÁREA PARA EL SELECT
+CARGAR ÁREA
 ========================================================== */
 function cargarArea(PDO $connection): string
 {
@@ -129,7 +129,7 @@ function cargarArea(PDO $connection): string
 }
 
 /* ==========================================================
-CARGAR EMPRESAS PARA EL SELECT
+CARGAR EMPRESAS
 ========================================================== */
 function cargarEmpresa(PDO $connection): string
 {
@@ -173,6 +173,13 @@ $EPS = cargarEPS($connection);
 $Area = cargarArea($connection);
 $empresa = cargarEmpresa($connection);
 
+/* ==========================================================
+QUIÉN REGISTRA
+========================================================== */
+$realizo = $_SESSION['nombre']
+    ?? $_SESSION['usuario']
+    ?? '';
+
 ?>
 
 <!DOCTYPE html>
@@ -189,28 +196,29 @@ $empresa = cargarEmpresa($connection);
     <title>Registro Contratistas</title>
 
     <!-- ==================================================
-    BOOTSTRAP CSS
-    =================================================== -->
+    BOOTSTRAP
+    ================================================== -->
     <link
         rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css">
 
     <!-- ==================================================
     FONT AWESOME
-    =================================================== -->
+    ================================================== -->
     <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <!-- ==================================================
     JQUERY
-    =================================================== -->
+    ================================================== -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
     <!-- ==================================================
     SWEETALERT2
-    =================================================== -->
+    ================================================== -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
     <style>
         /* ==================================================
@@ -231,18 +239,24 @@ $empresa = cargarEmpresa($connection);
         ================================================== */
 
         body {
-            background: linear-gradient(135deg,
+
+            background:
+                linear-gradient(135deg,
                     #eef2f7,
                     #d9e7ff);
 
             min-height: 100vh;
 
-            font-family: 'Segoe UI', sans-serif;
+            font-family:
+                'Segoe UI',
+                sans-serif;
         }
 
 
         label {
+
             font-weight: 600;
+
             margin-bottom: 8px;
         }
 
@@ -252,13 +266,16 @@ $empresa = cargarEmpresa($connection);
         ================================================== */
 
         .navbar {
+
             box-shadow:
                 0 4px 12px rgba(0, 0, 0, .1);
         }
 
 
         .navbar-brand {
+
             font-weight: 700;
+
             font-size: 1.1rem;
         }
 
@@ -268,28 +285,35 @@ $empresa = cargarEmpresa($connection);
         ================================================== */
 
         .breadcrumb {
+
             border-radius: 15px;
+
             margin-bottom: 30px;
         }
 
 
         .breadcrumb a {
+
             text-decoration: none;
+
             font-weight: 500;
+
             color: var(--primary);
         }
 
 
         .breadcrumb a:hover {
+
             text-decoration: underline;
         }
 
 
         /* ==================================================
-        HEADER PRINCIPAL
+        HEADER
         ================================================== */
 
         .form-label {
+
             min-height: 48px;
 
             display: flex;
@@ -303,26 +327,35 @@ $empresa = cargarEmpresa($connection);
 
 
         .page-header {
+
             text-align: center;
+
             margin-bottom: 40px;
         }
 
 
         .page-header h1 {
+
             font-weight: 700;
+
             color: #2c3e50;
+
             margin-top: 20px;
         }
 
 
         .page-header p {
+
             color: #6c757d;
+
             margin-bottom: 0;
         }
 
 
         .icon-circle {
+
             width: 100px;
+
             height: 100px;
 
             border-radius: 50%;
@@ -334,6 +367,7 @@ $empresa = cargarEmpresa($connection);
             display: flex;
 
             align-items: center;
+
             justify-content: center;
 
             margin: auto;
@@ -346,19 +380,11 @@ $empresa = cargarEmpresa($connection);
 
 
         /* ==================================================
-        CONTENEDOR
-        ================================================== */
-
-        .form-container {
-            max-width: 900px;
-        }
-
-
-        /* ==================================================
         MINI CARDS
         ================================================== */
 
         .mini-card {
+
             background: #fff;
 
             border-radius: 20px;
@@ -383,6 +409,7 @@ $empresa = cargarEmpresa($connection);
 
 
         .mini-card:hover {
+
             transform: translateY(-3px);
 
             box-shadow:
@@ -391,22 +418,27 @@ $empresa = cargarEmpresa($connection);
 
 
         .mini-card h6 {
+
             color: #6c757d;
+
             margin-bottom: 10px;
         }
 
 
         .mini-card strong {
+
             color: #212529;
+
             font-size: 1rem;
         }
 
 
         /* ==================================================
-        SECCIONES DEL FORMULARIO
+        SECCIONES
         ================================================== */
 
         .form-section {
+
             background: #fff;
 
             border-radius: 20px;
@@ -419,20 +451,11 @@ $empresa = cargarEmpresa($connection);
 
             box-shadow:
                 0 10px 25px rgba(0, 0, 0, .08);
-
-            transition: all .3s ease;
-        }
-
-
-        .form-section:hover {
-            transform: translateY(-2px);
-
-            box-shadow:
-                0 12px 30px rgba(0, 0, 0, .10);
         }
 
 
         .section-title {
+
             display: flex;
 
             align-items: center;
@@ -460,6 +483,7 @@ $empresa = cargarEmpresa($connection);
 
         .form-control,
         .form-select {
+
             min-height: 48px;
 
             border-radius: 12px;
@@ -474,7 +498,9 @@ $empresa = cargarEmpresa($connection);
 
         .form-control:focus,
         .form-select:focus {
-            border-color: var(--danger);
+
+            border-color:
+                var(--danger);
 
             box-shadow:
                 0 0 0 .15rem rgba(220, 53, 69, .15);
@@ -482,28 +508,90 @@ $empresa = cargarEmpresa($connection);
 
 
         textarea.form-control {
+
             min-height: 100px;
+
             resize: vertical;
         }
 
-        /* =====================================================
-   INDUCCIÓN SST
-===================================================== */
+
+        /* ==================================================
+        NUEVA EMPRESA
+        ================================================== */
+
+        #nuevaEmpresaContainer {
+
+            display: none;
+
+            animation:
+                aparecerEmpresa .25s ease;
+        }
+
+
+        @keyframes aparecerEmpresa {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                    translateY(-10px);
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                    translateY(0);
+            }
+        }
+
+
+        #nueva_empresa {
+
+            border:
+                2px solid #ffc107;
+
+            background:
+                #fffdf5;
+        }
+
+
+        #nueva_empresa:focus {
+
+            border-color:
+                #dc3545;
+
+            background:
+                #fff;
+        }
+
+
+        /* ==================================================
+        INDUCCIÓN SST
+        ================================================== */
 
         .induccion-card {
+
             display: flex;
+
             align-items: center;
+
             gap: 20px;
 
             padding: 22px;
 
-            background: linear-gradient(135deg,
+            background:
+                linear-gradient(135deg,
                     #fff8e1,
                     #fff3cd);
 
-            border: 2px solid #ffc107;
+            border:
+                2px solid #ffc107;
 
-            border-left: 6px solid #dc3545;
+            border-left:
+                6px solid #dc3545;
 
             border-radius: 18px;
 
@@ -513,8 +601,11 @@ $empresa = cargarEmpresa($connection);
             margin-top: 15px;
         }
 
+
         .induccion-icon {
+
             min-width: 65px;
+
             height: 65px;
 
             border-radius: 50%;
@@ -524,7 +615,9 @@ $empresa = cargarEmpresa($connection);
             color: white;
 
             display: flex;
+
             align-items: center;
+
             justify-content: center;
 
             font-size: 28px;
@@ -533,11 +626,15 @@ $empresa = cargarEmpresa($connection);
                 0 5px 15px rgba(220, 53, 69, .25);
         }
 
+
         .induccion-content {
+
             flex: 1;
         }
 
+
         .induccion-content h5 {
+
             margin-bottom: 8px;
 
             font-weight: 700;
@@ -545,13 +642,17 @@ $empresa = cargarEmpresa($connection);
             color: #343a40;
         }
 
+
         .induccion-content p {
+
             margin-bottom: 15px;
 
             color: #6c757d;
         }
 
+
         .induccion-content .badge {
+
             font-size: .7rem;
 
             margin-left: 8px;
@@ -559,7 +660,9 @@ $empresa = cargarEmpresa($connection);
             vertical-align: middle;
         }
 
+
         .induccion-content .form-check {
+
             background: white;
 
             padding: 12px 15px;
@@ -569,11 +672,15 @@ $empresa = cargarEmpresa($connection);
             border: 1px solid #dee2e6;
         }
 
+
         .induccion-content .form-check-input {
+
             cursor: pointer;
         }
 
+
         .induccion-content .form-check-label {
+
             cursor: pointer;
 
             font-weight: 600;
@@ -581,32 +688,19 @@ $empresa = cargarEmpresa($connection);
             color: #495057;
         }
 
-        @media (max-width: 576px) {
-
-            .induccion-card {
-                flex-direction: column;
-
-                text-align: center;
-            }
-
-            .induccion-content .form-check {
-                text-align: left;
-            }
-
-        }
-
-
 
         /* ==================================================
         EQUIPO ELECTRÓNICO
         ================================================== */
 
         #inputsEquipoElectronico {
+
             display: none;
         }
 
 
         #inputsEquipoElectronico .mini-card {
+
             border-left:
                 4px solid var(--danger);
         }
@@ -617,15 +711,8 @@ $empresa = cargarEmpresa($connection);
         ================================================== */
 
         .btn {
+
             border-radius: 12px;
-            font-weight: 600;
-        }
-
-
-        .btn-custom {
-            border-radius: 30px;
-
-            padding: 12px 25px;
 
             font-weight: 600;
         }
@@ -636,14 +723,19 @@ $empresa = cargarEmpresa($connection);
         ================================================== */
 
         .barra-acciones {
+
             position: sticky;
 
             bottom: 15px;
 
             background:
-                rgba(255, 255, 255, .97);
+                rgba(255,
+                    255,
+                    255,
+                    .97);
 
-            backdrop-filter: blur(10px);
+            backdrop-filter:
+                blur(10px);
 
             border-radius: 20px;
 
@@ -663,8 +755,11 @@ $empresa = cargarEmpresa($connection);
         ================================================== */
 
         #mensajeCedula {
+
             display: block;
+
             margin-top: 5px;
+
             font-weight: 600;
         }
 
@@ -676,12 +771,15 @@ $empresa = cargarEmpresa($connection);
         @media (max-width: 768px) {
 
             .page-header h1 {
+
                 font-size: 1.6rem;
             }
 
 
             .icon-circle {
+
                 width: 80px;
+
                 height: 80px;
 
                 font-size: 30px;
@@ -689,13 +787,34 @@ $empresa = cargarEmpresa($connection);
 
 
             .barra-acciones .btn {
+
                 width: 100%;
+
                 margin-bottom: 10px;
             }
 
 
             .barra-acciones .btn:last-child {
+
                 margin-bottom: 0;
+            }
+
+        }
+
+
+        @media (max-width: 576px) {
+
+            .induccion-card {
+
+                flex-direction: column;
+
+                text-align: center;
+            }
+
+
+            .induccion-content .form-check {
+
+                text-align: left;
             }
 
         }
@@ -708,8 +827,8 @@ $empresa = cargarEmpresa($connection);
 
 
     <!-- ==================================================
-    NAVBAR
-    ================================================== -->
+NAVBAR
+================================================== -->
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3">
 
@@ -729,8 +848,8 @@ $empresa = cargarEmpresa($connection);
 
 
     <!-- ==================================================
-    BREADCRUMB
-    ================================================== -->
+BREADCRUMB
+================================================== -->
 
     <div class="container mt-3">
 
@@ -750,7 +869,6 @@ $empresa = cargarEmpresa($connection);
 
                 </li>
 
-
                 <li class="breadcrumb-item active">
 
                     Contratistas
@@ -765,8 +883,8 @@ $empresa = cargarEmpresa($connection);
 
 
     <!-- ==================================================
-    CONTENIDO PRINCIPAL
-    ================================================== -->
+CONTENIDO
+================================================== -->
 
     <main class="d-flex justify-content-center min-vh-100 py-4">
 
@@ -776,8 +894,8 @@ $empresa = cargarEmpresa($connection);
 
 
             <!-- ==================================================
-            HEADER
-            ================================================== -->
+        HEADER
+        ================================================== -->
 
             <div class="page-header">
 
@@ -802,8 +920,8 @@ $empresa = cargarEmpresa($connection);
 
 
             <!-- ==================================================
-            FORMULARIO
-            ================================================== -->
+        FORMULARIO
+        ================================================== -->
 
             <form
                 action="../Controller/ingreso_contratistas.php"
@@ -812,11 +930,10 @@ $empresa = cargarEmpresa($connection);
 
 
                 <!-- ==================================================
-                MINI CARDS
-                ================================================== -->
+            MINI CARDS
+            ================================================== -->
 
                 <div class="row g-4 mb-4 justify-content-center">
-
 
                     <div class="col-12 col-md-4">
 
@@ -851,16 +968,14 @@ $empresa = cargarEmpresa($connection);
 
                     </div>
 
-
                 </div>
 
 
                 <!-- ==================================================
-                SECCIÓN DATOS GENERALES
-                ================================================== -->
+            DATOS GENERALES
+            ================================================== -->
 
                 <div class="form-section">
-
 
                     <div class="section-title">
 
@@ -932,9 +1047,7 @@ $empresa = cargarEmpresa($connection);
                                 required>
 
 
-                            <small
-                                id="mensajeCedula">
-                            </small>
+                            <small id="mensajeCedula"></small>
 
                         </div>
 
@@ -992,38 +1105,14 @@ $empresa = cargarEmpresa($connection);
 
                                 </option>
 
-
-                                <option value="O-">
-                                    O -
-                                </option>
-
-                                <option value="O+">
-                                    O +
-                                </option>
-
-                                <option value="A-">
-                                    A -
-                                </option>
-
-                                <option value="A+">
-                                    A +
-                                </option>
-
-                                <option value="B-">
-                                    B -
-                                </option>
-
-                                <option value="B+">
-                                    B +
-                                </option>
-
-                                <option value="AB-">
-                                    AB -
-                                </option>
-
-                                <option value="AB+">
-                                    AB +
-                                </option>
+                                <option value="O-">O -</option>
+                                <option value="O+">O +</option>
+                                <option value="A-">A -</option>
+                                <option value="A+">A +</option>
+                                <option value="B-">B -</option>
+                                <option value="B+">B +</option>
+                                <option value="AB-">AB -</option>
+                                <option value="AB+">AB +</option>
 
                             </select>
 
@@ -1057,7 +1146,6 @@ $empresa = cargarEmpresa($connection);
                                     Seleccione la ARL...
 
                                 </option>
-
 
                                 <?= $ARL ?>
 
@@ -1094,15 +1182,15 @@ $empresa = cargarEmpresa($connection);
 
                                 </option>
 
-
                                 <?= $EPS ?>
 
                             </select>
 
                         </div>
 
-
-                        <!-- EMPRESA -->
+                        <!-- ==================================================
+                        EMPRESA
+                        ================================================== -->
 
                         <div class="col-12 col-md-3">
 
@@ -1114,25 +1202,17 @@ $empresa = cargarEmpresa($connection);
 
                             </label>
 
-
                             <select
                                 name="empresa"
                                 id="empresa"
                                 class="form-select"
                                 required>
 
-                                <option
-                                    value=""
-                                    disabled
-                                    selected>
-
+                                <option value="" selected disabled>
                                     Seleccione la Empresa...
-
                                 </option>
 
-
                                 <?= $empresa ?>
-
 
                                 <option value="otra">
                                     OTRA...
@@ -1142,8 +1222,9 @@ $empresa = cargarEmpresa($connection);
 
                         </div>
 
-
-                        <!-- NUEVA EMPRESA -->
+                        <!-- ==================================================
+                        NUEVA EMPRESA
+                        ================================================== -->
 
                         <div
                             class="col-12 col-md-6"
@@ -1158,17 +1239,27 @@ $empresa = cargarEmpresa($connection);
 
                             </label>
 
-
                             <input
                                 type="text"
                                 name="nueva_empresa"
                                 id="nueva_empresa"
                                 class="form-control"
                                 maxlength="150"
-                                placeholder="Ingrese el nombre de la empresa">
+                                autocomplete="off"
+                                placeholder="Ingrese el nombre de la empresa"
+                                disabled
+                                readonly>
+
+                            <div class="form-text">
+
+                                <i class="fas fa-info-circle me-1"></i>
+
+                                Este campo solamente se utiliza cuando seleccione
+                                <strong>OTRA...</strong>
+
+                            </div>
 
                         </div>
-
 
                         <!-- ENFERMEDADES / ALERGIAS -->
 
@@ -1245,27 +1336,43 @@ $empresa = cargarEmpresa($connection);
                         </div>
 
 
-                        <!-- INDUCCIÓN SG-SST -->
+                        <!-- ==================================================
+                    INDUCCIÓN SST
+                    ================================================== -->
 
                         <div class="col-12">
 
                             <div class="induccion-card">
 
                                 <div class="induccion-icon">
+
                                     <i class="fas fa-hard-hat"></i>
+
                                 </div>
+
 
                                 <div class="induccion-content">
 
                                     <h5>
-                                        Inducción de Seguridad y Salud en el Trabajo
-                                        <span class="badge bg-danger">OBLIGATORIA</span>
+
+                                        Inducción de Seguridad y Salud
+                                        en el Trabajo
+
+                                        <span class="badge bg-danger">
+                                            OBLIGATORIA
+                                        </span>
+
                                     </h5>
 
+
                                     <p>
-                                        Antes de ingresar a las instalaciones, el contratista
-                                        debe haber realizado la inducción SST.
+
+                                        Antes de ingresar a las instalaciones,
+                                        el contratista debe haber realizado
+                                        la inducción SST.
+
                                     </p>
+
 
                                     <div class="form-check form-switch">
 
@@ -1276,11 +1383,13 @@ $empresa = cargarEmpresa($connection);
                                             id="induccion_sgsst"
                                             value="1">
 
+
                                         <label
                                             class="form-check-label"
                                             for="induccion_sgsst">
 
-                                            Confirmo que la inducción SST fue realizada.
+                                            Confirmo que la inducción SST
+                                            fue realizada.
 
                                         </label>
 
@@ -1293,13 +1402,11 @@ $empresa = cargarEmpresa($connection);
                         </div>
 
 
-
                         <!-- ==================================================
-                        EQUIPO ELECTRÓNICO
-                        ================================================== -->
+                    EQUIPO ELECTRÓNICO
+                    ================================================== -->
 
                         <div class="col-12">
-
 
                             <div class="form-check form-switch mt-3">
 
@@ -1315,7 +1422,9 @@ $empresa = cargarEmpresa($connection);
                                     class="form-check-label fw-semibold"
                                     for="equipoElectronicoCheckbox">
 
-                                    <i class="fas fa-laptop me-2 text-danger"></i>
+                                    <i
+                                        class="fas fa-laptop me-2 text-danger">
+                                    </i>
 
                                     Ingreso de equipo electrónico
 
@@ -1338,7 +1447,9 @@ $empresa = cargarEmpresa($connection);
 
                                         <h6 class="mb-3">
 
-                                            <i class="fas fa-laptop me-2 text-danger"></i>
+                                            <i
+                                                class="fas fa-laptop me-2 text-danger">
+                                            </i>
 
                                             Información del Equipo
 
@@ -1393,7 +1504,6 @@ $empresa = cargarEmpresa($connection);
 
                                             </div>
 
-
                                         </div>
 
                                     </div>
@@ -1428,22 +1538,64 @@ $empresa = cargarEmpresa($connection);
                         </div>
 
 
+                        <!-- QUIÉN REGISTRA -->
+
+                        <div class="col-12 col-md-3">
+
+                            <label
+                                for="realizo"
+                                class="form-label">
+
+                                Usuario que Registra:
+
+                            </label>
+
+
+                            <div class="input-group">
+
+                                <span class="input-group-text">
+
+                                    <i class="fas fa-user-shield"></i>
+
+                                </span>
+
+
+                                <input
+                                    type="text"
+                                    name="realizo"
+                                    id="realizo"
+                                    class="form-control bg-light"
+                                    value="<?= htmlspecialchars(
+                                                $realizo,
+                                                ENT_QUOTES,
+                                                'UTF-8'
+                                            ) ?>"
+                                    readonly>
+
+                            </div>
+
+                        </div>
+
                     </div>
 
                 </div>
 
 
                 <!-- ==================================================
-                BARRA DE ACCIONES
-                ================================================== -->
+            BARRA DE ACCIONES
+            ================================================== -->
 
                 <div class="barra-acciones">
 
                     <div
-                        class="text-center d-flex flex-wrap justify-content-center gap-2">
+                        class="
+                    text-center
+                    d-flex
+                    flex-wrap
+                    justify-content-center
+                    gap-2
+                    ">
 
-
-                        <!-- GUARDAR -->
 
                         <button
                             type="submit"
@@ -1456,8 +1608,6 @@ $empresa = cargarEmpresa($connection);
                         </button>
 
 
-                        <!-- VER REGISTROS -->
-
                         <a
                             href="tabla_contratistas.php"
                             class="btn btn-danger btn-lg px-5">
@@ -1468,14 +1618,11 @@ $empresa = cargarEmpresa($connection);
 
                         </a>
 
-
                     </div>
 
                 </div>
 
-
             </form>
-
 
         </div>
 
@@ -1483,58 +1630,118 @@ $empresa = cargarEmpresa($connection);
 
 
     <!-- ==================================================
-    BOOTSTRAP JS
-    ================================================== -->
+BOOTSTRAP JS
+================================================== -->
 
-    <script rc="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js">
+    </script>
+
 
     <script>
-        $(function() {
+        $(document).ready(function() {
 
             /* ==========================================================
-               CONFIGURACIÓN
+               ELEMENTOS PRINCIPALES
             ========================================================== */
 
             const $form = $("#formContratista");
+
             const $cedula = $("#cedula");
 
+            const $empresa = $("#empresa");
+
+            const $nuevaEmpresaContainer =
+                $("#nuevaEmpresaContainer");
+
+            const $nuevaEmpresa =
+                $("#nueva_empresa");
+
+            $nuevaEmpresa
+                .prop("disabled", true)
+                .prop("readonly", true);
+
+            $nuevaEmpresaContainer.hide();
+
+            const $induccion =
+                $("#induccion_sgsst");
+
+            const $equipo =
+                $("#equipoElectronicoCheckbox");
+
+            const $inputsEquipo =
+                $("#inputsEquipoElectronico");
+
             let ultimaCedulaConsultada = "";
+
             let enviandoFormulario = false;
 
 
             /* ==========================================================
-               LIMPIAR DATOS DEL CONTRATISTA
+               MOSTRAR / OCULTAR NUEVA EMPRESA
+               
+               ESTA ES LA PARTE IMPORTANTE
+               ========================================================== */
+
+            function controlarNuevaEmpresa() {
+
+                let valor = $("#empresa").val();
+
+                console.log("Empresa seleccionada:", valor);
+
+                if (valor === "otra") {
+
+                    $("#nuevaEmpresaContainer")
+                        .stop(true, true)
+                        .slideDown(250);
+
+                    $("#nueva_empresa")
+                        .prop("disabled", false)
+                        .prop("readonly", false)
+                        .prop("required", true);
+
+                    setTimeout(() => {
+
+                        $("#nueva_empresa").focus();
+
+                    }, 300);
+
+                } else {
+
+                    $("#nuevaEmpresaContainer")
+                        .stop(true, true)
+                        .slideUp(250);
+
+                    $("#nueva_empresa")
+                        .val("")
+                        .prop("disabled", true)
+                        .prop("readonly", true)
+                        .prop("required", false);
+                }
+            }
+
+            /* ==========================================================
+               CAMBIO DE EMPRESA
             ========================================================== */
 
-            function limpiarDatosContratista() {
+            $("#empresa").on("change", function() {
 
-                $("#nombre").val("");
+                console.log(
+                    "Cambio detectado:",
+                    $(this).val()
+                );
 
-                $("#rh").val("");
+                controlarNuevaEmpresa();
 
-                $("#arl").val("");
+                console.log("Script cargado correctamente");
 
-                $("#eps").val("");
+            });
 
-                $("#empresa").val("");
+            /* ==========================================================
+               EJECUTAR AL CARGAR
+            ========================================================== */
 
-                $("#nombre_emergencia").val("");
-
-                $("#telefono_emergencia").val("");
-
-                $("#induccion_sgsst").val("");
-
-                $("#enfermedad_alergia").val("");
-
-                $("#ingreso").val("");
-
-                $("#nueva_empresa")
-                    .val("")
-                    .prop("required", false);
-
-                $("#nuevaEmpresaContainer").hide();
-
-            }
+            controlarNuevaEmpresa();
 
 
             /* ==========================================================
@@ -1546,11 +1753,16 @@ $empresa = cargarEmpresa($connection);
                 this.value =
                     this.value.replace(/\D/g, "");
 
+
                 ultimaCedulaConsultada = "";
+
 
                 $("#mensajeCedula")
                     .removeClass(
-                        "text-success text-danger text-primary text-warning"
+                        "text-success " +
+                        "text-danger " +
+                        "text-primary " +
+                        "text-warning"
                     )
                     .text("");
 
@@ -1558,7 +1770,7 @@ $empresa = cargarEmpresa($connection);
 
 
             /* ==========================================================
-               CONSULTAR CONTRATISTA POR CÉDULA
+               CONSULTAR CONTRATISTA
             ========================================================== */
 
             $cedula.on("blur", function() {
@@ -1567,31 +1779,20 @@ $empresa = cargarEmpresa($connection);
                     $(this).val().trim();
 
 
-                /* ======================================================
-                   CÉDULA VACÍA
-                ====================================================== */
-
                 if (!cedula) {
 
-                    $("#mensajeCedula")
-                        .removeClass(
-                            "text-success text-danger text-primary text-warning"
-                        )
-                        .text("");
-
                     return;
+
                 }
 
-
-                /* ======================================================
-                   VALIDACIÓN MÍNIMA
-                ====================================================== */
 
                 if (cedula.length < 5) {
 
                     $("#mensajeCedula")
                         .removeClass(
-                            "text-success text-danger text-primary"
+                            "text-success " +
+                            "text-danger " +
+                            "text-primary"
                         )
                         .addClass(
                             "text-warning fw-semibold"
@@ -1601,12 +1802,9 @@ $empresa = cargarEmpresa($connection);
                         );
 
                     return;
+
                 }
 
-
-                /* ======================================================
-                   EVITAR CONSULTAR LA MISMA CÉDULA
-                ====================================================== */
 
                 if (
                     ultimaCedulaConsultada === cedula
@@ -1617,16 +1815,15 @@ $empresa = cargarEmpresa($connection);
                 }
 
 
-                ultimaCedulaConsultada = cedula;
+                ultimaCedulaConsultada =
+                    cedula;
 
-
-                /* ======================================================
-                   MENSAJE DE CONSULTA
-                ====================================================== */
 
                 $("#mensajeCedula")
                     .removeClass(
-                        "text-success text-danger text-warning"
+                        "text-success " +
+                        "text-danger " +
+                        "text-warning"
                     )
                     .addClass(
                         "text-primary fw-semibold"
@@ -1635,10 +1832,6 @@ $empresa = cargarEmpresa($connection);
                         "Consultando..."
                     );
 
-
-                /* ======================================================
-                   AJAX
-                ====================================================== */
 
                 $.ajax({
 
@@ -1654,20 +1847,20 @@ $empresa = cargarEmpresa($connection);
 
 
                     /* ==================================================
-                       RESPUESTA CORRECTA
+                    ÉXITO
                     ================================================== */
 
                     success: function(response) {
 
                         console.log(
-                            "RESPUESTA BUSCAR CONTRATISTA:",
+                            "RESPUESTA:",
                             response
                         );
 
 
-                        /* ==============================================
-                           CONTRATISTA NO ENCONTRADO
-                        ============================================== */
+                        /* ==========================================
+                        NO ENCONTRADO
+                        ========================================== */
 
                         if (
                             response.error === true
@@ -1675,9 +1868,12 @@ $empresa = cargarEmpresa($connection);
 
                             limpiarDatosContratista();
 
+
                             $("#mensajeCedula")
                                 .removeClass(
-                                    "text-success text-danger text-primary"
+                                    "text-success " +
+                                    "text-danger " +
+                                    "text-primary"
                                 )
                                 .addClass(
                                     "text-warning fw-semibold"
@@ -1687,13 +1883,25 @@ $empresa = cargarEmpresa($connection);
                                     "Cédula no encontrada. Complete la información."
                                 );
 
+
+                            /*
+                             * MUY IMPORTANTE:
+                             * después de limpiar los datos,
+                             * dejamos la empresa en su estado
+                             * inicial.
+                             */
+
+                            controlarNuevaEmpresa();
+
+
                             return;
+
                         }
 
 
-                        /* ==============================================
-                           DATOS PERSONALES
-                        ============================================== */
+                        /* ==========================================
+                        DATOS PERSONALES
+                        ========================================== */
 
                         $("#nombre")
                             .val(
@@ -1707,9 +1915,9 @@ $empresa = cargarEmpresa($connection);
                             );
 
 
-                        /* ==============================================
-                           SEGURIDAD SOCIAL
-                        ============================================== */
+                        /* ==========================================
+                        SEGURIDAD SOCIAL
+                        ========================================== */
 
                         $("#arl")
                             .val(
@@ -1723,19 +1931,75 @@ $empresa = cargarEmpresa($connection);
                             );
 
 
-                        /* ==============================================
-                           EMPRESA
-                        ============================================== */
+                        /* ==========================================
+                        EMPRESA
+                        ========================================== */
 
-                        $("#empresa")
-                            .val(
+                        let empresaRespuesta =
+                            String(
                                 response.empresa || ""
+                            ).trim();
+
+
+                        /*
+                         * Primero intentamos seleccionar
+                         * la empresa existente.
+                         */
+
+                        const existeEmpresa =
+                            $empresa.find(
+                                'option[value="' +
+                                empresaRespuesta +
+                                '"]'
+                            ).length > 0;
+
+
+                        if (
+                            empresaRespuesta === "otra"
+                        ) {
+
+                            $empresa.val("otra");
+
+                            controlarNuevaEmpresa();
+
+                            if (
+                                response.nueva_empresa
+                            ) {
+
+                                $nuevaEmpresa.val(
+                                    response.nueva_empresa
+                                );
+
+                            }
+
+                        } else if (
+                            existeEmpresa
+                        ) {
+
+                            $empresa.val(
+                                empresaRespuesta
                             );
 
+                            controlarNuevaEmpresa();
 
-                        /* ==============================================
-                           CONTACTO DE EMERGENCIA
-                        ============================================== */
+                        } else {
+
+                            /*
+                             * Si la empresa devuelta por PHP
+                             * no existe como option, dejamos
+                             * el selector vacío.
+                             */
+
+                            $empresa.val("");
+
+                            controlarNuevaEmpresa();
+
+                        }
+
+
+                        /* ==========================================
+                        CONTACTO EMERGENCIA
+                        ========================================== */
 
                         $("#nombre_emergencia")
                             .val(
@@ -1749,20 +2013,9 @@ $empresa = cargarEmpresa($connection);
                             );
 
 
-                        /* ==============================================
-                           INDUCCIÓN SG-SST
-                        ============================================== */
-
-                        /*
-                         * Si induccion_sgsst es un checkbox,
-                         * usamos checked.
-                         *
-                         * Si es un select/input normal,
-                         * usamos val().
-                         */
-
-                        const $induccion =
-                            $("#induccion_sgsst");
+                        /* ==========================================
+                        INDUCCIÓN SST
+                        ========================================== */
 
                         if (
                             $induccion.is(":checkbox")
@@ -1782,9 +2035,9 @@ $empresa = cargarEmpresa($connection);
                         }
 
 
-                        /* ==============================================
-                           ENFERMEDADES / ALERGIAS
-                        ============================================== */
+                        /* ==========================================
+                        ENFERMEDADES
+                        ========================================== */
 
                         $("#enfermedad_alergia")
                             .val(
@@ -1792,9 +2045,9 @@ $empresa = cargarEmpresa($connection);
                             );
 
 
-                        /* ==============================================
-                           HORA DE INGRESO
-                        ============================================== */
+                        /* ==========================================
+                        HORA INGRESO
+                        ========================================== */
 
                         $("#ingreso")
                             .val(
@@ -1802,47 +2055,15 @@ $empresa = cargarEmpresa($connection);
                             );
 
 
-                        /* ==============================================
-                           EMPRESA "OTRA"
-                        ============================================== */
-
-                        if (
-                            response.empresa === "otra"
-                        ) {
-
-                            $("#nuevaEmpresaContainer")
-                                .stop(true, true)
-                                .slideDown();
-
-                            $("#nueva_empresa")
-                                .prop(
-                                    "required",
-                                    true
-                                );
-
-                        } else {
-
-                            $("#nuevaEmpresaContainer")
-                                .stop(true, true)
-                                .slideUp();
-
-                            $("#nueva_empresa")
-                                .prop(
-                                    "required",
-                                    false
-                                )
-                                .val("");
-
-                        }
-
-
-                        /* ==============================================
-                           MENSAJE DE ÉXITO DE CONSULTA
-                        ============================================== */
+                        /* ==========================================
+                        MENSAJE
+                        ========================================== */
 
                         $("#mensajeCedula")
                             .removeClass(
-                                "text-primary text-danger text-warning"
+                                "text-primary " +
+                                "text-danger " +
+                                "text-warning"
                             )
                             .addClass(
                                 "text-success fw-semibold"
@@ -1855,7 +2076,7 @@ $empresa = cargarEmpresa($connection);
 
 
                     /* ==================================================
-                       ERROR AJAX
+                    ERROR AJAX
                     ================================================== */
 
                     error: function(
@@ -1865,40 +2086,27 @@ $empresa = cargarEmpresa($connection);
                     ) {
 
                         console.error(
-                            "========== ERROR AJAX =========="
-                        );
-
-                        console.error(
-                            "HTTP:",
-                            xhr.status
-                        );
-
-                        console.error(
-                            "STATUS:",
-                            status
-                        );
-
-                        console.error(
-                            "ERROR:",
+                            "ERROR AJAX:",
+                            xhr.status,
+                            status,
                             error
                         );
 
+
                         console.error(
-                            "RESPUESTA:",
                             xhr.responseText
                         );
 
-                        console.error(
-                            "================================"
-                        );
 
-
-                        ultimaCedulaConsultada = "";
+                        ultimaCedulaConsultada =
+                            "";
 
 
                         $("#mensajeCedula")
                             .removeClass(
-                                "text-success text-primary text-warning"
+                                "text-success " +
+                                "text-primary " +
+                                "text-warning"
                             )
                             .addClass(
                                 "text-danger fw-semibold"
@@ -1930,346 +2138,333 @@ $empresa = cargarEmpresa($connection);
 
 
             /* ==========================================================
-               MOSTRAR / OCULTAR NUEVA EMPRESA
+               LIMPIAR DATOS
             ========================================================== */
 
-            $("#empresa").on("change", function() {
+            function limpiarDatosContratista() {
 
-                const empresa =
-                    $(this).val();
+                $("#nombre").val("");
 
+                $("#rh").val("");
 
-                if (
-                    empresa === "otra"
-                ) {
+                $("#arl").val("");
 
-                    $("#nuevaEmpresaContainer")
-                        .stop(true, true)
-                        .slideDown();
+                $("#eps").val("");
 
+                $("#empresa").val("");
 
-                    $("#nueva_empresa")
-                        .prop(
-                            "required",
-                            true
-                        );
+                $("#nueva_empresa")
+                    .val("")
+                    .prop("disabled", true)
+                    .prop("readonly", true)
+                    .prop("required", false);
 
-                } else {
-
-                    $("#nuevaEmpresaContainer")
-                        .stop(true, true)
-                        .slideUp();
+                $("#nuevaEmpresaContainer")
+                    .hide();
 
 
-                    $("#nueva_empresa")
-                        .prop(
-                            "required",
-                            false
-                        )
-                        .val("");
+                $("#nombre_emergencia").val("");
 
-                }
+                $("#telefono_emergencia").val("");
 
-            });
+                $("#induccion_sgsst")
+                    .prop("checked", false);
 
+                $("#enfermedad_alergia").val("");
 
-            /* ==========================================================
-               VALIDACIÓN DE FECHA
-            ========================================================== */
+                $("#ingreso").val("");
 
-            $("#fecha").on("change", function() {
+                $("#marca").val("");
 
-                const valor =
-                    this.value;
+                $("#serial").val("");
 
+                $("#equipoElectronicoCheckbox")
+                    .prop("checked", false);
 
-                if (!valor) {
-                    return;
-                }
+                $("#inputsEquipoElectronico")
+                    .hide();
 
-
-                const partes =
-                    valor.split("-");
-
-
-                if (
-                    partes.length !== 3
-                ) {
-
-                    this.value = "";
-
-                    return;
-
-                }
-
-
-                const fechaSeleccionada =
-                    new Date(
-                        Number(partes[0]),
-                        Number(partes[1]) - 1,
-                        Number(partes[2])
-                    );
-
-
-                const hoy =
-                    new Date();
-
-
-                hoy.setHours(
-                    0,
-                    0,
-                    0,
-                    0
-                );
-
-
-                if (
-                    fechaSeleccionada > hoy
-                ) {
-
-                    Swal.fire({
-
-                        icon: "warning",
-
-                        title: "Fecha inválida",
-
-                        text: "No se permiten fechas futuras.",
-
-                        confirmButtonColor: "#ffc107"
-
-                    });
-
-
-                    this.value = "";
-
-                }
-
-            });
+            }
 
 
             /* ==========================================================
                EQUIPO ELECTRÓNICO
             ========================================================== */
 
-            $("#equipoElectronicoCheckbox")
-                .on("change", function() {
+            $equipo.on(
+                "change",
+                function() {
 
                     if (this.checked) {
 
-                        $("#inputsEquipoElectronico")
+                        $inputsEquipo
                             .stop(true, true)
-                            .slideDown();
+                            .slideDown(250);
 
                     } else {
 
-                        $("#inputsEquipoElectronico")
+                        $inputsEquipo
                             .stop(true, true)
-                            .slideUp();
+                            .slideUp(250);
 
 
-                        $("#marca")
-                            .val("");
+                        $("#marca").val("");
 
-
-                        $("#serial")
-                            .val("");
+                        $("#serial").val("");
 
                     }
 
-                });
+                }
+            );
+
+
+            /* ==========================================================
+               FECHA
+            ========================================================== */
+
+            $("#fecha").on(
+                "change",
+                function() {
+
+                    const valor =
+                        this.value;
+
+
+                    if (!valor) {
+
+                        return;
+
+                    }
+
+
+                    const partes =
+                        valor.split("-");
+
+
+                    if (
+                        partes.length !== 3
+                    ) {
+
+                        this.value = "";
+
+                        return;
+
+                    }
+
+
+                    const fechaSeleccionada =
+                        new Date(
+                            Number(partes[0]),
+                            Number(partes[1]) - 1,
+                            Number(partes[2])
+                        );
+
+
+                    const hoy =
+                        new Date();
+
+
+                    hoy.setHours(
+                        0,
+                        0,
+                        0,
+                        0
+                    );
+
+
+                    if (
+                        fechaSeleccionada > hoy
+                    ) {
+
+                        Swal.fire({
+
+                            icon: "warning",
+
+                            title: "Fecha inválida",
+
+                            text: "No se permiten fechas futuras.",
+
+                            confirmButtonColor: "#ffc107"
+
+                        });
+
+
+                        this.value = "";
+
+                    }
+
+                }
+            );
 
 
             /* ==========================================================
                ENVÍO DEL FORMULARIO
             ========================================================== */
 
-            $form.on("submit", function(e) {
+            $form.on(
+                "submit",
+                function(e) {
 
-                /*
-                 * Si ya fue confirmado,
-                 * permitimos el envío normal.
-                 */
+                    if (
+                        enviandoFormulario
+                    ) {
 
-                if (
-                    enviandoFormulario
-                ) {
+                        return;
 
-                    return;
-
-                }
+                    }
 
 
-                e.preventDefault();
+                    e.preventDefault();
 
 
-                /* ======================================================
-                   VALIDACIÓN HTML5
-                ====================================================== */
+                    /* ==============================================
+                    VALIDACIÓN HTML
+                    ============================================== */
 
-                if (
-                    !this.checkValidity()
-                ) {
+                    if (
+                        !this.checkValidity()
+                    ) {
 
-                    this.reportValidity();
+                        this.reportValidity();
 
-                    return;
+                        return;
 
-                }
-
-
-                const formulario =
-                    this;
+                    }
 
 
-                const $botonGuardar =
-                    $form.find(
-                        'button[type="submit"]'
-                    );
+                    const formulario =
+                        this;
 
 
-                /* ======================================================
-                   VALIDAR EMPRESA "OTRA"
-                ====================================================== */
+                    const $botonGuardar =
+                        $form.find(
+                            'button[type="submit"]'
+                        );
 
-                if (
-                    $("#empresa").val() === "otra"
-                ) {
 
-                    const nuevaEmpresa =
-                        $("#nueva_empresa")
-                        .val()
-                        .trim();
+                    /* ==============================================
+                    VALIDAR OTRA EMPRESA
+                    ============================================== */
+
+                    if (
+                        $empresa.val() === "otra"
+                    ) {
+
+                        const nombreNuevaEmpresa =
+                            $nuevaEmpresa
+                            .val()
+                            .trim();
+
+
+                        if (
+                            nombreNuevaEmpresa === ""
+                        ) {
+
+                            Swal.fire({
+
+                                icon: "warning",
+
+                                title: "Empresa requerida",
+
+                                text: "Debe indicar el nombre de la nueva empresa.",
+
+                                confirmButtonColor: "#ffc107"
+
+                            });
+
+
+                            controlarNuevaEmpresa();
+
+
+                            $nuevaEmpresa.focus();
+
+
+                            return;
+
+                        }
+
+                    }
+
+
+                    /* ==============================================
+                    VALIDAR EQUIPO
+                    ============================================== */
+
+                    if (
+                        $equipo.is(":checked")
+                    ) {
+
+                        const marca =
+                            $("#marca")
+                            .val()
+                            .trim();
+
+
+                        const serial =
+                            $("#serial")
+                            .val()
+                            .trim();
+
+
+                        if (
+                            marca === "" ||
+                            serial === ""
+                        ) {
+
+                            Swal.fire({
+
+                                icon: "warning",
+
+                                title: "Datos del equipo",
+
+                                text: "Debe ingresar la marca y el serial del equipo electrónico.",
+
+                                confirmButtonColor: "#ffc107"
+
+                            });
+
+
+                            return;
+
+                        }
+
+                    }
+
+
+                    /* ==============================================
+                    VALIDAR INDUCCIÓN
+                    ============================================== */
+
+                    let induccionRealizada =
+                        false;
 
 
                     if (
-                        nuevaEmpresa === ""
+                        $induccion.is(":checkbox")
+                    ) {
+
+                        induccionRealizada =
+                            $induccion.is(":checked");
+
+                    } else {
+
+                        induccionRealizada =
+                            $induccion.val() === "1";
+
+                    }
+
+
+                    if (
+                        !induccionRealizada
                     ) {
 
                         Swal.fire({
 
                             icon: "warning",
 
-                            title: "Empresa requerida",
+                            title: "Inducción SST obligatoria",
 
-                            text: "Debe indicar el nombre de la nueva empresa.",
-
-                            confirmButtonColor: "#ffc107"
-
-                        });
-
-
-                        $("#nueva_empresa")
-                            .focus();
-
-
-                        return;
-
-                    }
-
-                }
-
-
-                /* ======================================================
-                   VALIDAR EQUIPO ELECTRÓNICO
-                ====================================================== */
-
-                if (
-                    $("#equipoElectronicoCheckbox")
-                    .is(":checked")
-                ) {
-
-                    const marca =
-                        $("#marca")
-                        .val()
-                        .trim();
-
-
-                    const serial =
-                        $("#serial")
-                        .val()
-                        .trim();
-
-
-                    if (
-                        marca === "" ||
-                        serial === ""
-                    ) {
-
-                        Swal.fire({
-
-                            icon: "warning",
-
-                            title: "Datos del equipo",
-
-                            text: "Debe ingresar la marca y el serial del equipo electrónico.",
-
-                            confirmButtonColor: "#ffc107"
-
-                        });
-
-
-                        return;
-
-                    }
-
-                }
-
-
-                /* ======================================================
-                   VALIDAR INDUCCIÓN SST
-                ====================================================== */
-
-                const $induccion =
-                    $("#induccion_sgsst");
-
-                let induccionRealizada = false;
-
-
-                /*
-                 * Si el campo es checkbox.
-                 */
-
-                if (
-                    $induccion.is(":checkbox")
-                ) {
-
-                    induccionRealizada =
-                        $induccion.is(":checked");
-
-                } else {
-
-                    /*
-                     * Si el campo es select,
-                     * consideramos válido solamente
-                     * el valor 1.
-                     */
-
-                    induccionRealizada =
-                        $induccion.val() === "1";
-
-                }
-
-
-                /* ======================================================
-                   INDUCCIÓN NO REALIZADA
-                ====================================================== */
-
-                if (!induccionRealizada) {
-
-                    Swal.fire({
-
-                        icon: "warning",
-
-                        title: `
-                        <span style="
-                            color:#dc3545;
-                            font-weight:700;
-                        ">
-                            Inducción SST obligatoria
-                        </span>
-                    `,
-
-                        html: `
+                            html: `
 
                         <div style="
                             text-align:center;
@@ -2288,32 +2483,45 @@ $empresa = cargarEmpresa($connection);
                                 justify-content:center;
                                 color:#dc3545;
                                 font-size:34px;
-                                box-shadow:0 5px 15px rgba(0,0,0,.10);
+                                box-shadow:
+                                    0 5px 15px
+                                    rgba(0,0,0,.10);
                             ">
+
                                 <i class="fas fa-hard-hat"></i>
+
                             </div>
+
 
                             <h5 style="
                                 font-weight:700;
                                 color:#343a40;
                                 margin-bottom:12px;
                             ">
-                                La inducción de SST es obligatoria
+
+                                La inducción de SST
+                                es obligatoria
+
                             </h5>
+
 
                             <p style="
                                 font-size:16px;
                                 line-height:1.6;
                                 color:#495057;
-                                margin-bottom:12px;
                             ">
-                                Para registrar el ingreso del contratista
-                                es necesario haber realizado la
+
+                                Para registrar el ingreso del
+                                contratista es necesario haber
+                                realizado la
+
                                 <strong>
                                     Inducción de Seguridad y Salud
                                     en el Trabajo (SST)
                                 </strong>.
+
                             </p>
+
 
                             <div style="
                                 background:#f8f9fa;
@@ -2325,17 +2533,26 @@ $empresa = cargarEmpresa($connection);
                             ">
 
                                 <strong style="color:#dc3545;">
-                                    <i class="fas fa-circle-exclamation me-1"></i>
+
+                                    <i
+                                        class="fas fa-circle-exclamation me-1">
+                                    </i>
+
                                     Importante
+
                                 </strong>
+
 
                                 <div style="
                                     margin-top:5px;
                                     color:#6c757d;
                                     font-size:14px;
                                 ">
-                                    No es posible continuar con el registro
-                                    hasta completar y confirmar la inducción.
+
+                                    No es posible continuar con
+                                    el registro hasta completar
+                                    y confirmar la inducción.
+
                                 </div>
 
                             </div>
@@ -2344,69 +2561,74 @@ $empresa = cargarEmpresa($connection);
 
                     `,
 
-                        confirmButtonText: `
-                        <i class="fas fa-check me-2"></i>
-                        Entendido
-                    `,
+                            confirmButtonText: "Entendido",
 
-                        confirmButtonColor: "#dc3545",
+                            confirmButtonColor: "#dc3545",
 
-                        allowOutsideClick: false,
+                            allowOutsideClick: false,
 
-                        allowEscapeKey: false,
+                            allowEscapeKey: false,
 
-                        width: "500px"
+                            width: "500px"
 
-                    }).then(function() {
+                        }).then(function() {
 
-                        /*
-                         * Llevar al usuario directamente
-                         * al campo de inducción.
-                         */
-
-                        const elemento =
-                            document.getElementById(
-                                "induccion_sgsst"
-                            );
-
-                        if (elemento) {
-
-                            elemento.scrollIntoView({
-                                behavior: "smooth",
-                                block: "center"
-                            });
-
-                            setTimeout(function() {
-
-                                elemento.focus();
-
-                            }, 500);
-
-                        }
-
-                    });
-
-                    return;
-
-                }
+                            const elemento =
+                                document.getElementById(
+                                    "induccion_sgsst"
+                                );
 
 
-                /* ======================================================
-                   CONFIRMACIÓN FINAL
-                ====================================================== */
+                            if (elemento) {
 
-                Swal.fire({
+                                elemento.scrollIntoView({
 
-                    title: "¿Guardar registro?",
+                                    behavior: "smooth",
 
-                    html: `
+                                    block: "center"
+
+                                });
+
+
+                                setTimeout(
+                                    function() {
+
+                                        elemento.focus();
+
+                                    },
+                                    500
+                                );
+
+                            }
+
+                        });
+
+
+                        return;
+
+                    }
+
+
+                    /* ==============================================
+                    CONFIRMACIÓN FINAL
+                    ============================================== */
+
+                    Swal.fire({
+
+                        title: "¿Guardar registro?",
+
+                        html: `
+
                     <p style="
                         font-size:16px;
                         color:#495057;
                     ">
+
                         Se registrará el contratista
                         en la base de datos.
+
                     </p>
+
 
                     <div style="
                         margin-top:15px;
@@ -2416,69 +2638,71 @@ $empresa = cargarEmpresa($connection);
                         color:#198754;
                         font-weight:600;
                     ">
-                        <i class="fas fa-circle-check me-2"></i>
+
+                        <i
+                            class="fas fa-circle-check me-2">
+                        </i>
+
                         Inducción SST confirmada
+
                     </div>
+
                 `,
 
-                    icon: "question",
+                        icon: "question",
 
-                    showCancelButton: true,
+                        showCancelButton: true,
 
-                    confirmButtonColor: "#dc3545",
+                        confirmButtonColor: "#dc3545",
 
-                    cancelButtonColor: "#6c757d",
+                        cancelButtonColor: "#6c757d",
 
-                    confirmButtonText: `
-                    <i class="fas fa-save me-2"></i>
-                    Sí, guardar
-                `,
+                        confirmButtonText: "Sí, guardar",
 
-                    cancelButtonText: "Cancelar",
+                        cancelButtonText: "Cancelar",
 
-                    reverseButtons: true
+                        reverseButtons: true
 
-                }).then(function(result) {
+                    }).then(
+                        function(result) {
 
-                    if (
-                        !result.isConfirmed
-                    ) {
+                            if (
+                                !result.isConfirmed
+                            ) {
 
-                        return;
+                                return;
 
-                    }
+                            }
 
 
-                    enviandoFormulario =
-                        true;
+                            enviandoFormulario =
+                                true;
 
 
-                    /* ==================================================
-                       DESACTIVAR BOTÓN
-                    ================================================== */
-
-                    $botonGuardar
-                        .prop(
-                            "disabled",
-                            true
-                        )
-                        .html(
-                            '<span class="spinner-border spinner-border-sm me-2"></span>' +
-                            'Guardando...'
-                        );
+                            $botonGuardar
+                                .prop(
+                                    "disabled",
+                                    true
+                                )
+                                .html(
+                                    '<span class="spinner-border spinner-border-sm me-2"></span>' +
+                                    'Guardando...'
+                                );
 
 
-                    /*
-                     * Submit nativo.
-                     */
+                            /*
+                             * Envío nativo del formulario.
+                             */
 
-                    HTMLFormElement.prototype.submit.call(
-                        formulario
+                            HTMLFormElement.prototype.submit.call(
+                                formulario
+                            );
+
+                        }
                     );
 
-                });
-
-            });
+                }
+            );
 
 
             /* ==========================================================
@@ -2510,7 +2734,7 @@ $empresa = cargarEmpresa($connection);
 
 
             /* ==========================================================
-               MENSAJES DE ERROR DESDE PHP
+               MENSAJE DE ERROR DESDE PHP
             ========================================================== */
 
             <?php if (isset($_SESSION['error'])): ?>
@@ -2521,120 +2745,134 @@ $empresa = cargarEmpresa($connection);
                         JSON_UNESCAPED_UNICODE
                     ) ?>;
 
+
                 <?php unset($_SESSION['error']); ?>
 
 
-                /* ======================================================
-                   INDUCCIÓN SST OBLIGATORIA
-                ====================================================== */
-
                 if (
-                    errorServidor === "induccion_obligatoria"
+                    errorServidor ===
+                    "induccion_obligatoria"
                 ) {
 
                     Swal.fire({
 
                         icon: "warning",
 
-                        title: `
-                        <span style="
-                            color:#dc3545;
-                            font-weight:700;
-                        ">
-                            Inducción SST obligatoria
-                        </span>
-                    `,
+                        title: "Inducción SST obligatoria",
 
                         html: `
 
+                    <div style="
+                        text-align:center;
+                        padding:5px 10px;
+                    ">
+
                         <div style="
-                            text-align:center;
-                            padding:5px 10px;
+                            width:85px;
+                            height:85px;
+                            margin:0 auto 20px;
+                            border-radius:50%;
+                            background:#fff3cd;
+                            border:3px solid #ffc107;
+                            display:flex;
+                            align-items:center;
+                            justify-content:center;
+                            color:#dc3545;
+                            font-size:40px;
+                            box-shadow:
+                                0 6px 18px
+                                rgba(0,0,0,.12);
+                        ">
+
+                            <i class="fas fa-hard-hat"></i>
+
+                        </div>
+
+
+                        <h4 style="
+                            font-weight:700;
+                            color:#343a40;
+                            margin-bottom:15px;
+                        ">
+
+                            No se puede registrar
+                            el ingreso
+
+                        </h4>
+
+
+                        <p style="
+                            font-size:17px;
+                            line-height:1.6;
+                            color:#495057;
+                        ">
+
+                            La
+
+                            <strong>
+                                Inducción de Seguridad y Salud
+                                en el Trabajo (SST)
+                            </strong>
+
+                            es
+
+                            <span style="
+                                color:#dc3545;
+                                font-weight:700;
+                            ">
+
+                                obligatoria
+
+                            </span>
+
+                            para realizar el registro.
+
+                        </p>
+
+
+                        <div style="
+                            background:#fff8e1;
+                            border:1px solid #ffc107;
+                            border-radius:10px;
+                            padding:14px;
+                            margin-top:18px;
+                            text-align:left;
                         ">
 
                             <div style="
-                                width:85px;
-                                height:85px;
-                                margin:0 auto 20px;
-                                border-radius:50%;
-                                background:#fff3cd;
-                                border:3px solid #ffc107;
-                                display:flex;
-                                align-items:center;
-                                justify-content:center;
-                                color:#dc3545;
-                                font-size:40px;
-                                box-shadow:
-                                    0 6px 18px rgba(0,0,0,.12);
+                                color:#856404;
+                                font-weight:700;
+                                margin-bottom:5px;
                             ">
-                                <i class="fas fa-hard-hat"></i>
+
+                                <i
+                                    class="fas fa-triangle-exclamation me-2">
+                                </i>
+
+                                Acción requerida
+
                             </div>
 
-                            <h4 style="
-                                font-weight:700;
-                                color:#343a40;
-                                margin-bottom:15px;
-                            ">
-                                No se puede registrar el ingreso
-                            </h4>
-
-                            <p style="
-                                font-size:17px;
-                                line-height:1.6;
-                                color:#495057;
-                            ">
-                                La
-                                <strong>
-                                    Inducción de Seguridad y Salud
-                                    en el Trabajo (SST)
-                                </strong>
-                                es
-                                <span style="
-                                    color:#dc3545;
-                                    font-weight:700;
-                                ">
-                                    obligatoria
-                                </span>
-                                para realizar el registro.
-                            </p>
 
                             <div style="
-                                background:#fff8e1;
-                                border:1px solid #ffc107;
-                                border-radius:10px;
-                                padding:14px;
-                                margin-top:18px;
-                                text-align:left;
+                                color:#6c757d;
+                                font-size:14px;
                             ">
 
-                                <div style="
-                                    color:#856404;
-                                    font-weight:700;
-                                    margin-bottom:5px;
-                                ">
-                                    <i class="fas fa-triangle-exclamation me-2"></i>
-                                    Acción requerida
-                                </div>
-
-                                <div style="
-                                    color:#6c757d;
-                                    font-size:14px;
-                                ">
-                                    Realice la inducción SST y confirme
-                                    su realización en el formulario
-                                    antes de continuar.
-                                </div>
+                                Realice la inducción SST
+                                y confirme su realización
+                                en el formulario antes
+                                de continuar.
 
                             </div>
 
                         </div>
 
-                    `,
+                    </div>
 
-                        confirmButtonText: `
-                        <i class="fas fa-check me-2"></i>
-                        Entendido
-                    `,
+                `,
+
+                        confirmButtonText: "Entendido",
 
                         confirmButtonColor: "#dc3545",
 
@@ -2651,28 +2889,32 @@ $empresa = cargarEmpresa($connection);
                                 "induccion_sgsst"
                             );
 
+
                         if (elemento) {
 
                             elemento.scrollIntoView({
+
                                 behavior: "smooth",
+
                                 block: "center"
+
                             });
 
-                            setTimeout(function() {
 
-                                elemento.focus();
+                            setTimeout(
+                                function() {
 
-                            }, 500);
+                                    elemento.focus();
+
+                                },
+                                500
+                            );
 
                         }
 
                     });
 
                 } else {
-
-                    /* ==================================================
-                       ERROR GENERAL
-                    ================================================== */
 
                     Swal.fire({
 

@@ -119,6 +119,9 @@ $fecha_inicial = date('Y-m-d');
 $ARL = cargarARL($connection);
 $EPS = cargarEPS($connection);
 $Area = cargarArea($connection);
+
+$realizo = $_SESSION['nombre'] ?? $_SESSION['usuario'] ?? '';
+
 ?>
 
 <!DOCTYPE html>
@@ -580,6 +583,28 @@ $Area = cargarArea($connection);
                         <div class="col-12 col-md-3">
                             <label for="ingreso" class="form-label">Hora de ingreso:</label>
                             <input type="time" name="ingreso" id="ingreso" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="realizo" class="form-label">
+                                Usuario que Registra:
+                            </label>
+
+                            <div class="input-group">
+
+                                <span class="input-group-text">
+                                    <i class="fas fa-user-shield"></i>
+                                </span>
+
+                                <input
+                                    type="text"
+                                    name="realizo"
+                                    id="realizo"
+                                    class="form-control bg-light"
+                                    value="<?= htmlspecialchars($realizo, ENT_QUOTES, 'UTF-8') ?>"
+                                    readonly>
+
+                            </div>
                         </div>
 
                         <!-- EQUIPO ELECTRÓNICO -->

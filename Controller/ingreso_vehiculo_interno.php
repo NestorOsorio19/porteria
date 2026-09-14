@@ -41,8 +41,6 @@ try {
     $revision_tecn   = trim($_POST['fecha_revision'] ?? '');
     $licencia        = trim($_POST['fecha_licencia'] ?? '');
 
-    $induccion_sst   = trim($_POST['induccion_sgsst'] ?? '0');
-
     /* ==========================================================
     HORAS
     ========================================================== */
@@ -92,7 +90,6 @@ try {
             fecha_soat,
             revision_tecn,
             licencia,
-            induccion_sst,
             registro
         )
         VALUES (
@@ -108,7 +105,6 @@ try {
             :fecha_soat,
             :revision_tecn,
             :licencia,
-            :induccion_sst,
             :registro
         )
     ";
@@ -129,7 +125,6 @@ try {
         ':fecha_soat'     => $fecha_soat,
         ':revision_tecn'  => $revision_tecn,
         ':licencia'       => $licencia,
-        ':induccion_sst'  => $induccion_sst,
         ':registro'       => $registro
 
     ]);

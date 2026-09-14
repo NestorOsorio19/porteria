@@ -29,7 +29,7 @@ function responderError(string $mensaje): void
 {
     header(
         "Location: ../View/registro_colaboradores.php?error=" .
-        urlencode($mensaje)
+            urlencode($mensaje)
     );
 
     exit;
@@ -110,6 +110,8 @@ $area = $_POST['area'] ?? '';
 
 $equipo = isset($_POST['equipo']) ? 'SI' : 'NO';
 
+$realizo = $_SESSION['nombre'] ?? $_SESSION['usuario'] ?? '';
+
 
 /* =====================================================
    VALIDAR CAMPOS OBLIGATORIOS
@@ -126,14 +128,14 @@ if (
     $ingreso === '' ||
     $arl === '' ||
     $eps === '' ||
-    $area === ''
+    $area === '' ||
+    $realizo === ''
 ) {
 
     responderError(
         "Todos los campos obligatorios deben completarse."
     );
 }
-
 
 /* =====================================================
    VALIDAR CÉDULA
@@ -252,7 +254,6 @@ if ($equipo === 'NO') {
     $marca = '';
 
     $serial = '';
-
 } else {
 
     if ($marca === '' || $serial === '') {
@@ -272,35 +273,37 @@ try {
 
     $sql = "
         INSERT INTO colaboradores (
-            fecha,
-            cedula,
-            nombre,
-            telefono,
-            id_arl,
-            id_eps,
-            rh,
-            nom_eme,
-            tel_eme,
-            id_area,
-            marca,
-            serial,
-            ingreso
+        fecha,
+        cedula,
+        nombre,
+        telefono,
+        id_arl,
+        id_eps,
+        rh,
+        nom_eme,
+        tel_eme,
+        id_area,
+        marca,
+        serial,
+        ingreso,
+        realizo
         )
         VALUES (
-            :fecha,
-            :cedula,
-            :nombre,
-            :telefono,
-            :arl,
-            :eps,
-            :rh,
-            :nom_eme,
-            :tel_eme,
-            :area,
-            :marca,
-            :serial,
-            :ingreso
-        )
+        :fecha,
+        :cedula,
+        :nombre,
+        :telefono,
+        :arl,
+        :eps,
+        :rh,
+        :nom_eme,
+        :tel_eme,
+        :area,
+        :marca,
+        :serial,
+        :ingreso,
+        :realizo
+    )
     ";
 
     $stmt = $con->prepare($sql);
@@ -331,7 +334,9 @@ try {
 
         ':serial' => $serial,
 
-        ':ingreso' => $ingreso
+        ':ingreso' => $ingreso,
+
+        ':realizo' => $realizo
 
     ]);
 
@@ -345,8 +350,6 @@ try {
     );
 
     exit;
-
-
 } catch (PDOException $e) {
 
     /*
@@ -357,6 +360,6 @@ try {
 
     responderError(
         "No fue posible guardar el registro: " .
-        $e->getMessage()
+            $e->getMessage()
     );
 }

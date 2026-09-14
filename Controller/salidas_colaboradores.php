@@ -11,8 +11,30 @@ try {
     $con = connection();
 
     /* ==========================================================
+       USUARIO QUE REGISTRA LA SALIDA
+    ========================================================== */
+
+    $realizoSalida = $_SESSION['nombre']
+        ?? $_SESSION['usuario']
+        ?? '';
+
+    $realizoSalida = trim($realizoSalida);
+
+    if ($realizoSalida === '') {
+
+        echo json_encode([
+            'ok' => false,
+            'mensaje' => 'No se pudo identificar el usuario que registra la salida.'
+        ]);
+
+        exit;
+    }
+
+
+    /* ==========================================================
        RECIBIR ID
     ========================================================== */
+
     $id = filter_input(
         INPUT_POST,
         'id_registro',
@@ -29,9 +51,11 @@ try {
         exit;
     }
 
+
     /* ==========================================================
        BUSCAR REGISTRO
     ========================================================== */
+
     $sql = "
         SELECT
             id_registro,
@@ -49,6 +73,7 @@ try {
 
     $registro = $stmt->fetch(PDO::FETCH_ASSOC);
 
+
     if (!$registro) {
 
         echo json_encode([
@@ -59,9 +84,11 @@ try {
         exit;
     }
 
+
     /* ==========================================================
        VERIFICAR SI YA TIENE SALIDA
     ========================================================== */
+
     if (
         !empty($registro['salida']) &&
         $registro['salida'] !== '00:00:00'
@@ -75,43 +102,48 @@ try {
         exit;
     }
 
+
     /* ==========================================================
        HORA ACTUAL
     ========================================================== */
+
     $horaSalida = date('H:i:s');
 
+
     /* ==========================================================
-       ACTUALIZAR SALIDA
+       ACTUALIZAR SALIDA Y USUARIO
     ========================================================== */
+
     $sql = "
         UPDATE colaboradores
-        SET salida = :salida
+        SET
+            salida = :salida,
+            realizo_salida = :realizo_salida
         WHERE id_registro = :id
     ";
 
     $stmt = $con->prepare($sql);
 
     $stmt->execute([
-        ':salida' => $horaSalida,
-        ':id'     => $id
+        ':salida'         => $horaSalida,
+        ':realizo_salida' => $realizoSalida,
+        ':id'             => $id
     ]);
 
-    /* ==========================================================
-       CERRAR CONEXIÓN PDO (OPCIONAL)
-    ========================================================== */
-    $stmt = null;
-    $con = null;
 
     /* ==========================================================
        RESPUESTA
     ========================================================== */
+
     echo json_encode([
-        'ok' => true,
-        'hora_salida' => $horaSalida,
-        'mensaje' => 'Salida registrada correctamente.'
+        'ok'              => true,
+        'hora_salida'     => $horaSalida,
+        'realizo_salida'  => $realizoSalida,
+        'mensaje'         => 'Salida registrada correctamente.'
     ]);
 
     exit;
+
 
 } catch (PDOException $e) {
 

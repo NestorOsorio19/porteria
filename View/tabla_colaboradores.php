@@ -38,22 +38,19 @@ try {
     $stmt = $con->prepare($sql);
 
     $stmt->execute();
-
 } catch (PDOException $e) {
 
-    die(
-        "Error al consultar los colaboradores: " .
+    die("Error al consultar los colaboradores: " .
         htmlspecialchars(
             $e->getMessage(),
             ENT_QUOTES,
             'UTF-8'
-        )
-    );
+        ));
 }
 
 
 /* ==========================================================
-   FUNCIÓN DE SEGURIDAD PARA MOSTRAR DATOS
+   FUNCIÓN DE SEGURIDAD
 ========================================================== */
 
 function e($valor): string
@@ -66,6 +63,7 @@ function e($valor): string
 }
 
 ?>
+
 
 <!DOCTYPE html>
 
@@ -118,6 +116,9 @@ function e($valor): string
     ====================================================== -->
 
     <style>
+        /* =====================================================
+           GENERAL
+        ====================================================== */
 
         body {
 
@@ -135,16 +136,16 @@ function e($valor): string
 
 
         /* =====================================================
-           CONTENEDOR PRINCIPAL
+           CONTENEDOR
         ====================================================== */
 
         .users-table {
 
-            max-width: 1500px;
+            max-width: 1750px;
 
-            margin: 30px auto;
+            margin: 15px auto;
 
-            padding: 20px;
+            padding: 10px 15px;
 
         }
 
@@ -157,14 +158,14 @@ function e($valor): string
 
             background: #ffffff;
 
-            border-radius: 15px;
+            border-radius: 10px;
 
-            padding: 20px 25px;
+            padding: 14px 18px;
 
             box-shadow:
-                0 5px 18px rgba(0, 0, 0, 0.08);
+                0 3px 12px rgba(0, 0, 0, 0.07);
 
-            margin-bottom: 20px;
+            margin-bottom: 12px;
 
         }
 
@@ -175,6 +176,8 @@ function e($valor): string
 
             color: #192a56;
 
+            font-size: 20px;
+
             font-weight: 700;
 
         }
@@ -184,6 +187,8 @@ function e($valor): string
 
             color: #718093;
 
+            font-size: 12px;
+
         }
 
 
@@ -191,7 +196,7 @@ function e($valor): string
 
             display: flex;
 
-            gap: 10px;
+            gap: 7px;
 
             align-items: center;
 
@@ -209,11 +214,13 @@ function e($valor): string
 
             border: none;
 
-            padding: 10px 18px;
+            padding: 7px 12px;
 
-            border-radius: 8px;
+            border-radius: 6px;
 
             text-decoration: none;
+
+            font-size: 12px;
 
             font-weight: 600;
 
@@ -225,7 +232,7 @@ function e($valor): string
 
             align-items: center;
 
-            gap: 7px;
+            gap: 5px;
 
         }
 
@@ -243,8 +250,6 @@ function e($valor): string
 
             color: white;
 
-            transform: translateY(-1px);
-
         }
 
 
@@ -261,8 +266,6 @@ function e($valor): string
 
             color: white;
 
-            transform: translateY(-1px);
-
         }
 
 
@@ -274,12 +277,12 @@ function e($valor): string
 
             background: #fff;
 
-            padding: 20px;
+            padding: 10px;
 
-            border-radius: 15px;
+            border-radius: 10px;
 
             box-shadow:
-                0 5px 18px rgba(0, 0, 0, 0.08);
+                0 3px 12px rgba(0, 0, 0, 0.07);
 
         }
 
@@ -287,6 +290,10 @@ function e($valor): string
         table.dataTable {
 
             width: 100% !important;
+
+            font-size: 12px;
+
+            margin-top: 0 !important;
 
         }
 
@@ -305,6 +312,10 @@ function e($valor): string
 
             white-space: nowrap;
 
+            padding: 7px 6px !important;
+
+            border: none;
+
         }
 
 
@@ -315,6 +326,8 @@ function e($valor): string
             vertical-align: middle;
 
             white-space: nowrap;
+
+            padding: 5px 6px !important;
 
         }
 
@@ -327,18 +340,14 @@ function e($valor): string
 
 
         /* =====================================================
-           CÉDULA
+           ID
         ====================================================== */
 
-        .cedula {
+        .id-registro {
 
-            background: #718093;
+            color: #6c757d;
 
-            color: white;
-
-            padding: 5px 9px;
-
-            border-radius: 6px;
+            font-size: 11px;
 
             font-weight: 600;
 
@@ -346,58 +355,188 @@ function e($valor): string
 
 
         /* =====================================================
-           HORA INGRESO
+           COLABORADOR
         ====================================================== */
+
+        .colaborador {
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: flex-start;
+
+            line-height: 1.15;
+
+            min-width: 150px;
+
+        }
+
+
+        .colaborador strong {
+
+            color: #192a56;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+        }
+
+
+        .colaborador small {
+
+            color: #718093;
+
+            font-size: 10px;
+
+        }
+
+
+        /* =====================================================
+           EQUIPO
+        ====================================================== */
+
+        .equipo {
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: flex-start;
+
+            line-height: 1.15;
+
+        }
+
+
+        .equipo strong {
+
+            font-size: 11px;
+
+            color: #2f3640;
+
+        }
+
+
+        .equipo small {
+
+            font-size: 10px;
+
+            color: #718093;
+
+        }
+
+
+        /* =====================================================
+           ÁREA
+        ====================================================== */
+
+        .area {
+
+            font-size: 11px;
+
+            font-weight: 600;
+
+            color: #495057;
+
+        }
+
+
+        /* =====================================================
+           HORAS
+        ====================================================== */
+
+        .hora-ingreso,
+        .hora-salida,
+        .pendiente {
+
+            display: inline-block;
+
+            padding: 3px 6px;
+
+            border-radius: 4px;
+
+            font-size: 10px;
+
+            font-weight: 700;
+
+        }
+
 
         .hora-ingreso {
 
-            background: #28a745;
+            background: #d4edda;
 
-            color: white;
-
-            padding: 5px 9px;
-
-            border-radius: 6px;
-
-            font-weight: 600;
+            color: #155724;
 
         }
 
-
-        /* =====================================================
-           HORA SALIDA
-        ====================================================== */
 
         .hora-salida {
 
-            background: #17a2b8;
+            background: #d1ecf1;
 
-            color: white;
+            color: #0c5460;
 
-            padding: 5px 9px;
+        }
 
-            border-radius: 6px;
 
-            font-weight: 600;
+        .pendiente {
+
+            background: #fff3cd;
+
+            color: #856404;
 
         }
 
 
         /* =====================================================
-           PENDIENTE
+           USUARIO
         ====================================================== */
 
-        .pendiente {
+        .usuario-registro,
+        .usuario-salida {
 
-            background: #ffc107;
+            display: inline-flex;
 
-            color: #212529;
+            align-items: center;
 
-            padding: 5px 9px;
+            gap: 4px;
 
-            border-radius: 6px;
+            max-width: 120px;
+
+            padding: 3px 6px;
+
+            border-radius: 4px;
+
+            font-size: 10px;
 
             font-weight: 600;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+            white-space: nowrap;
+
+        }
+
+
+        .usuario-registro {
+
+            background: #e9ecef;
+
+            color: #495057;
+
+        }
+
+
+        .usuario-salida {
+
+            background: #e8f5e9;
+
+            color: #198754;
 
         }
 
@@ -414,15 +553,19 @@ function e($valor): string
 
             border: none;
 
-            padding: 7px 13px;
+            padding: 4px 8px;
 
-            border-radius: 6px;
+            border-radius: 5px;
+
+            font-size: 10px;
 
             font-weight: 600;
 
             cursor: pointer;
 
             transition: 0.2s;
+
+            white-space: nowrap;
 
         }
 
@@ -453,15 +596,55 @@ function e($valor): string
 
         .finalizado {
 
-            background: #28a745;
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 3px;
+
+            background: #d4edda;
+
+            color: #155724;
+
+            padding: 3px 6px;
+
+            border-radius: 4px;
+
+            font-size: 10px;
+
+            font-weight: 700;
+
+        }
+
+
+        /* =====================================================
+           BOTÓN DETALLES
+        ====================================================== */
+
+        .btnDetalles {
+
+            background: #6c757d;
 
             color: white;
 
-            padding: 5px 9px;
+            border: none;
 
-            border-radius: 6px;
+            padding: 4px 7px;
 
-            font-weight: 600;
+            border-radius: 5px;
+
+            font-size: 10px;
+
+            cursor: pointer;
+
+            margin-left: 3px;
+
+        }
+
+
+        .btnDetalles:hover {
+
+            background: #495057;
 
         }
 
@@ -470,30 +653,116 @@ function e($valor): string
            DATATABLES
         ====================================================== */
 
-        .dataTables_wrapper
-        .dataTables_filter
-        input {
+        .dataTables_wrapper {
 
-            border: 1px solid #ced4da;
-
-            border-radius: 6px;
-
-            padding: 6px 10px;
-
-            margin-left: 5px;
+            font-size: 12px;
 
         }
 
 
-        .dataTables_wrapper
-        .dataTables_length
-        select {
+        .dataTables_wrapper .dataTables_filter {
+
+            margin-bottom: 8px;
+
+        }
+
+
+        .dataTables_wrapper .dataTables_filter input {
 
             border: 1px solid #ced4da;
 
-            border-radius: 6px;
+            border-radius: 5px;
 
-            padding: 5px;
+            padding: 4px 8px;
+
+            margin-left: 5px;
+
+            font-size: 12px;
+
+        }
+
+
+        .dataTables_wrapper .dataTables_length select {
+
+            border: 1px solid #ced4da;
+
+            border-radius: 5px;
+
+            padding: 3px;
+
+            font-size: 12px;
+
+        }
+
+
+        .dataTables_wrapper .dataTables_info {
+
+            font-size: 11px;
+
+        }
+
+
+        .dataTables_wrapper .dataTables_paginate {
+
+            font-size: 11px;
+
+        }
+
+
+        /* =====================================================
+           MODAL DETALLES
+        ====================================================== */
+
+        .detalle-label {
+
+            color: #718093;
+
+            font-size: 10px;
+
+            font-weight: 700;
+
+            text-transform: uppercase;
+
+            margin-bottom: 2px;
+
+        }
+
+
+        .detalle-valor {
+
+            font-size: 12px;
+
+            font-weight: 600;
+
+            color: #2f3640;
+
+            margin-bottom: 10px;
+
+        }
+
+
+        .detalle-seccion {
+
+            background: #f8f9fa;
+
+            border-radius: 7px;
+
+            padding: 10px;
+
+            margin-bottom: 10px;
+
+        }
+
+
+        .detalle-seccion h6 {
+
+            color: #273c75;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            margin-bottom: 8px;
 
         }
 
@@ -506,16 +775,23 @@ function e($valor): string
 
             .users-table {
 
-                margin: 10px auto;
+                margin: 5px auto;
 
-                padding: 10px;
+                padding: 5px;
 
             }
 
 
             .card-header-custom {
 
-                padding: 15px;
+                padding: 10px;
+
+            }
+
+
+            .card-header-custom h2 {
+
+                font-size: 16px;
 
             }
 
@@ -526,7 +802,7 @@ function e($valor): string
 
                 align-items: flex-start !important;
 
-                gap: 15px;
+                gap: 10px;
 
             }
 
@@ -535,15 +811,13 @@ function e($valor): string
 
                 width: 100%;
 
-                flex-direction: column;
-
             }
 
 
             .btn-nuevo,
             .btn-menu {
 
-                width: 100%;
+                flex: 1;
 
                 justify-content: center;
 
@@ -552,14 +826,11 @@ function e($valor): string
 
             .table-container {
 
-                padding: 10px;
-
-                overflow-x: auto;
+                padding: 5px;
 
             }
 
         }
-
     </style>
 
 </head>
@@ -568,67 +839,432 @@ function e($valor): string
 <body>
 
 
-<div class="users-table">
+    <div class="users-table">
 
 
-    <!-- =====================================================
+        <!-- =====================================================
          ENCABEZADO
     ====================================================== -->
 
-    <div class="card-header-custom">
+        <div class="card-header-custom">
 
-        <div
-            class="header-content d-flex justify-content-between align-items-center">
-
-
-            <div>
-
-                <h2>
-
-                    <i class="fas fa-users text-danger"></i>
-
-                    Registro General de Colaboradores
-
-                </h2>
+            <div class="header-content d-flex justify-content-between align-items-center">
 
 
-                <small>
+                <div>
 
-                    Consulta y control de ingreso y salida
+                    <h2>
 
-                </small>
+                        <i class="fas fa-users text-danger"></i>
+
+                        Registro General de Colaboradores
+
+                    </h2>
+
+
+                    <small>
+
+                        Consulta y control de ingreso y salida
+
+                    </small>
+
+                </div>
+
+
+                <div class="header-buttons">
+
+
+                    <a
+                        href="../index.php"
+                        class="btn-menu">
+
+                        <i class="fas fa-home"></i>
+
+                        Menú
+
+                    </a>
+
+
+                    <a
+                        href="registro_colaboradores.php"
+                        class="btn-nuevo">
+
+                        <i class="fas fa-plus"></i>
+
+                        Nuevo Registro
+
+                    </a>
+
+
+                </div>
 
             </div>
 
-
-            <div class="header-buttons">
-
-
-                <!-- MENÚ -->
-
-                <a
-                    href="../index.php"
-                    class="btn-menu">
-
-                    <i class="fas fa-home"></i>
-
-                    Menú
-
-                </a>
+        </div>
 
 
-                <!-- NUEVO REGISTRO -->
 
-                <a
-                    href="registrocolaboradores.php"
-                    class="btn-nuevo">
+        <!-- =====================================================
+         TABLA
+    ====================================================== -->
 
-                    <i class="fas fa-plus"></i>
+        <div class="table-container">
 
-                    Nuevo Registro
+            <div class="table-responsive">
 
-                </a>
 
+                <table
+                    id="tablaColaboradores"
+                    class="table table-striped table-hover align-middle">
+
+
+                    <thead>
+
+                        <tr>
+
+                            <th>ID</th>
+
+                            <th>Fecha</th>
+
+                            <th>Colaborador</th>
+
+                            <th>Área</th>
+
+                            <th>Equipo</th>
+
+                            <th>Ingreso</th>
+
+                            <th>Registró ingreso</th>
+
+                            <th>Salida</th>
+
+                            <th>Registró salida</th>
+
+                            <th>Acción</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+
+                        <?php while (
+                            $row = $stmt->fetch(PDO::FETCH_ASSOC)
+                        ): ?>
+
+
+                            <?php
+
+                            $id = (int)($row['id_registro'] ?? 0);
+
+
+                            $horaSalida = trim(
+                                $row['salida'] ?? ''
+                            );
+
+
+                            $tieneSalida =
+                                $horaSalida !== '' &&
+                                $horaSalida !== '00:00:00';
+
+
+                            $realizo = trim(
+                                $row['realizo'] ?? ''
+                            );
+
+
+                            $realizoSalida = trim(
+                                $row['realizo_salida'] ?? ''
+                            );
+
+                            ?>
+
+
+                            <tr>
+
+
+                                <!-- =================================================
+                             ID
+                        ================================================== -->
+
+                                <td>
+
+                                    <span class="id-registro">
+
+                                        #<?= $id ?>
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- =================================================
+                             FECHA
+                        ================================================== -->
+
+                                <td>
+
+                                    <?= e(
+                                        $row['fecha'] ?? ''
+                                    ) ?>
+
+                                </td>
+
+
+                                <!-- =================================================
+                             COLABORADOR
+                        ================================================== -->
+
+                                <td>
+
+                                    <div class="colaborador">
+
+                                        <strong>
+
+                                            <?= e(
+                                                $row['nombre'] ?? ''
+                                            ) ?>
+
+                                        </strong>
+
+                                        <small>
+
+                                            CC:
+                                            <?= e(
+                                                $row['cedula'] ?? ''
+                                            ) ?>
+
+                                            <?php if (!empty($row['telefono'])): ?>
+
+                                                ·
+                                                <?= e(
+                                                    $row['telefono']
+                                                ) ?>
+
+                                            <?php endif; ?>
+
+                                        </small>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- =================================================
+                             ÁREA
+                        ================================================== -->
+
+                                <td>
+
+                                    <span class="area">
+
+                                        <?= e(
+                                            $row['nom_area'] ?? 'Sin área'
+                                        ) ?>
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- =================================================
+                             EQUIPO
+                        ================================================== -->
+
+                                <td>
+
+                                    <div class="equipo">
+
+                                        <strong>
+
+                                            <?= e(
+                                                $row['marca'] ?? 'Sin equipo'
+                                            ) ?>
+
+                                        </strong>
+
+                                        <small>
+
+                                            <?= e(
+                                                $row['serial'] ?? 'Sin serial'
+                                            ) ?>
+
+                                        </small>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- =================================================
+                             INGRESO
+                        ================================================== -->
+
+                                <td>
+
+                                    <?php if (!empty($row['ingreso'])): ?>
+
+                                        <span class="hora-ingreso">
+
+                                            <?= e(
+                                                $row['ingreso']
+                                            ) ?>
+
+                                        </span>
+
+                                    <?php else: ?>
+
+                                        <span class="text-muted">
+
+                                            —
+
+                                        </span>
+
+                                    <?php endif; ?>
+
+                                </td>
+
+
+                                <!-- =================================================
+                             USUARIO QUE REGISTRÓ INGRESO
+                        ================================================== -->
+
+                                <td>
+
+                                    <?php if ($realizo !== ''): ?>
+
+                                        <span
+                                            class="usuario-registro"
+                                            title="<?= e($realizo) ?>">
+
+                                            <i class="fas fa-user"></i>
+
+                                            <?= e($realizo) ?>
+
+                                        </span>
+
+                                    <?php else: ?>
+
+                                        <span class="text-muted">
+
+                                            —
+
+                                        </span>
+
+                                    <?php endif; ?>
+
+                                </td>
+
+
+                                <!-- =================================================
+                             SALIDA
+                        ================================================== -->
+
+                                <td id="salida_<?= $id ?>">
+
+                                    <?php if (!$tieneSalida): ?>
+
+                                        <span class="pendiente">
+
+                                            Pendiente
+
+                                        </span>
+
+                                    <?php else: ?>
+
+                                        <span class="hora-salida">
+
+                                            <?= e(
+                                                $horaSalida
+                                            ) ?>
+
+                                        </span>
+
+                                    <?php endif; ?>
+
+                                </td>
+
+
+                                <!-- =================================================
+                             USUARIO QUE REGISTRÓ SALIDA
+                        ================================================== -->
+
+                                <td id="realizo_salida_<?= $id ?>">
+
+                                    <?php if (
+                                        $tieneSalida &&
+                                        $realizoSalida !== ''
+                                    ): ?>
+
+                                        <span
+                                            class="usuario-salida"
+                                            title="<?= e($realizoSalida) ?>">
+
+                                            <i class="fas fa-user-check"></i>
+
+                                            <?= e($realizoSalida) ?>
+
+                                        </span>
+
+                                    <?php else: ?>
+
+                                        <span class="text-muted">
+
+                                            —
+
+                                        </span>
+
+                                    <?php endif; ?>
+
+                                </td>
+
+
+                                <!-- =================================================
+                             ACCIÓN
+                        ================================================== -->
+
+                                <td id="accion_<?= $id ?>">
+
+                                    <?php if (!$tieneSalida): ?>
+
+                                        <button
+                                            type="button"
+                                            id="btnSalida_<?= $id ?>"
+                                            class="btnSalida"
+                                            onclick="marcarSalida(<?= $id ?>)">
+
+                                            <i class="fas fa-sign-out-alt"></i>
+
+                                            Salida
+
+                                        </button>
+
+                                    <?php else: ?>
+
+                                        <span class="finalizado">
+
+                                            <i class="fas fa-check"></i>
+
+                                            Finalizado
+
+                                        </span>
+
+                                    <?php endif; ?>
+
+                                </td>
+
+
+                            </tr>
+
+
+                        <?php endwhile; ?>
+
+
+                    </tbody>
+
+                </table>
 
             </div>
 
@@ -639,840 +1275,521 @@ function e($valor): string
 
 
     <!-- =====================================================
-         TABLA
-    ====================================================== -->
+     MODAL DETALLES
+====================================================== -->
 
-    <div class="table-container">
+    <div
+        class="modal fade"
+        id="modalDetalles"
+        tabindex="-1"
+        aria-hidden="true">
 
-        <div class="table-responsive">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
 
+            <div class="modal-content">
 
-            <table
-                id="tablaColaboradores"
-                class="table table-striped table-hover align-middle">
+                <div class="modal-header">
 
+                    <h5 class="modal-title">
 
-                <thead>
+                        <i class="fas fa-user-circle text-primary"></i>
 
-                <tr>
+                        Detalles del colaborador
 
-                    <th>ID</th>
+                    </h5>
 
-                    <th>Fecha</th>
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                    </button>
 
-                    <th>Cédula</th>
+                </div>
 
-                    <th>Nombre</th>
 
-                    <th>Telefono</th>
+                <div class="modal-body">
 
-                    <th>ARL</th>
+                    <div id="contenidoDetalles"></div>
 
-                    <th>EPS</th>
+                </div>
 
-                    <th>RH</th>
 
-                    <th>Contacto Emergencia</th>
+                <div class="modal-footer">
 
-                    <th>Tel. Emergencia</th>
+                    <button
+                        type="button"
+                        class="btn btn-secondary btn-sm"
+                        data-bs-dismiss="modal">
 
-                    <th>Área</th>
+                        Cerrar
 
-                    <th>Marca</th>
+                    </button>
 
-                    <th>Serial</th>
+                </div>
 
-                    <th>Ingreso</th>
-
-                    <th>Salida</th>
-
-                    <th>Acción</th>
-
-                </tr>
-
-                </thead>
-
-
-                <tbody>
-
-
-                <?php while (
-                    $row = $stmt->fetch(PDO::FETCH_ASSOC)
-                ): ?>
-
-
-                    <?php
-
-                    /*
-                     * ID PRINCIPAL DEL REGISTRO
-                     */
-
-                    $id = (int)($row['id_registro'] ?? 0);
-
-
-                    /*
-                     * HORA DE SALIDA
-                     */
-
-                    $horaSalida = trim(
-                        $row['salida'] ?? ''
-                    );
-
-
-                    /*
-                     * Verificar si ya tiene salida
-                     */
-
-                    $tieneSalida =
-                        $horaSalida !== '' &&
-                        $horaSalida !== '00:00:00';
-
-                    ?>
-
-
-                    <tr>
-
-
-                        <!-- =================================================
-                             ID
-                        ================================================== -->
-
-                        <td>
-
-                            <?= $id ?>
-
-                        </td>
-
-
-                        <!-- =================================================
-                             FECHA
-                        ================================================== -->
-
-                        <td>
-
-                            <?= e(
-                                $row['fecha'] ?? ''
-                            ) ?>
-
-                        </td>
-
-                        <!-- =================================================
-                            CÉDULA
-                        ================================================== -->
-
-                        <td>
-
-                            <span class="cedula">
-
-                                <?= e(
-                                    $row['cedula'] ?? ''
-                                ) ?>
-
-                            </span>
-
-                        </td>
-
-
-                        <!-- =================================================
-                            NOMBRE
-                        ================================================== -->
-
-                        <td>
-
-                            <?= e(
-                                $row['nombre'] ?? ''
-                            ) ?>
-
-                        </td>
-
-                        <!-- =================================================
-                            TELEFONO
-                        ================================================== -->
-
-                        <td>
-
-                            <span class="telefono">
-
-                                <?= e(
-                                    $row['telefono'] ?? ''
-                                ) ?>
-
-                            </span>
-
-                        </td>
-
-                        <!-- =================================================
-                            ARL
-                        ================================================== -->
-
-                        <td>
-
-                            <?= e(
-                                $row['nom_arl'] ?? 'Sin ARL'
-                            ) ?>
-
-                        </td>
-
-
-                        <!-- =================================================
-                             EPS
-                        ================================================== -->
-
-                        <td>
-
-                            <?= e(
-                                $row['nom_eps'] ?? 'Sin EPS'
-                            ) ?>
-
-                        </td>
-
-
-                        <!-- =================================================
-                             RH
-                        ================================================== -->
-
-                        <td>
-
-                            <?= e(
-                                $row['rh'] ?? ''
-                            ) ?>
-
-                        </td>
-
-
-                        <!-- =================================================
-                             CONTACTO
-                        ================================================== -->
-
-                        <td>
-
-                            <?= e(
-                                $row['nom_eme'] ?? ''
-                            ) ?>
-
-                        </td>
-
-
-                        <!-- =================================================
-                             TELÉFONO
-                        ================================================== -->
-
-                        <td>
-
-                            <?= e(
-                                $row['tel_eme'] ?? ''
-                            ) ?>
-
-                        </td>
-
-
-                        <!-- =================================================
-                             ÁREA
-                        ================================================== -->
-
-                        <td>
-
-                            <?= e(
-                                $row['nom_area'] ?? ''
-                            ) ?>
-
-                        </td>
-
-
-                        <!-- =================================================
-                             MARCA
-                        ================================================== -->
-
-                        <td>
-
-                            <?= e(
-                                $row['marca'] ?? ''
-                            ) ?>
-
-                        </td>
-
-
-                        <!-- =================================================
-                             SERIAL
-                        ================================================== -->
-
-                        <td>
-
-                            <?= e(
-                                $row['serial'] ?? ''
-                            ) ?>
-
-                        </td>
-
-
-                        <!-- =================================================
-                             INGRESO
-                        ================================================== -->
-
-                        <td>
-
-                            <?php if (
-                                !empty($row['ingreso'])
-                            ): ?>
-
-                                <span class="hora-ingreso">
-
-                                    <?= e(
-                                        $row['ingreso']
-                                    ) ?>
-
-                                </span>
-
-                            <?php else: ?>
-
-                                <span class="text-muted">
-
-                                    —
-
-                                </span>
-
-                            <?php endif; ?>
-
-                        </td>
-
-
-                        <!-- =================================================
-                             SALIDA
-                        ================================================== -->
-
-                        <td id="salida_<?= $id ?>">
-
-                            <?php if (!$tieneSalida): ?>
-
-                                <span class="pendiente">
-
-                                    Pendiente
-
-                                </span>
-
-                            <?php else: ?>
-
-                                <span class="hora-salida">
-
-                                    <?= e(
-                                        $horaSalida
-                                    ) ?>
-
-                                </span>
-
-                            <?php endif; ?>
-
-                        </td>
-
-
-                        <!-- =================================================
-                             ACCIÓN
-                        ================================================== -->
-
-                        <td id="accion_<?= $id ?>">
-
-
-                            <?php if (!$tieneSalida): ?>
-
-
-                                <button
-                                    type="button"
-                                    id="btnSalida_<?= $id ?>"
-                                    class="btnSalida"
-                                    onclick="marcarSalida(<?= $id ?>)">
-
-                                    <i class="fas fa-sign-out-alt"></i>
-
-                                    Salida
-
-                                </button>
-
-
-                            <?php else: ?>
-
-
-                                <span class="finalizado">
-
-                                    <i class="fas fa-check"></i>
-
-                                    Finalizado
-
-                                </span>
-
-
-                            <?php endif; ?>
-
-
-                        </td>
-
-
-                    </tr>
-
-
-                <?php endwhile; ?>
-
-
-                </tbody>
-
-            </table>
+            </div>
 
         </div>
 
     </div>
 
-</div>
 
 
-
-<!-- =====================================================
+    <!-- =====================================================
      JQUERY
 ====================================================== -->
 
-<script
-    src="https://code.jquery.com/jquery-3.7.1.min.js">
-</script>
+    <script
+        src="https://code.jquery.com/jquery-3.7.1.min.js">
+    </script>
 
 
-<!-- =====================================================
+    <!-- =====================================================
      BOOTSTRAP
 ====================================================== -->
 
-<script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
-</script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    </script>
 
 
-<!-- =====================================================
+    <!-- =====================================================
      DATATABLES
 ====================================================== -->
 
-<script
-    src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js">
-</script>
+    <script
+        src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js">
+    </script>
 
-<script
-    src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js">
-</script>
+    <script
+        src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js">
+    </script>
 
 
-<!-- =====================================================
+    <!-- =====================================================
      SWEETALERT
 ====================================================== -->
 
-<script
-    src="https://cdn.jsdelivr.net/npm/sweetalert2@11">
-</script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+    </script>
 
 
 
-<script>
-
-
-/* =========================================================
+    <script>
+        /* =========================================================
    DATATABLE
 ========================================================= */
+        $(document).ready(function() {
 
-$(document).ready(function() {
+            $('#tablaColaboradores').DataTable({
 
+                pageLength: 15,
 
-    $('#tablaColaboradores').DataTable({
+                lengthMenu: [
+                    [10, 15, 25, 50, 100, -1],
+                    [10, 15, 25, 50, 100, "Todos"]
+                ],
 
-        pageLength: 10,
+                /*
+                 * ID = columna 0
+                 * Se fuerza como número
+                 */
+                columnDefs: [{
+                    targets: 0,
+                    type: 'num'
+                }],
 
-        order: [
-            [0, 'desc']
-        ],
+                /*
+                 * Ordenar por ID de mayor a menor
+                 */
+                order: [
+                    [0, 'desc']
+                ],
 
-        lengthMenu: [
-            [10, 50, 100, -1],
-            [10, 50, 100, "Todos"]
-        ],
+                autoWidth: false,
 
-        language: {
+                language: {
 
-            search: "Buscar:",
+                    search: "Buscar:",
 
-            lengthMenu:
-                "Mostrar _MENU_ registros",
+                    lengthMenu: "Mostrar _MENU_ registros",
 
-            info:
-                "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                    info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
 
-            infoEmpty:
-                "No hay registros disponibles",
+                    infoEmpty: "No hay registros disponibles",
 
-            infoFiltered:
-                "(filtrado de _MAX_ registros)",
+                    infoFiltered: "(filtrado de _MAX_ registros)",
 
-            zeroRecords:
-                "No se encontraron registros",
+                    zeroRecords: "No se encontraron registros",
 
-            emptyTable:
-                "No hay colaboradores registrados",
+                    emptyTable: "No hay colaboradores registrados",
 
-            paginate: {
+                    paginate: {
 
-                first: "Primero",
+                        first: "Primero",
 
-                last: "Último",
+                        last: "Último",
 
-                next: "Siguiente",
+                        next: "Siguiente",
 
-                previous: "Anterior"
+                        previous: "Anterior"
 
-            }
-
-        }
-
-    });
-
-});
-
-
-
-/* =========================================================
-   REGISTRAR SALIDA
-========================================================= */
-
-function marcarSalida(id) {
-
-
-    /* =====================================================
-       CONFIRMACIÓN
-    ====================================================== */
-
-    Swal.fire({
-
-        title: '¿Registrar salida?',
-
-        text:
-            'Se registrará la hora de salida del colaborador.',
-
-        icon: 'question',
-
-        showCancelButton: true,
-
-        confirmButtonText:
-            'Sí, registrar',
-
-        cancelButtonText:
-            'Cancelar',
-
-        confirmButtonColor:
-            '#dc3545',
-
-        cancelButtonColor:
-            '#6c757d',
-
-        reverseButtons: true
-
-    }).then(function(result) {
-
-
-        if (!result.isConfirmed) {
-
-            return;
-
-        }
-
-
-        /* =================================================
-           BOTÓN
-        ================================================== */
-
-        const $boton =
-            $('#btnSalida_' + id);
-
-
-        $boton
-
-            .prop('disabled', true)
-
-            .html(
-                '<i class="fas fa-spinner fa-spin"></i> ' +
-                'Registrando...'
-            );
-
-
-        /* =================================================
-           AJAX
-        ================================================== */
-
-        $.ajax({
-
-            url:
-                '../Controller/salidas_colaboradores.php',
-
-            type:
-                'POST',
-
-            data: {
-
-                id_registro: id
-
-            },
-
-            dataType:
-                'json',
-
-
-            /* =============================================
-               RESPUESTA CORRECTA
-            ============================================== */
-
-            success: function(response) {
-
-
-                console.log(
-                    'RESPUESTA PHP:',
-                    response
-                );
-
-
-                /* =========================================
-                   ÉXITO
-                ========================================== */
-
-                if (response.ok === true) {
-
-
-                    const horaSalida =
-                        response.hora_salida || '';
-
-
-                    /* =====================================
-                       ACTUALIZAR SALIDA
-                    ====================================== */
-
-                    $('#salida_' + id).html(
-
-                        '<span class="hora-salida">' +
-
-                        $('<div>')
-                            .text(horaSalida)
-                            .html() +
-
-                        '</span>'
-
-                    );
-
-
-                    /* =====================================
-                       ACTUALIZAR ACCIÓN
-                    ====================================== */
-
-                    $('#accion_' + id).html(
-
-                        '<span class="finalizado">' +
-
-                        '<i class="fas fa-check"></i> ' +
-
-                        'Finalizado' +
-
-                        '</span>'
-
-                    );
-
-
-                    /* =====================================
-                       MENSAJE
-                    ====================================== */
-
-                    Swal.fire({
-
-                        title:
-                            'Salida registrada',
-
-                        text:
-                            'La hora de salida se registró correctamente.',
-
-                        icon:
-                            'success',
-
-                        confirmButtonColor:
-                            '#198754',
-
-                        confirmButtonText:
-                            'Aceptar',
-
-                        timer:
-                            2000,
-
-                        timerProgressBar:
-                            true
-
-                    });
-
-
-                } else {
-
-
-                    /* =====================================
-                       RESTAURAR BOTÓN
-                    ====================================== */
-
-                    $boton
-
-                        .prop(
-                            'disabled',
-                            false
-                        )
-
-                        .html(
-
-                            '<i class="fas fa-sign-out-alt"></i> ' +
-
-                            'Salida'
-
-                        );
-
-
-                    /* =====================================
-                       MENSAJE
-                    ====================================== */
-
-                    Swal.fire({
-
-                        title:
-                            'Aviso',
-
-                        text:
-                            response.mensaje ||
-                            'No se pudo registrar la salida.',
-
-                        icon:
-                            'warning',
-
-                        confirmButtonColor:
-                            '#ffc107'
-
-                    });
+                    }
 
                 }
 
-            },
-
-
-            /* =============================================
-               ERROR AJAX
-            ============================================== */
-
-            error: function(
-                xhr,
-                status,
-                error
-            ) {
-
-
-                console.error(
-                    '========== ERROR AJAX =========='
-                );
-
-
-                console.error(
-                    'HTTP:',
-                    xhr.status
-                );
-
-
-                console.error(
-                    'STATUS:',
-                    status
-                );
-
-
-                console.error(
-                    'ERROR:',
-                    error
-                );
-
-
-                console.error(
-                    'RESPUESTA:',
-                    xhr.responseText
-                );
-
-
-                console.error(
-                    '================================'
-                );
-
-
-                /* =========================================
-                   RESTAURAR BOTÓN
-                ========================================== */
-
-                $boton
-
-                    .prop(
-                        'disabled',
-                        false
-                    )
-
-                    .html(
-
-                        '<i class="fas fa-sign-out-alt"></i> ' +
-
-                        'Salida'
-
-                    );
-
-
-                /* =========================================
-                   MENSAJE
-                ========================================== */
-
-                Swal.fire({
-
-                    title:
-                        'Error de servidor',
-
-                    html:
-
-                        '<b>Código HTTP:</b> ' +
-                        xhr.status +
-
-                        '<br><br>' +
-
-                        '<b>Respuesta del servidor:</b>' +
-
-                        '<pre style="' +
-
-                        'text-align:left;' +
-                        'white-space:pre-wrap;' +
-                        'max-height:300px;' +
-                        'overflow:auto;' +
-                        'background:#f8f9fa;' +
-                        'padding:10px;' +
-                        'border-radius:6px;' +
-
-                        '">' +
-
-                        $('<div>')
-                            .text(
-                                xhr.responseText
-                            )
-                            .html() +
-
-                        '</pre>',
-
-                    icon:
-                        'error',
-
-                    confirmButtonColor:
-                        '#dc3545'
-
-                });
-
-            }
+            });
 
         });
 
-    });
+        /* =========================================================
+           REGISTRAR SALIDA
+        ========================================================= */
 
-}
+        function marcarSalida(id) {
 
-</script>
+
+            Swal.fire({
+
+                title: '¿Registrar salida?',
+
+                text: 'Se registrará la hora actual y el usuario que realiza la salida.',
+
+                icon: 'question',
+
+                showCancelButton: true,
+
+                confirmButtonText: 'Sí, registrar',
+
+                cancelButtonText: 'Cancelar',
+
+                confirmButtonColor: '#dc3545',
+
+                cancelButtonColor: '#6c757d',
+
+                reverseButtons: true
+
+            }).then(function(result) {
+
+
+                if (!result.isConfirmed) {
+
+                    return;
+
+                }
+
+
+                /* =================================================
+                   BOTÓN
+                ================================================== */
+
+                const $boton =
+                    $('#btnSalida_' + id);
+
+
+                $boton
+
+                    .prop('disabled', true)
+
+                    .html(
+                        '<i class="fas fa-spinner fa-spin"></i>'
+                    );
+
+
+                /* =================================================
+                   AJAX
+                ================================================== */
+
+                $.ajax({
+
+                    url: '../Controller/salidas_colaboradores.php',
+
+                    type: 'POST',
+
+                    data: {
+
+                        id_registro: id
+
+                    },
+
+                    dataType: 'json',
+
+
+                    /* =============================================
+                       RESPUESTA CORRECTA
+                    ============================================== */
+
+                    success: function(response) {
+
+
+                        console.log(
+                            'RESPUESTA PHP:',
+                            response
+                        );
+
+
+                        if (response.ok === true) {
+
+
+                            const horaSalida =
+                                response.hora_salida || '';
+
+
+                            const realizoSalida =
+                                response.realizo_salida || '';
+
+
+                            /* =====================================
+                               ACTUALIZAR SALIDA
+                            ====================================== */
+
+                            $('#salida_' + id).html(
+
+                                '<span class="hora-salida">' +
+
+                                $('<div>')
+                                .text(horaSalida)
+                                .html() +
+
+                                '</span>'
+
+                            );
+
+
+                            /* =====================================
+                               ACTUALIZAR USUARIO SALIDA
+                            ====================================== */
+
+                            $('#realizo_salida_' + id).html(
+
+                                '<span ' +
+
+                                'class="usuario-salida" ' +
+
+                                'title="' +
+                                $('<div>')
+                                .text(realizoSalida)
+                                .html() +
+                                '">' +
+
+                                '<i class="fas fa-user-check"></i> ' +
+
+                                $('<div>')
+                                .text(realizoSalida)
+                                .html() +
+
+                                '</span>'
+
+                            );
+
+
+                            /* =====================================
+                               ACTUALIZAR ACCIÓN
+                            ====================================== */
+
+                            $('#accion_' + id).html(
+
+                                '<span class="finalizado">' +
+
+                                '<i class="fas fa-check"></i> ' +
+
+                                'Finalizado' +
+
+                                '</span>'
+
+                            );
+
+
+                            /* =====================================
+                               MENSAJE
+                            ====================================== */
+
+                            Swal.fire({
+
+                                title: 'Salida registrada',
+
+                                html: 'Hora: <b>' +
+                                    $('<div>')
+                                    .text(horaSalida)
+                                    .html() +
+                                    '</b><br>' +
+
+                                    'Registró: <b>' +
+                                    $('<div>')
+                                    .text(realizoSalida)
+                                    .html() +
+                                    '</b>',
+
+                                icon: 'success',
+
+                                confirmButtonColor: '#198754',
+
+                                confirmButtonText: 'Aceptar',
+
+                                timer: 2500,
+
+                                timerProgressBar: true
+
+                            });
+
+
+                        } else {
+
+
+                            /* =====================================
+                               RESTAURAR BOTÓN
+                            ====================================== */
+
+                            $boton
+
+                                .prop(
+                                    'disabled',
+                                    false
+                                )
+
+                                .html(
+
+                                    '<i class="fas fa-sign-out-alt"></i> ' +
+
+                                    'Salida'
+
+                                );
+
+
+                            /* =====================================
+                               MENSAJE
+                            ====================================== */
+
+                            Swal.fire({
+
+                                title: 'Aviso',
+
+                                text: response.mensaje ||
+                                    'No se pudo registrar la salida.',
+
+                                icon: 'warning',
+
+                                confirmButtonColor: '#ffc107'
+
+                            });
+
+                        }
+
+                    },
+
+
+                    /* =============================================
+                       ERROR AJAX
+                    ============================================== */
+
+                    error: function(
+                        xhr,
+                        status,
+                        error
+                    ) {
+
+
+                        console.error(
+                            '========== ERROR AJAX =========='
+                        );
+
+                        console.error(
+                            'HTTP:',
+                            xhr.status
+                        );
+
+                        console.error(
+                            'STATUS:',
+                            status
+                        );
+
+                        console.error(
+                            'ERROR:',
+                            error
+                        );
+
+                        console.error(
+                            'RESPUESTA:',
+                            xhr.responseText
+                        );
+
+                        console.error(
+                            '================================'
+                        );
+
+
+                        /* =========================================
+                           RESTAURAR BOTÓN
+                        ========================================== */
+
+                        $boton
+
+                            .prop(
+                                'disabled',
+                                false
+                            )
+
+                            .html(
+
+                                '<i class="fas fa-sign-out-alt"></i> ' +
+
+                                'Salida'
+
+                            );
+
+
+                        /* =========================================
+                           MENSAJE
+                        ========================================== */
+
+                        Swal.fire({
+
+                            title: 'Error de servidor',
+
+                            html:
+
+                                '<b>Código HTTP:</b> ' +
+                                xhr.status +
+
+                                '<br><br>' +
+
+                                '<b>Respuesta del servidor:</b>' +
+
+                                '<pre style="' +
+
+                                'text-align:left;' +
+                                'white-space:pre-wrap;' +
+                                'max-height:300px;' +
+                                'overflow:auto;' +
+                                'background:#f8f9fa;' +
+                                'padding:10px;' +
+                                'border-radius:6px;' +
+
+                                '">' +
+
+                                $('<div>')
+                                .text(
+                                    xhr.responseText
+                                )
+                                .html() +
+
+                                '</pre>',
+
+                            icon: 'error',
+
+                            confirmButtonColor: '#dc3545'
+
+                        });
+
+                    }
+
+                });
+
+            });
+
+        }
+    </script>
 
 
 </body>
