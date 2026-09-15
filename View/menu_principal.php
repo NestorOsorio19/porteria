@@ -21,7 +21,7 @@ $modulos = [
         "subtitulo" => "Formulario",
         "icono" => "fa-house",
         "color" => "gradient-1",
-        "link" => "View/registro_colaboradores.php"
+        "link" => "registro_colaboradores.php"
     ],
 
     [
@@ -29,7 +29,7 @@ $modulos = [
         "subtitulo" => "Formulario",
         "icono" => "fa-person",
         "color" => "gradient-2",
-        "link" => "View/registro_visitantes.php"
+        "link" => "registro_visitantes.php"
     ],
 
     [
@@ -37,7 +37,7 @@ $modulos = [
         "subtitulo" => "Formulario",
         "icono" => "fa-briefcase",
         "color" => "gradient-3",
-        "link" => "View/registro_contratistas.php"
+        "link" => "registro_contratistas.php"
     ],
 
     [
@@ -45,7 +45,7 @@ $modulos = [
         "subtitulo" => "Formulario",
         "icono" => "fa-truck",
         "color" => "gradient-4",
-        "link" => "View/registro_vehiculos_externos.php"
+        "link" => "registro_vehiculos_externos.php"
     ],
 
     [
@@ -53,7 +53,7 @@ $modulos = [
         "subtitulo" => "Formulario",
         "icono" => "fa-truck-front",
         "color" => "gradient-8",
-        "link" => "View/registro_vehiculos_internos.php"
+        "link" => "registro_vehiculos_internos.php"
     ],
 
     [
@@ -61,7 +61,7 @@ $modulos = [
         "subtitulo" => "Formulario",
         "icono" => "fa-table",
         "color" => "gradient-7",
-        "link" => "View/menu_tablas.php"
+        "link" => "/menu_tablas.php"
     ]
 ];
 ?>

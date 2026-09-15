@@ -4,11 +4,12 @@ require_once "../Config/database.php";
 
 $con = connection();
 
-try {
 
-    /* =====================================================
-       CONSULTA GENERAL DE VISITANTES
-    ====================================================== */
+/* ==========================================================
+   CONSULTAR VISITANTES
+========================================================== */
+
+try {
 
     $sql = "
         SELECT
@@ -27,7 +28,7 @@ try {
         LEFT JOIN empresas emp
             ON v.empresa_fk = emp.id_registro
 
-        ORDER BY v.fecha DESC
+        ORDER BY v.id DESC
     ";
 
     $stmt = $con->prepare($sql);
@@ -45,6 +46,20 @@ try {
         )
     );
 
+}
+
+
+/* ==========================================================
+   FUNCIÓN DE SEGURIDAD
+========================================================== */
+
+function e($valor): string
+{
+    return htmlspecialchars(
+        (string)($valor ?? ''),
+        ENT_QUOTES,
+        'UTF-8'
+    );
 }
 
 ?>
@@ -66,30 +81,25 @@ try {
         name="description"
         content="Consulta de registros de visitantes">
 
-    <meta
-        name="keywords"
-        content="php, pdo, base de datos, visitantes, sistema">
-
-
     <title>Consulta Visitantes</title>
 
 
     <!-- =====================================================
-         JQUERY
+         BOOTSTRAP
     ====================================================== -->
 
-    <script
-        src="https://code.jquery.com/jquery-3.7.1.min.js">
-    </script>
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
 
 
     <!-- =====================================================
-         SWEETALERT
+         FONT AWESOME
     ====================================================== -->
 
-    <script
-        src="https://cdn.jsdelivr.net/npm/sweetalert2@11">
-    </script>
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 
     <!-- =====================================================
@@ -98,12 +108,7 @@ try {
 
     <link
         rel="stylesheet"
-        href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css">
-
-
-    <script
-        src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js">
-    </script>
+        href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css">
 
 
     <!-- =====================================================
@@ -111,6 +116,10 @@ try {
     ====================================================== -->
 
     <style>
+
+        /* =====================================================
+           GENERAL
+        ====================================================== */
 
         body {
 
@@ -133,11 +142,11 @@ try {
 
         .users-table {
 
-            max-width: 1500px;
+            max-width: 1750px;
 
-            margin: 30px auto;
+            margin: 15px auto;
 
-            padding: 20px;
+            padding: 10px 15px;
 
         }
 
@@ -150,27 +159,14 @@ try {
 
             background: #ffffff;
 
-            border-radius: 15px;
+            border-radius: 10px;
 
-            padding: 20px 25px;
+            padding: 14px 18px;
 
             box-shadow:
-                0 5px 18px rgba(0, 0, 0, 0.08);
+                0 3px 12px rgba(0, 0, 0, 0.07);
 
-            margin-bottom: 20px;
-
-        }
-
-
-        .header-content {
-
-            display: flex;
-
-            justify-content: space-between;
-
-            align-items: center;
-
-            gap: 20px;
+            margin-bottom: 12px;
 
         }
 
@@ -181,6 +177,8 @@ try {
 
             color: #192a56;
 
+            font-size: 20px;
+
             font-weight: 700;
 
         }
@@ -190,6 +188,19 @@ try {
 
             color: #718093;
 
+            font-size: 12px;
+
+        }
+
+
+        .header-buttons {
+
+            display: flex;
+
+            gap: 7px;
+
+            align-items: center;
+
         }
 
 
@@ -197,29 +208,20 @@ try {
            BOTONES
         ====================================================== */
 
-        .header-buttons {
-
-            display: flex;
-
-            gap: 10px;
-
-            align-items: center;
-
-        }
-
-
-        .btn-menu,
-        .btn-nuevo {
+        .btn-nuevo,
+        .btn-menu {
 
             color: white;
 
             border: none;
 
-            padding: 10px 18px;
+            padding: 7px 12px;
 
-            border-radius: 8px;
+            border-radius: 6px;
 
             text-decoration: none;
+
+            font-size: 12px;
 
             font-weight: 600;
 
@@ -231,25 +233,7 @@ try {
 
             align-items: center;
 
-            gap: 7px;
-
-        }
-
-
-        .btn-menu {
-
-            background: #718093;
-
-        }
-
-
-        .btn-menu:hover {
-
-            background: #576574;
-
-            color: white;
-
-            transform: translateY(-1px);
+            gap: 5px;
 
         }
 
@@ -267,7 +251,21 @@ try {
 
             color: white;
 
-            transform: translateY(-1px);
+        }
+
+
+        .btn-menu {
+
+            background: #718093;
+
+        }
+
+
+        .btn-menu:hover {
+
+            background: #576574;
+
+            color: white;
 
         }
 
@@ -280,12 +278,12 @@ try {
 
             background: #fff;
 
-            padding: 20px;
+            padding: 10px;
 
-            border-radius: 15px;
+            border-radius: 10px;
 
             box-shadow:
-                0 5px 18px rgba(0, 0, 0, 0.08);
+                0 3px 12px rgba(0, 0, 0, 0.07);
 
         }
 
@@ -293,6 +291,10 @@ try {
         table.dataTable {
 
             width: 100% !important;
+
+            font-size: 12px;
+
+            margin-top: 0 !important;
 
         }
 
@@ -311,6 +313,10 @@ try {
 
             white-space: nowrap;
 
+            padding: 7px 6px !important;
+
+            border: none;
+
         }
 
 
@@ -321,6 +327,8 @@ try {
             vertical-align: middle;
 
             white-space: nowrap;
+
+            padding: 5px 6px !important;
 
         }
 
@@ -333,18 +341,14 @@ try {
 
 
         /* =====================================================
-           SALIDA PENDIENTE
+           ID
         ====================================================== */
 
-        .pendiente {
+        .id-registro {
 
-            background: #ffc107;
+            color: #6c757d;
 
-            color: #212529;
-
-            padding: 5px 9px;
-
-            border-radius: 6px;
+            font-size: 11px;
 
             font-weight: 600;
 
@@ -352,20 +356,231 @@ try {
 
 
         /* =====================================================
-           HORA DE SALIDA
+           VISITANTE
         ====================================================== */
+
+        .visitante {
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: flex-start;
+
+            line-height: 1.15;
+
+            min-width: 150px;
+
+        }
+
+
+        .visitante strong {
+
+            color: #192a56;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+        }
+
+
+        .visitante small {
+
+            color: #718093;
+
+            font-size: 10px;
+
+        }
+
+
+        /* =====================================================
+           EMPRESA
+        ====================================================== */
+
+        .empresa {
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: flex-start;
+
+            line-height: 1.15;
+
+            min-width: 120px;
+
+        }
+
+
+        .empresa strong {
+
+            color: #2f3640;
+
+            font-size: 11px;
+
+            font-weight: 700;
+
+        }
+
+
+        /* =====================================================
+           MOTIVO
+        ====================================================== */
+
+        .motivo {
+
+            max-width: 160px;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+            white-space: nowrap;
+
+            font-size: 11px;
+
+            color: #495057;
+
+        }
+
+
+        /* =====================================================
+           DATO
+        ====================================================== */
+
+        .dato {
+
+            font-size: 11px;
+
+            font-weight: 600;
+
+            color: #495057;
+
+        }
+
+
+        /* =====================================================
+           CARNET
+        ====================================================== */
+
+        .carnet {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 4px;
+
+            padding: 3px 6px;
+
+            border-radius: 4px;
+
+            font-size: 10px;
+
+            font-weight: 700;
+
+            background: #e9ecef;
+
+            color: #495057;
+
+        }
+
+
+        /* =====================================================
+           HORAS
+        ====================================================== */
+
+        .hora-ingreso,
+        .hora-salida,
+        .pendiente {
+
+            display: inline-block;
+
+            padding: 3px 6px;
+
+            border-radius: 4px;
+
+            font-size: 10px;
+
+            font-weight: 700;
+
+        }
+
+
+        .hora-ingreso {
+
+            background: #d4edda;
+
+            color: #155724;
+
+        }
+
 
         .hora-salida {
 
-            background: #17a2b8;
+            background: #d1ecf1;
 
-            color: white;
+            color: #0c5460;
 
-            padding: 5px 9px;
+        }
 
-            border-radius: 6px;
+
+        .pendiente {
+
+            background: #fff3cd;
+
+            color: #856404;
+
+        }
+
+
+        /* =====================================================
+           USUARIOS
+        ====================================================== */
+
+        .usuario-registro,
+        .usuario-salida {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 4px;
+
+            max-width: 120px;
+
+            padding: 3px 6px;
+
+            border-radius: 4px;
+
+            font-size: 10px;
 
             font-weight: 600;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+            white-space: nowrap;
+
+        }
+
+
+        .usuario-registro {
+
+            background: #e9ecef;
+
+            color: #495057;
+
+        }
+
+
+        .usuario-salida {
+
+            background: #e8f5e9;
+
+            color: #198754;
 
         }
 
@@ -378,19 +593,23 @@ try {
 
             background: #e84118;
 
-            border: none;
-
             color: white;
 
-            padding: 7px 13px;
+            border: none;
 
-            border-radius: 6px;
+            padding: 4px 8px;
 
-            cursor: pointer;
+            border-radius: 5px;
+
+            font-size: 10px;
 
             font-weight: 600;
 
+            cursor: pointer;
+
             transition: 0.2s;
+
+            white-space: nowrap;
 
         }
 
@@ -421,15 +640,23 @@ try {
 
         .finalizado {
 
-            background: #28a745;
+            display: inline-flex;
 
-            color: white;
+            align-items: center;
 
-            padding: 5px 9px;
+            gap: 3px;
 
-            border-radius: 6px;
+            background: #d4edda;
 
-            font-weight: 600;
+            color: #155724;
+
+            padding: 3px 6px;
+
+            border-radius: 4px;
+
+            font-size: 10px;
+
+            font-weight: 700;
 
         }
 
@@ -438,28 +665,148 @@ try {
            DATATABLES
         ====================================================== */
 
-        .dataTables_wrapper
-        .dataTables_filter input {
+        .dataTables_wrapper {
 
-            border: 1px solid #ced4da;
-
-            border-radius: 6px;
-
-            padding: 6px 10px;
-
-            margin-left: 5px;
+            font-size: 12px;
 
         }
 
 
-        .dataTables_wrapper
-        .dataTables_length select {
+        .dataTables_wrapper .dataTables_filter {
+
+            margin-bottom: 8px;
+
+        }
+
+
+        .dataTables_wrapper .dataTables_filter input {
 
             border: 1px solid #ced4da;
 
-            border-radius: 6px;
+            border-radius: 5px;
 
-            padding: 5px;
+            padding: 4px 8px;
+
+            margin-left: 5px;
+
+            font-size: 12px;
+
+        }
+
+
+        .dataTables_wrapper .dataTables_length select {
+
+            border: 1px solid #ced4da;
+
+            border-radius: 5px;
+
+            padding: 3px;
+
+            font-size: 12px;
+
+        }
+
+
+        .dataTables_wrapper .dataTables_info {
+
+            font-size: 11px;
+
+        }
+
+
+        .dataTables_wrapper .dataTables_paginate {
+
+            font-size: 11px;
+
+        }
+
+
+        /* =====================================================
+           MODAL DETALLES
+        ====================================================== */
+
+        .detalle-label {
+
+            color: #718093;
+
+            font-size: 10px;
+
+            font-weight: 700;
+
+            text-transform: uppercase;
+
+            margin-bottom: 2px;
+
+        }
+
+
+        .detalle-valor {
+
+            font-size: 12px;
+
+            font-weight: 600;
+
+            color: #2f3640;
+
+            margin-bottom: 10px;
+
+        }
+
+
+        .detalle-seccion {
+
+            background: #f8f9fa;
+
+            border-radius: 7px;
+
+            padding: 10px;
+
+            margin-bottom: 10px;
+
+        }
+
+
+        .detalle-seccion h6 {
+
+            color: #273c75;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            margin-bottom: 8px;
+
+        }
+
+
+        /* =====================================================
+           BOTÓN DETALLES
+        ====================================================== */
+
+        .btnDetalles {
+
+            background: #6c757d;
+
+            color: white;
+
+            border: none;
+
+            padding: 4px 7px;
+
+            border-radius: 5px;
+
+            font-size: 10px;
+
+            cursor: pointer;
+
+            margin-left: 3px;
+
+        }
+
+
+        .btnDetalles:hover {
+
+            background: #495057;
 
         }
 
@@ -472,16 +819,23 @@ try {
 
             .users-table {
 
-                margin: 10px auto;
+                margin: 5px auto;
 
-                padding: 10px;
+                padding: 5px;
 
             }
 
 
             .card-header-custom {
 
-                padding: 15px;
+                padding: 10px;
+
+            }
+
+
+            .card-header-custom h2 {
+
+                font-size: 16px;
 
             }
 
@@ -490,7 +844,9 @@ try {
 
                 flex-direction: column;
 
-                align-items: flex-start;
+                align-items: flex-start !important;
+
+                gap: 10px;
 
             }
 
@@ -499,15 +855,13 @@ try {
 
                 width: 100%;
 
-                flex-direction: column;
-
             }
 
 
-            .btn-menu,
-            .btn-nuevo {
+            .btn-nuevo,
+            .btn-menu {
 
-                width: 100%;
+                flex: 1;
 
                 justify-content: center;
 
@@ -516,9 +870,7 @@ try {
 
             .table-container {
 
-                padding: 10px;
-
-                overflow-x: auto;
+                padding: 5px;
 
             }
 
@@ -534,23 +886,21 @@ try {
 
     <div class="users-table">
 
+
         <!-- =====================================================
              ENCABEZADO
         ====================================================== -->
 
         <div class="card-header-custom">
 
-            <div class="header-content">
+            <div class="header-content d-flex justify-content-between align-items-center">
 
 
                 <div>
 
                     <h2>
 
-                        <i
-                            class="fas fa-users"
-                            style="color:#dc3545;">
-                        </i>
+                        <i class="fas fa-users text-danger"></i>
 
                         Registro General de Visitantes
 
@@ -569,8 +919,6 @@ try {
                 <div class="header-buttons">
 
 
-                    <!-- MENÚ -->
-
                     <a
                         href="../index.php"
                         class="btn-menu">
@@ -582,8 +930,6 @@ try {
                     </a>
 
 
-                    <!-- NUEVO -->
-
                     <a
                         href="registro_visitantes.php"
                         class="btn-nuevo">
@@ -594,7 +940,6 @@ try {
 
                     </a>
 
-
                 </div>
 
             </div>
@@ -603,16 +948,17 @@ try {
 
 
         <!-- =====================================================
-        TABLA
+             TABLA
         ====================================================== -->
 
         <div class="table-container">
 
             <div class="table-responsive">
 
+
                 <table
                     id="tablaVisitantes"
-                    class="display">
+                    class="table table-striped table-hover align-middle">
 
 
                     <thead>
@@ -623,9 +969,7 @@ try {
 
                             <th>Fecha</th>
 
-                            <th>Nombre</th>
-
-                            <th>Cédula</th>
+                            <th>Visitante</th>
 
                             <th>ARL</th>
 
@@ -637,17 +981,19 @@ try {
 
                             <th>Motivo</th>
 
-                            <th>Marca</th>
-
-                            <th>Serial</th>
+                            <th>Equipo</th>
 
                             <th>Carnet</th>
 
                             <th>Ingreso</th>
 
+                            <th>Registró ingreso</th>
+
                             <th>Salida</th>
 
-                            <th>Acciones</th>
+                            <th>Registró salida</th>
+
+                            <th>Acción</th>
 
                         </tr>
 
@@ -657,18 +1003,25 @@ try {
                     <tbody>
 
 
-                        <?php while ($row = $stmt->fetch(PDO::FETCH_ASSOC)): ?>
+                        <?php while (
+                            $row = $stmt->fetch(PDO::FETCH_ASSOC)
+                        ): ?>
 
 
                             <?php
 
-                            /*
-                             * IMPORTANTE:
-                             * El identificador de visitantes es "id".
-                             */
+                            /* =================================================
+                               ID
+                            ================================================== */
 
-                            $id = (int) ($row['id'] ?? 0);
+                            $id = (int)(
+                                $row['id'] ?? 0
+                            );
 
+
+                            /* =================================================
+                               SALIDA
+                            ================================================== */
 
                             $horaSalida = trim(
                                 $row['salida'] ?? ''
@@ -679,183 +1032,224 @@ try {
                                 $horaSalida !== '' &&
                                 $horaSalida !== '00:00:00';
 
+
+                            /* =================================================
+                               USUARIO INGRESO
+                            ================================================== */
+
+                            $realizo = trim(
+                                $row['realizo'] ?? ''
+                            );
+
+
+                            /* =================================================
+                               USUARIO SALIDA
+                            ================================================== */
+
+                            $realizoSalida = trim(
+                                $row['realizo_salida'] ?? ''
+                            );
+
                             ?>
 
 
                             <tr>
 
 
-                                <!-- ID -->
+                                <!-- =================================================
+                                     ID
+                                ================================================== -->
 
-                                <td data-label="ID">
+                                <td>
 
-                                    <?= $id ?>
+                                    <span class="id-registro">
+
+                                        #<?= $id ?>
+
+                                    </span>
 
                                 </td>
 
 
-                                <!-- FECHA -->
+                                <!-- =================================================
+                                     FECHA
+                                ================================================== -->
 
-                                <td data-label="Fecha">
+                                <td>
 
-                                    <?= htmlspecialchars(
-                                        $row['fecha'] ?? '',
-                                        ENT_QUOTES,
-                                        'UTF-8'
+                                    <?= e(
+                                        $row['fecha'] ?? ''
                                     ) ?>
 
                                 </td>
 
 
-                                <!-- NOMBRE -->
+                                <!-- =================================================
+                                     VISITANTE
+                                ================================================== -->
 
-                                <td data-label="Nombre">
+                                <td>
 
-                                    <?= htmlspecialchars(
-                                        $row['nombre'] ?? '',
-                                        ENT_QUOTES,
-                                        'UTF-8'
-                                    ) ?>
+                                    <div class="visitante">
 
-                                </td>
+                                        <strong>
 
+                                            <?= e(
+                                                $row['nombre'] ?? ''
+                                            ) ?>
 
-                                <!-- CÉDULA -->
+                                        </strong>
 
-                                <td data-label="Cédula">
+                                        <small>
 
-                                    <?= htmlspecialchars(
-                                        $row['cedula'] ?? '',
-                                        ENT_QUOTES,
-                                        'UTF-8'
-                                    ) ?>
+                                            CC:
+                                            <?= e(
+                                                $row['cedula'] ?? ''
+                                            ) ?>
 
-                                </td>
+                                        </small>
 
-
-                                <!-- ARL -->
-
-                                <td data-label="ARL">
-
-                                    <?= htmlspecialchars(
-                                        $row['nom_arl'] ?? 'Sin ARL',
-                                        ENT_QUOTES,
-                                        'UTF-8'
-                                    ) ?>
+                                    </div>
 
                                 </td>
 
 
-                                <!-- EPS -->
+                                <!-- =================================================
+                                     ARL
+                                ================================================== -->
 
-                                <td data-label="EPS">
+                                <td>
 
-                                    <?= htmlspecialchars(
-                                        $row['nom_eps'] ?? 'Sin EPS',
-                                        ENT_QUOTES,
-                                        'UTF-8'
-                                    ) ?>
+                                    <span class="dato">
 
-                                </td>
+                                        <?= e(
+                                            $row['nom_arl'] ?? 'Sin ARL'
+                                        ) ?>
 
-
-                                <!-- RH -->
-
-                                <td data-label="RH">
-
-                                    <?= htmlspecialchars(
-                                        $row['rh'] ?? '',
-                                        ENT_QUOTES,
-                                        'UTF-8'
-                                    ) ?>
+                                    </span>
 
                                 </td>
 
 
-                                <!-- EMPRESA -->
+                                <!-- =================================================
+                                     EPS
+                                ================================================== -->
 
-                                <td data-label="Empresa">
+                                <td>
 
-                                    <?= htmlspecialchars(
-                                        $row['nom_empresa'] ?? '',
-                                        ENT_QUOTES,
-                                        'UTF-8'
-                                    ) ?>
+                                    <span class="dato">
 
-                                </td>
+                                        <?= e(
+                                            $row['nom_eps'] ?? 'Sin EPS'
+                                        ) ?>
 
-
-                                <!-- MOTIVO -->
-
-                                <td data-label="Motivo">
-
-                                    <?= htmlspecialchars(
-                                        $row['motivo'] ?? '',
-                                        ENT_QUOTES,
-                                        'UTF-8'
-                                    ) ?>
+                                    </span>
 
                                 </td>
 
 
-                                <!-- MARCA -->
+                                <!-- =================================================
+                                     RH
+                                ================================================== -->
 
-                                <td data-label="Marca">
+                                <td>
 
-                                    <?= htmlspecialchars(
-                                        $row['marca'] ?? '',
-                                        ENT_QUOTES,
-                                        'UTF-8'
-                                    ) ?>
+                                    <span class="dato">
 
-                                </td>
+                                        <?= e(
+                                            $row['rh'] ?? ''
+                                        ) ?>
 
-
-                                <!-- SERIAL -->
-
-                                <td data-label="Serial">
-
-                                    <?= htmlspecialchars(
-                                        $row['serial'] ?? '',
-                                        ENT_QUOTES,
-                                        'UTF-8'
-                                    ) ?>
+                                    </span>
 
                                 </td>
 
 
-                                <!-- CARNET -->
+                                <!-- =================================================
+                                     EMPRESA
+                                ================================================== -->
 
-                                <td data-label="Carnet">
+                                <td>
 
-                                    <?= htmlspecialchars(
-                                        $row['carnet'] ?? '',
-                                        ENT_QUOTES,
-                                        'UTF-8'
-                                    ) ?>
+                                    <div class="empresa">
+
+                                        <strong>
+
+                                            <?= e(
+                                                $row['nom_empresa'] ?? 'Sin empresa'
+                                            ) ?>
+
+                                        </strong>
+
+                                    </div>
 
                                 </td>
 
 
-                                <!-- INGRESO -->
+                                <!-- =================================================
+                                     MOTIVO
+                                ================================================== -->
 
-                                <td data-label="Ingreso">
+                                <td>
 
-                                    <?php if (!empty($row['ingreso'])): ?>
+                                    <span
+                                        class="motivo"
+                                        title="<?= e($row['motivo'] ?? '') ?>">
 
-                                        <span
-                                            style="
-                                                background:#28a745;
-                                                color:white;
-                                                padding:5px 9px;
-                                                border-radius:6px;
-                                                font-weight:600;
-                                            ">
+                                        <?= e(
+                                            $row['motivo'] ?? ''
+                                        ) ?>
 
-                                            <?= htmlspecialchars(
-                                                $row['ingreso'],
-                                                ENT_QUOTES,
-                                                'UTF-8'
+                                    </span>
+
+                                </td>
+
+
+                                <!-- =================================================
+                                     EQUIPO
+                                ================================================== -->
+
+                                <td>
+
+                                    <div class="empresa">
+
+                                        <strong>
+
+                                            <?= e(
+                                                $row['marca'] ?? 'Sin equipo'
+                                            ) ?>
+
+                                        </strong>
+
+                                        <small>
+
+                                            <?= e(
+                                                $row['serial'] ?? 'Sin serial'
+                                            ) ?>
+
+                                        </small>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- =================================================
+                                     CARNET
+                                ================================================== -->
+
+                                <td>
+
+                                    <?php if (
+                                        !empty($row['carnet'])
+                                    ): ?>
+
+                                        <span class="carnet">
+
+                                            <i class="fas fa-id-card"></i>
+
+                                            <?= e(
+                                                $row['carnet']
                                             ) ?>
 
                                         </span>
@@ -863,7 +1257,9 @@ try {
                                     <?php else: ?>
 
                                         <span class="text-muted">
+
                                             —
+
                                         </span>
 
                                     <?php endif; ?>
@@ -871,12 +1267,74 @@ try {
                                 </td>
 
 
-                                <!-- SALIDA -->
+                                <!-- =================================================
+                                     INGRESO
+                                ================================================== -->
+
+                                <td>
+
+                                    <?php if (
+                                        !empty($row['ingreso'])
+                                    ): ?>
+
+                                        <span class="hora-ingreso">
+
+                                            <?= e(
+                                                $row['ingreso']
+                                            ) ?>
+
+                                        </span>
+
+                                    <?php else: ?>
+
+                                        <span class="text-muted">
+
+                                            —
+
+                                        </span>
+
+                                    <?php endif; ?>
+
+                                </td>
+
+
+                                <!-- =================================================
+                                     USUARIO INGRESO
+                                ================================================== -->
+
+                                <td>
+
+                                    <?php if ($realizo !== ''): ?>
+
+                                        <span
+                                            class="usuario-registro"
+                                            title="<?= e($realizo) ?>">
+
+                                            <i class="fas fa-user"></i>
+
+                                            <?= e($realizo) ?>
+
+                                        </span>
+
+                                    <?php else: ?>
+
+                                        <span class="text-muted">
+
+                                            —
+
+                                        </span>
+
+                                    <?php endif; ?>
+
+                                </td>
+
+
+                                <!-- =================================================
+                                     SALIDA
+                                ================================================== -->
 
                                 <td
-                                    data-label="Salida"
                                     id="salida_<?= $id ?>">
-
 
                                     <?php if (!$tieneSalida): ?>
 
@@ -890,29 +1348,60 @@ try {
 
                                         <span class="hora-salida">
 
-                                            <?= htmlspecialchars(
-                                                $horaSalida,
-                                                ENT_QUOTES,
-                                                'UTF-8'
+                                            <?= e(
+                                                $horaSalida
                                             ) ?>
 
                                         </span>
 
                                     <?php endif; ?>
 
+                                </td>
+
+
+                                <!-- =================================================
+                                     USUARIO SALIDA
+                                ================================================== -->
+
+                                <td
+                                    id="realizo_salida_<?= $id ?>">
+
+                                    <?php if (
+                                        $tieneSalida &&
+                                        $realizoSalida !== ''
+                                    ): ?>
+
+                                        <span
+                                            class="usuario-salida"
+                                            title="<?= e($realizoSalida) ?>">
+
+                                            <i class="fas fa-user-check"></i>
+
+                                            <?= e($realizoSalida) ?>
+
+                                        </span>
+
+                                    <?php else: ?>
+
+                                        <span class="text-muted">
+
+                                            —
+
+                                        </span>
+
+                                    <?php endif; ?>
 
                                 </td>
 
 
-                                <!-- ACCIONES -->
+                                <!-- =================================================
+                                     ACCIÓN
+                                ================================================== -->
 
                                 <td
-                                    data-label="Acciones"
                                     id="accion_<?= $id ?>">
 
-
                                     <?php if (!$tieneSalida): ?>
-
 
                                         <button
                                             type="button"
@@ -920,9 +1409,7 @@ try {
                                             class="btnSalida"
                                             onclick="marcarSalida(<?= $id ?>)">
 
-                                            <i
-                                                class="fas fa-sign-out-alt">
-                                            </i>
+                                            <i class="fas fa-sign-out-alt"></i>
 
                                             Salida
 
@@ -932,9 +1419,7 @@ try {
 
                                         <span class="finalizado">
 
-                                            <i
-                                                class="fas fa-check">
-                                            </i>
+                                            <i class="fas fa-check"></i>
 
                                             Finalizado
 
@@ -944,9 +1429,12 @@ try {
 
                                 </td>
 
+
                             </tr>
 
+
                         <?php endwhile; ?>
+
 
                     </tbody>
 
@@ -961,42 +1449,138 @@ try {
 
 
     <!-- =====================================================
-    FONT AWESOME
+         MODAL DETALLES
     ====================================================== -->
 
-    <script
-        src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js">
-    </script>
+    <div
+        class="modal fade"
+        id="modalDetalles"
+        tabindex="-1"
+        aria-hidden="true">
+
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+
+                    <h5 class="modal-title">
+
+                        <i class="fas fa-user-circle text-primary"></i>
+
+                        Detalles del visitante
+
+                    </h5>
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                    </button>
+
+                </div>
+
+
+                <div class="modal-body">
+
+                    <div id="contenidoDetalles"></div>
+
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary btn-sm"
+                        data-bs-dismiss="modal">
+
+                        Cerrar
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
 
 
 
     <!-- =====================================================
-    JAVASCRIPT
+         JQUERY
     ====================================================== -->
+
+    <script
+        src="https://code.jquery.com/jquery-3.7.1.min.js">
+    </script>
+
+
+    <!-- =====================================================
+         BOOTSTRAP
+    ====================================================== -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+
+    <!-- =====================================================
+         DATATABLES
+    ====================================================== -->
+
+    <script
+        src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js">
+    </script>
+
+    <script
+        src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js">
+    </script>
+
+
+    <!-- =====================================================
+         SWEETALERT
+    ====================================================== -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+    </script>
+
+
 
     <script>
 
-        /* =====================================================
-        DATATABLE
-        ====================================================== */
+        /* =========================================================
+           DATATABLE
+        ========================================================= */
 
         $(document).ready(function() {
 
-
             $('#tablaVisitantes').DataTable({
 
-                pageLength: 10,
+                pageLength: 15,
+
+                lengthMenu: [
+                    [10, 15, 25, 50, 100, -1],
+                    [10, 15, 25, 50, 100, "Todos"]
+                ],
+
+                columnDefs: [
+
+                    {
+                        targets: 0,
+                        type: 'num'
+                    }
+
+                ],
 
                 order: [
                     [0, 'desc']
                 ],
 
-                lengthMenu: [
-                    [10, 50, -1],
-                    [10, 50, "Todos"]
-                ],
-
-                searching: true,
+                autoWidth: false,
 
                 language: {
 
@@ -1016,6 +1600,9 @@ try {
 
                     zeroRecords:
                         "No se encontraron registros",
+
+                    emptyTable:
+                        "No hay visitantes registrados",
 
                     paginate: {
 
@@ -1037,35 +1624,40 @@ try {
 
 
 
-        /* =====================================================
+        /* =========================================================
            REGISTRAR SALIDA
-        ====================================================== */
+        ========================================================= */
 
         function marcarSalida(id) {
 
-
             Swal.fire({
 
-                title: "¿Registrar salida?",
+                title:
+                    '¿Registrar salida?',
 
                 text:
-                    "La salida del visitante será registrada.",
+                    'Se registrará la hora actual y el usuario que realiza la salida.',
 
-                icon: "question",
+                icon:
+                    'question',
 
-                showCancelButton: true,
-
-                confirmButtonColor: "#dc3545",
-
-                cancelButtonColor: "#6c757d",
+                showCancelButton:
+                    true,
 
                 confirmButtonText:
-                    "Sí, registrar",
+                    'Sí, registrar',
 
                 cancelButtonText:
-                    "Cancelar",
+                    'Cancelar',
 
-                reverseButtons: true
+                confirmButtonColor:
+                    '#dc3545',
+
+                cancelButtonColor:
+                    '#6c757d',
+
+                reverseButtons:
+                    true
 
             }).then(function(result) {
 
@@ -1079,33 +1671,35 @@ try {
 
                 /* =================================================
                    BOTÓN
-                ================================================= */
+                ================================================== */
 
                 const $boton =
-                    $("#btnSalida_" + id);
+                    $('#btnSalida_' + id);
 
 
                 $boton
 
-                    .prop("disabled", true)
+                    .prop(
+                        'disabled',
+                        true
+                    )
 
                     .html(
-                        '<i class="fas fa-spinner fa-spin"></i> ' +
-                        'Registrando...'
+                        '<i class="fas fa-spinner fa-spin"></i>'
                     );
 
 
                 /* =================================================
                    AJAX
-                ================================================= */
+                ================================================== */
 
                 $.ajax({
 
                     url:
-                        "../Controller/salidas_visitantes.php",
+                        '../Controller/salidas_visitantes.php',
 
                     type:
-                        "POST",
+                        'POST',
 
                     data: {
 
@@ -1114,18 +1708,18 @@ try {
                     },
 
                     dataType:
-                        "json",
+                        'json',
 
 
                     /* =============================================
-                    ÉXITO AJAX
+                       RESPUESTA CORRECTA
                     ============================================== */
 
                     success: function(response) {
 
 
                         console.log(
-                            "RESPUESTA PHP:",
+                            'RESPUESTA PHP:',
                             response
                         );
 
@@ -1136,64 +1730,111 @@ try {
 
 
                             const horaSalida =
-                                response.hora_salida ||
-                                "";
+                                response.hora_salida || '';
+
+
+                            const realizoSalida =
+                                response.realizo_salida || '';
 
 
                             /* =====================================
-                            ACTUALIZAR SALIDA
+                               ESCAPAR DATOS
                             ====================================== */
 
-                            $("#salida_" + id)
-                                .html(
+                            const horaSegura =
+                                $('<div>')
+                                .text(horaSalida)
+                                .html();
 
-                                    '<span class="hora-salida">' +
 
-                                    horaSalida +
-
-                                    '</span>'
-
-                                );
+                            const usuarioSeguro =
+                                $('<div>')
+                                .text(realizoSalida)
+                                .html();
 
 
                             /* =====================================
-                            CAMBIAR ACCIÓN
+                               ACTUALIZAR SALIDA
                             ====================================== */
 
-                            $("#accion_" + id)
-                                .html(
+                            $('#salida_' + id).html(
 
-                                    '<span class="finalizado">' +
+                                '<span class="hora-salida">' +
 
-                                    '<i class="fas fa-check"></i> ' +
+                                horaSegura +
 
-                                    'Finalizado' +
+                                '</span>'
 
-                                    '</span>'
-
-                                );
+                            );
 
 
                             /* =====================================
-                            MENSAJE
+                               ACTUALIZAR USUARIO SALIDA
+                            ====================================== */
+
+                            $('#realizo_salida_' + id).html(
+
+                                '<span ' +
+                                'class="usuario-salida" ' +
+                                'title="' +
+                                usuarioSeguro +
+                                '">' +
+
+                                '<i class="fas fa-user-check"></i> ' +
+
+                                usuarioSeguro +
+
+                                '</span>'
+
+                            );
+
+
+                            /* =====================================
+                               ACTUALIZAR ACCIÓN
+                            ====================================== */
+
+                            $('#accion_' + id).html(
+
+                                '<span class="finalizado">' +
+
+                                '<i class="fas fa-check"></i> ' +
+
+                                'Finalizado' +
+
+                                '</span>'
+
+                            );
+
+
+                            /* =====================================
+                               MENSAJE
                             ====================================== */
 
                             Swal.fire({
 
                                 title:
-                                    "Salida registrada",
+                                    'Salida registrada',
 
-                                text:
-                                    "La hora de salida se registró correctamente.",
+                                html:
+                                    'Hora: <b>' +
+                                    horaSegura +
+                                    '</b><br>' +
+
+                                    'Registró: <b>' +
+                                    usuarioSeguro +
+                                    '</b>',
 
                                 icon:
-                                    "success",
+                                    'success',
 
                                 confirmButtonColor:
-                                    "#28a745",
+                                    '#198754',
+
+                                confirmButtonText:
+                                    'Aceptar',
 
                                 timer:
-                                    2000,
+                                    2500,
 
                                 timerProgressBar:
                                     true
@@ -1205,13 +1846,13 @@ try {
 
 
                             /* =====================================
-                            RESTAURAR BOTÓN
+                               RESTAURAR BOTÓN
                             ====================================== */
 
                             $boton
 
                                 .prop(
-                                    "disabled",
+                                    'disabled',
                                     false
                                 )
 
@@ -1227,14 +1868,17 @@ try {
                             Swal.fire({
 
                                 title:
-                                    "Aviso",
+                                    'Aviso',
 
                                 text:
                                     response.mensaje ||
-                                    "No se pudo registrar la salida.",
+                                    'No se pudo registrar la salida.',
 
                                 icon:
-                                    "warning"
+                                    'warning',
+
+                                confirmButtonColor:
+                                    '#ffc107'
 
                             });
 
@@ -1244,7 +1888,7 @@ try {
 
 
                     /* =============================================
-                    ERROR AJAX
+                       ERROR AJAX
                     ============================================== */
 
                     error: function(
@@ -1255,47 +1899,42 @@ try {
 
 
                         console.error(
-                            "========== ERROR AJAX =========="
+                            '========== ERROR AJAX =========='
                         );
 
-
                         console.error(
-                            "HTTP:",
+                            'HTTP:',
                             xhr.status
                         );
 
-
                         console.error(
-                            "STATUS:",
+                            'STATUS:',
                             status
                         );
 
-
                         console.error(
-                            "ERROR:",
+                            'ERROR:',
                             error
                         );
 
-
                         console.error(
-                            "RESPUESTA:",
+                            'RESPUESTA:',
                             xhr.responseText
                         );
 
-
                         console.error(
-                            "================================"
+                            '================================'
                         );
 
 
                         /* =====================================
-                        RESTAURAR BOTÓN
+                           RESTAURAR BOTÓN
                         ====================================== */
 
                         $boton
 
                             .prop(
-                                "disabled",
+                                'disabled',
                                 false
                             )
 
@@ -1308,36 +1947,57 @@ try {
                             );
 
 
+                        /* =====================================
+                           ESCAPAR RESPUESTA
+                        ====================================== */
+
+                        const respuestaSegura =
+                            $('<div>')
+                            .text(
+                                xhr.responseText
+                            )
+                            .html();
+
+
+                        /* =====================================
+                           MENSAJE
+                        ====================================== */
+
                         Swal.fire({
 
                             title:
-                                "Error de servidor",
+                                'Error de servidor',
 
                             html:
 
-                                "<b>Código HTTP:</b> " +
+                                '<b>Código HTTP:</b> ' +
                                 xhr.status +
 
-                                "<br><br>" +
+                                '<br><br>' +
 
-                                "<b>Respuesta del servidor:</b>" +
+                                '<b>Respuesta del servidor:</b>' +
 
-                                "<pre " +
-                                "style='text-align:left;" +
-                                "white-space:pre-wrap;" +
-                                "max-height:300px;" +
-                                "overflow:auto;'>" +
+                                '<pre style="' +
 
-                                $("<div>")
-                                    .text(
-                                        xhr.responseText
-                                    )
-                                    .html() +
+                                'text-align:left;' +
+                                'white-space:pre-wrap;' +
+                                'max-height:300px;' +
+                                'overflow:auto;' +
+                                'background:#f8f9fa;' +
+                                'padding:10px;' +
+                                'border-radius:6px;' +
 
-                                "</pre>",
+                                '">' +
+
+                                respuestaSegura +
+
+                                '</pre>',
 
                             icon:
-                                "error"
+                                'error',
+
+                            confirmButtonColor:
+                                '#dc3545'
 
                         });
 

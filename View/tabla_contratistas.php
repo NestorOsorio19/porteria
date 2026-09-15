@@ -4,11 +4,12 @@ require_once "../Config/database.php";
 
 $con = connection();
 
-try {
 
-    /* =====================================================
-       CONSULTA GENERAL DE CONTRATISTAS
-    ====================================================== */
+/* ==========================================================
+   CONSULTAR CONTRATISTAS
+========================================================== */
+
+try {
 
     $sql = "
         SELECT
@@ -27,7 +28,7 @@ try {
         LEFT JOIN empresas emp
             ON v.empresa_fk = emp.id_registro
 
-        ORDER BY v.fecha DESC, v.id DESC
+        ORDER BY v.id DESC
     ";
 
     $stmt = $con->prepare($sql);
@@ -45,6 +46,20 @@ try {
         )
     );
 
+}
+
+
+/* ==========================================================
+   FUNCIÓN DE SEGURIDAD
+========================================================== */
+
+function e($valor): string
+{
+    return htmlspecialchars(
+        (string)($valor ?? ''),
+        ENT_QUOTES,
+        'UTF-8'
+    );
 }
 
 ?>
@@ -66,42 +81,16 @@ try {
         name="description"
         content="Consulta de registros de contratistas">
 
-    <meta
-        name="keywords"
-        content="contratistas, SST, SG-SST, portería, ingreso, salida">
-
     <title>Consulta Contratistas</title>
 
 
     <!-- =====================================================
-         JQUERY
-    ====================================================== -->
-
-    <script
-        src="https://code.jquery.com/jquery-3.7.1.min.js">
-    </script>
-
-
-    <!-- =====================================================
-         SWEETALERT
-    ====================================================== -->
-
-    <script
-        src="https://cdn.jsdelivr.net/npm/sweetalert2@11">
-    </script>
-
-
-    <!-- =====================================================
-         DATATABLES
+         BOOTSTRAP
     ====================================================== -->
 
     <link
-        rel="stylesheet"
-        href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css">
-
-    <script
-        src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js">
-    </script>
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
 
 
     <!-- =====================================================
@@ -111,6 +100,15 @@ try {
     <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+
+    <!-- =====================================================
+         DATATABLES
+    ====================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css">
 
 
     <!-- =====================================================
@@ -139,16 +137,16 @@ try {
 
 
         /* =====================================================
-           CONTENEDOR PRINCIPAL
+           CONTENEDOR
         ====================================================== */
 
         .users-table {
 
-            max-width: 1600px;
+            max-width: 1750px;
 
-            margin: 30px auto;
+            margin: 15px auto;
 
-            padding: 20px;
+            padding: 10px 15px;
 
         }
 
@@ -161,27 +159,14 @@ try {
 
             background: #ffffff;
 
-            border-radius: 15px;
+            border-radius: 10px;
 
-            padding: 20px 25px;
+            padding: 14px 18px;
 
             box-shadow:
-                0 5px 18px rgba(0, 0, 0, 0.08);
+                0 3px 12px rgba(0, 0, 0, 0.07);
 
-            margin-bottom: 20px;
-
-        }
-
-
-        .header-content {
-
-            display: flex;
-
-            justify-content: space-between;
-
-            align-items: center;
-
-            gap: 20px;
+            margin-bottom: 12px;
 
         }
 
@@ -192,6 +177,8 @@ try {
 
             color: #192a56;
 
+            font-size: 20px;
+
             font-weight: 700;
 
         }
@@ -201,36 +188,40 @@ try {
 
             color: #718093;
 
+            font-size: 12px;
+
         }
 
-
-        /* =====================================================
-           BOTONES DEL ENCABEZADO
-        ====================================================== */
 
         .header-buttons {
 
             display: flex;
 
-            gap: 10px;
+            gap: 7px;
 
             align-items: center;
 
         }
 
 
-        .btn-menu,
-        .btn-nuevo {
+        /* =====================================================
+           BOTONES
+        ====================================================== */
+
+        .btn-nuevo,
+        .btn-menu {
 
             color: white;
 
             border: none;
 
-            padding: 10px 18px;
+            padding: 7px 12px;
 
-            border-radius: 8px;
+            border-radius: 6px;
 
             text-decoration: none;
+
+            font-size: 12px;
 
             font-weight: 600;
 
@@ -242,25 +233,7 @@ try {
 
             align-items: center;
 
-            gap: 7px;
-
-        }
-
-
-        .btn-menu {
-
-            background: #718093;
-
-        }
-
-
-        .btn-menu:hover {
-
-            background: #576574;
-
-            color: white;
-
-            transform: translateY(-1px);
+            gap: 5px;
 
         }
 
@@ -278,34 +251,39 @@ try {
 
             color: white;
 
-            transform: translateY(-1px);
+        }
+
+
+        .btn-menu {
+
+            background: #718093;
+
+        }
+
+
+        .btn-menu:hover {
+
+            background: #576574;
+
+            color: white;
 
         }
 
 
         /* =====================================================
-           CONTENEDOR TABLA
+           TABLA
         ====================================================== */
 
         .table-container {
 
-            background: #ffffff;
+            background: #fff;
 
-            padding: 20px;
+            padding: 10px;
 
-            border-radius: 15px;
+            border-radius: 10px;
 
             box-shadow:
-                0 5px 18px rgba(0, 0, 0, 0.08);
-
-        }
-
-
-        .table-responsive {
-
-            width: 100%;
-
-            overflow-x: auto;
+                0 3px 12px rgba(0, 0, 0, 0.07);
 
         }
 
@@ -314,18 +292,18 @@ try {
 
             width: 100% !important;
 
+            font-size: 12px;
+
+            margin-top: 0 !important;
+
         }
 
-
-        /* =====================================================
-           ENCABEZADO TABLA
-        ====================================================== */
 
         table.dataTable thead th {
 
             background-color: #273c75 !important;
 
-            color: #ffffff !important;
+            color: #fff !important;
 
             font-weight: 600;
 
@@ -335,12 +313,12 @@ try {
 
             white-space: nowrap;
 
+            padding: 7px 6px !important;
+
+            border: none;
+
         }
 
-
-        /* =====================================================
-           CELDAS
-        ====================================================== */
 
         table.dataTable tbody td {
 
@@ -349,6 +327,8 @@ try {
             vertical-align: middle;
 
             white-space: nowrap;
+
+            padding: 5px 6px !important;
 
         }
 
@@ -361,32 +341,109 @@ try {
 
 
         /* =====================================================
-           INDUCCIÓN OBLIGATORIA
+           ID
         ====================================================== */
 
-        .induccion-obligatoria {
+        .id-registro {
 
-            display: inline-flex;
+            color: #6c757d;
 
-            align-items: center;
+            font-size: 11px;
 
-            justify-content: center;
+            font-weight: 600;
 
-            gap: 6px;
+        }
 
-            background: #fff3cd;
 
-            color: #856404;
+        /* =====================================================
+           CONTRATISTA
+        ====================================================== */
 
-            border: 1px solid #ffc107;
+        .contratista {
 
-            padding: 6px 10px;
+            display: flex;
 
-            border-radius: 7px;
+            flex-direction: column;
+
+            align-items: flex-start;
+
+            line-height: 1.15;
+
+            min-width: 150px;
+
+        }
+
+
+        .contratista strong {
+
+            color: #192a56;
+
+            font-size: 12px;
 
             font-weight: 700;
 
-            font-size: 12px;
+        }
+
+
+        .contratista small {
+
+            color: #718093;
+
+            font-size: 10px;
+
+        }
+
+
+        /* =====================================================
+           EMPRESA
+        ====================================================== */
+
+        .empresa {
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: flex-start;
+
+            line-height: 1.15;
+
+            min-width: 120px;
+
+        }
+
+
+        .empresa strong {
+
+            color: #2f3640;
+
+            font-size: 11px;
+
+            font-weight: 700;
+
+        }
+
+
+        .empresa small {
+
+            color: #718093;
+
+            font-size: 10px;
+
+        }
+
+
+        /* =====================================================
+           INFORMACIÓN GENERAL
+        ====================================================== */
+
+        .dato {
+
+            font-size: 11px;
+
+            color: #495057;
+
+            font-weight: 600;
 
         }
 
@@ -401,29 +458,25 @@ try {
 
             align-items: center;
 
-            justify-content: center;
+            gap: 4px;
 
-            gap: 6px;
+            background: #d4edda;
 
-            background: #d1e7dd;
+            color: #155724;
 
-            color: #0f5132;
+            padding: 3px 6px;
 
-            border: 1px solid #198754;
+            border-radius: 4px;
 
-            padding: 6px 10px;
-
-            border-radius: 7px;
+            font-size: 10px;
 
             font-weight: 700;
-
-            font-size: 12px;
 
         }
 
 
         /* =====================================================
-           INDUCCIÓN NO CUMPLIDA
+           INDUCCIÓN OBLIGATORIA
         ====================================================== */
 
         .induccion-no {
@@ -432,65 +485,102 @@ try {
 
             align-items: center;
 
-            justify-content: center;
+            gap: 4px;
 
-            gap: 6px;
+            background: #fff3cd;
 
-            background: #f8d7da;
+            color: #856404;
 
-            color: #842029;
+            padding: 3px 6px;
 
-            border: 1px solid #dc3545;
+            border-radius: 4px;
 
-            padding: 6px 10px;
-
-            border-radius: 7px;
+            font-size: 10px;
 
             font-weight: 700;
-
-            font-size: 12px;
 
         }
 
 
         /* =====================================================
-           SALIDA PENDIENTE
+           HORAS
         ====================================================== */
 
+        .hora-ingreso,
+        .hora-salida,
         .pendiente {
 
             display: inline-block;
 
-            background: #ffc107;
+            padding: 3px 6px;
 
-            color: #212529;
+            border-radius: 4px;
 
-            padding: 5px 9px;
+            font-size: 10px;
 
-            border-radius: 6px;
+            font-weight: 700;
 
-            font-weight: 600;
+        }
+
+
+        .hora-ingreso {
+
+            background: #d4edda;
+
+            color: #155724;
+
+        }
+
+
+        .hora-salida {
+
+            background: #d1ecf1;
+
+            color: #0c5460;
+
+        }
+
+
+        .pendiente {
+
+            background: #fff3cd;
+
+            color: #856404;
 
         }
 
 
         /* =====================================================
-           HORA DE SALIDA
+           USUARIO SALIDA
         ====================================================== */
 
-        .hora-salida {
+        .usuario-salida {
 
-            display: inline-block;
+            display: inline-flex;
 
-            background: #17a2b8;
+            align-items: center;
 
-            color: white;
+            gap: 4px;
 
-            padding: 5px 9px;
+            max-width: 120px;
 
-            border-radius: 6px;
+            padding: 3px 6px;
+
+            border-radius: 4px;
+
+            font-size: 10px;
 
             font-weight: 600;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+            white-space: nowrap;
+
+            background: #e8f5e9;
+
+            color: #198754;
 
         }
 
@@ -503,19 +593,23 @@ try {
 
             background: #e84118;
 
-            border: none;
-
             color: white;
 
-            padding: 7px 13px;
+            border: none;
 
-            border-radius: 6px;
+            padding: 4px 8px;
 
-            cursor: pointer;
+            border-radius: 5px;
+
+            font-size: 10px;
 
             font-weight: 600;
 
+            cursor: pointer;
+
             transition: 0.2s;
+
+            white-space: nowrap;
 
         }
 
@@ -546,17 +640,55 @@ try {
 
         .finalizado {
 
-            display: inline-block;
+            display: inline-flex;
 
-            background: #28a745;
+            align-items: center;
+
+            gap: 3px;
+
+            background: #d4edda;
+
+            color: #155724;
+
+            padding: 3px 6px;
+
+            border-radius: 4px;
+
+            font-size: 10px;
+
+            font-weight: 700;
+
+        }
+
+
+        /* =====================================================
+           BOTÓN DETALLES
+        ====================================================== */
+
+        .btnDetalles {
+
+            background: #6c757d;
 
             color: white;
 
-            padding: 5px 9px;
+            border: none;
 
-            border-radius: 6px;
+            padding: 4px 7px;
 
-            font-weight: 600;
+            border-radius: 5px;
+
+            font-size: 10px;
+
+            cursor: pointer;
+
+            margin-left: 3px;
+
+        }
+
+
+        .btnDetalles:hover {
+
+            background: #495057;
 
         }
 
@@ -565,55 +697,116 @@ try {
            DATATABLES
         ====================================================== */
 
-        .dataTables_wrapper
-        .dataTables_filter {
+        .dataTables_wrapper {
 
-            margin-bottom: 15px;
+            font-size: 12px;
 
         }
 
 
-        .dataTables_wrapper
-        .dataTables_filter input {
+        .dataTables_wrapper .dataTables_filter {
+
+            margin-bottom: 8px;
+
+        }
+
+
+        .dataTables_wrapper .dataTables_filter input {
 
             border: 1px solid #ced4da;
 
-            border-radius: 6px;
+            border-radius: 5px;
 
-            padding: 6px 10px;
+            padding: 4px 8px;
 
             margin-left: 5px;
 
+            font-size: 12px;
+
         }
 
 
-        .dataTables_wrapper
-        .dataTables_length select {
+        .dataTables_wrapper .dataTables_length select {
 
             border: 1px solid #ced4da;
 
-            border-radius: 6px;
+            border-radius: 5px;
 
-            padding: 5px;
+            padding: 3px;
+
+            font-size: 12px;
+
+        }
+
+
+        .dataTables_wrapper .dataTables_info {
+
+            font-size: 11px;
+
+        }
+
+
+        .dataTables_wrapper .dataTables_paginate {
+
+            font-size: 11px;
 
         }
 
 
         /* =====================================================
-           BADGE ID
+           MODAL DETALLES
         ====================================================== */
 
-        .badge-id {
+        .detalle-label {
 
-            background: #273c75;
+            color: #718093;
 
-            color: #ffffff;
+            font-size: 10px;
 
-            padding: 5px 8px;
+            font-weight: 700;
 
-            border-radius: 6px;
+            text-transform: uppercase;
+
+            margin-bottom: 2px;
+
+        }
+
+
+        .detalle-valor {
+
+            font-size: 12px;
 
             font-weight: 600;
+
+            color: #2f3640;
+
+            margin-bottom: 10px;
+
+        }
+
+
+        .detalle-seccion {
+
+            background: #f8f9fa;
+
+            border-radius: 7px;
+
+            padding: 10px;
+
+            margin-bottom: 10px;
+
+        }
+
+
+        .detalle-seccion h6 {
+
+            color: #273c75;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            margin-bottom: 8px;
 
         }
 
@@ -626,16 +819,23 @@ try {
 
             .users-table {
 
-                margin: 10px auto;
+                margin: 5px auto;
 
-                padding: 10px;
+                padding: 5px;
 
             }
 
 
             .card-header-custom {
 
-                padding: 15px;
+                padding: 10px;
+
+            }
+
+
+            .card-header-custom h2 {
+
+                font-size: 16px;
 
             }
 
@@ -646,6 +846,8 @@ try {
 
                 align-items: flex-start;
 
+                gap: 10px;
+
             }
 
 
@@ -653,15 +855,13 @@ try {
 
                 width: 100%;
 
-                flex-direction: column;
-
             }
 
 
-            .btn-menu,
-            .btn-nuevo {
+            .btn-nuevo,
+            .btn-menu {
 
-                width: 100%;
+                flex: 1;
 
                 justify-content: center;
 
@@ -670,7 +870,7 @@ try {
 
             .table-container {
 
-                padding: 10px;
+                padding: 5px;
 
             }
 
@@ -693,17 +893,14 @@ try {
 
         <div class="card-header-custom">
 
-            <div class="header-content">
+            <div class="header-content d-flex justify-content-between align-items-center">
 
 
                 <div>
 
                     <h2>
 
-                        <i
-                            class="fas fa-hard-hat"
-                            style="color:#dc3545;">
-                        </i>
+                        <i class="fas fa-hard-hat text-danger"></i>
 
                         Registro General de Contratistas
 
@@ -722,8 +919,6 @@ try {
                 <div class="header-buttons">
 
 
-                    <!-- MENÚ -->
-
                     <a
                         href="../index.php"
                         class="btn-menu">
@@ -735,8 +930,6 @@ try {
                     </a>
 
 
-                    <!-- NUEVO REGISTRO -->
-
                     <a
                         href="registro_contratistas.php"
                         class="btn-nuevo">
@@ -746,7 +939,6 @@ try {
                         Nuevo Registro
 
                     </a>
-
 
                 </div>
 
@@ -766,7 +958,7 @@ try {
 
                 <table
                     id="tablaContratistas"
-                    class="display">
+                    class="table table-striped table-hover align-middle">
 
 
                     <thead>
@@ -777,9 +969,7 @@ try {
 
                             <th>Fecha</th>
 
-                            <th>Nombre</th>
-
-                            <th>Cédula</th>
+                            <th>Contratista</th>
 
                             <th>RH</th>
 
@@ -789,23 +979,19 @@ try {
 
                             <th>Empresa</th>
 
-                            <th>Enfermedad / Alergia</th>
+                            <th>Inducción</th>
 
-                            <th>Contacto Emergencia</th>
-
-                            <th>Tel. Emergencia</th>
-
-                            <th>Inducción SG-SST</th>
-
-                            <th>Marca</th>
-
-                            <th>Serial</th>
+                            <th>Equipo</th>
 
                             <th>Ingreso</th>
 
+                            <th>Registró ingreso</th>
+
                             <th>Salida</th>
 
-                            <th>Acciones</th>
+                            <th>Registró salida</th>
+
+                            <th>Acción</th>
 
                         </tr>
 
@@ -815,7 +1001,9 @@ try {
                     <tbody>
 
 
-                        <?php while ($row = $stmt->fetch(PDO::FETCH_ASSOC)): ?>
+                        <?php while (
+                            $row = $stmt->fetch(PDO::FETCH_ASSOC)
+                        ): ?>
 
 
                             <?php
@@ -824,11 +1012,13 @@ try {
                                ID
                             ================================================== */
 
-                            $id = (int) ($row['id'] ?? 0);
+                            $id = (int)(
+                                $row['id'] ?? 0
+                            );
 
 
                             /* =================================================
-                               HORA DE SALIDA
+                               SALIDA
                             ================================================== */
 
                             $horaSalida = trim(
@@ -836,40 +1026,41 @@ try {
                             );
 
 
-                            /* =================================================
-                               VERIFICAR SALIDA
-                            ================================================== */
-
                             $tieneSalida =
                                 $horaSalida !== '' &&
                                 $horaSalida !== '00:00:00';
 
 
                             /* =================================================
-                               INDUCCIÓN SG-SST
+                               USUARIOS
+                            ================================================== */
+
+                            $realizo = trim(
+                                $row['realizo'] ?? ''
+                            );
+
+
+                            $realizoSalida = trim(
+                                $row['realizo_salida'] ?? ''
+                            );
+
+
+                            /* =================================================
+                               INDUCCIÓN
                             ================================================== */
 
                             $induccion = trim(
-                                (string) (
+                                (string)(
                                     $row['induccion_sgsst'] ?? ''
                                 )
                             );
 
-
-                            /*
-                             * Consideramos cumplida la inducción
-                             * cuando el valor almacenado es 1.
-                             *
-                             * También soportamos valores como:
-                             * SI, Sí, SÍ, CUMPLIDA.
-                             */
 
                             $induccionCumplida =
                                 $induccion === '1' ||
                                 strtoupper($induccion) === 'SI' ||
                                 strtoupper($induccion) === 'SÍ' ||
                                 strtoupper($induccion) === 'CUMPLIDA';
-
 
                             ?>
 
@@ -881,11 +1072,11 @@ try {
                                      ID
                                 ================================================== -->
 
-                                <td data-label="ID">
+                                <td>
 
-                                    <span class="badge-id">
+                                    <span class="id-registro">
 
-                                        <?= $id ?>
+                                        #<?= $id ?>
 
                                     </span>
 
@@ -896,43 +1087,41 @@ try {
                                      FECHA
                                 ================================================== -->
 
-                                <td data-label="Fecha">
+                                <td>
 
-                                    <?= htmlspecialchars(
-                                        $row['fecha'] ?? '',
-                                        ENT_QUOTES,
-                                        'UTF-8'
+                                    <?= e(
+                                        $row['fecha'] ?? ''
                                     ) ?>
 
                                 </td>
 
 
                                 <!-- =================================================
-                                     NOMBRE
+                                     CONTRATISTA
                                 ================================================== -->
 
-                                <td data-label="Nombre">
+                                <td>
 
-                                    <?= htmlspecialchars(
-                                        $row['nombre'] ?? '',
-                                        ENT_QUOTES,
-                                        'UTF-8'
-                                    ) ?>
+                                    <div class="contratista">
 
-                                </td>
+                                        <strong>
 
+                                            <?= e(
+                                                $row['nombre'] ?? ''
+                                            ) ?>
 
-                                <!-- =================================================
-                                     CÉDULA
-                                ================================================== -->
+                                        </strong>
 
-                                <td data-label="Cédula">
+                                        <small>
 
-                                    <?= htmlspecialchars(
-                                        $row['cedula'] ?? '',
-                                        ENT_QUOTES,
-                                        'UTF-8'
-                                    ) ?>
+                                            CC:
+                                            <?= e(
+                                                $row['cedula'] ?? ''
+                                            ) ?>
+
+                                        </small>
+
+                                    </div>
 
                                 </td>
 
@@ -941,13 +1130,15 @@ try {
                                      RH
                                 ================================================== -->
 
-                                <td data-label="RH">
+                                <td>
 
-                                    <?= htmlspecialchars(
-                                        $row['rh'] ?? '',
-                                        ENT_QUOTES,
-                                        'UTF-8'
-                                    ) ?>
+                                    <span class="dato">
+
+                                        <?= e(
+                                            $row['rh'] ?? ''
+                                        ) ?>
+
+                                    </span>
 
                                 </td>
 
@@ -956,13 +1147,15 @@ try {
                                      ARL
                                 ================================================== -->
 
-                                <td data-label="ARL">
+                                <td>
 
-                                    <?= htmlspecialchars(
-                                        $row['nom_arl'] ?? 'Sin ARL',
-                                        ENT_QUOTES,
-                                        'UTF-8'
-                                    ) ?>
+                                    <span class="dato">
+
+                                        <?= e(
+                                            $row['nom_arl'] ?? 'Sin ARL'
+                                        ) ?>
+
+                                    </span>
 
                                 </td>
 
@@ -971,13 +1164,15 @@ try {
                                      EPS
                                 ================================================== -->
 
-                                <td data-label="EPS">
+                                <td>
 
-                                    <?= htmlspecialchars(
-                                        $row['nom_eps'] ?? 'Sin EPS',
-                                        ENT_QUOTES,
-                                        'UTF-8'
-                                    ) ?>
+                                    <span class="dato">
+
+                                        <?= e(
+                                            $row['nom_eps'] ?? 'Sin EPS'
+                                        ) ?>
+
+                                    </span>
 
                                 </td>
 
@@ -986,133 +1181,83 @@ try {
                                      EMPRESA
                                 ================================================== -->
 
-                                <td data-label="Empresa">
+                                <td>
 
-                                    <?= htmlspecialchars(
-                                        $row['nom_empresa'] ?? 'Sin empresa',
-                                        ENT_QUOTES,
-                                        'UTF-8'
-                                    ) ?>
+                                    <div class="empresa">
 
-                                </td>
+                                        <strong>
 
+                                            <?= e(
+                                                $row['nom_empresa'] ?? 'Sin empresa'
+                                            ) ?>
 
-                                <!-- =================================================
-                                     ENFERMEDAD / ALERGIA
-                                ================================================== -->
+                                        </strong>
 
-                                <td data-label="Enfermedad / Alergia">
-
-                                    <?= htmlspecialchars(
-                                        $row['enfermedad_alergia'] ?? '',
-                                        ENT_QUOTES,
-                                        'UTF-8'
-                                    ) ?>
+                                    </div>
 
                                 </td>
 
 
                                 <!-- =================================================
-                                     CONTACTO EMERGENCIA
+                                     INDUCCIÓN
                                 ================================================== -->
 
-                                <td data-label="Contacto Emergencia">
-
-                                    <?= htmlspecialchars(
-                                        $row['nombre_emergencia'] ?? '',
-                                        ENT_QUOTES,
-                                        'UTF-8'
-                                    ) ?>
-
-                                </td>
-
-
-                                <!-- =================================================
-                                     TELEFONO EMERGENCIA
-                                ================================================== -->
-
-                                <td data-label="Tel. Emergencia">
-
-                                    <?= htmlspecialchars(
-                                        $row['telefono_emergencia'] ?? '',
-                                        ENT_QUOTES,
-                                        'UTF-8'
-                                    ) ?>
-
-                                </td>
-
-
-                                <!-- =================================================
-                                     INDUCCIÓN SG-SST
-                                ================================================== -->
-
-                                <td data-label="Inducción SG-SST">
-
+                                <td>
 
                                     <?php if ($induccionCumplida): ?>
-
 
                                         <span
                                             class="induccion-cumplida"
                                             title="Inducción SG-SST cumplida">
 
-                                            <i
-                                                class="fas fa-check-circle">
-                                            </i>
+                                            <i class="fas fa-check-circle"></i>
 
                                             CUMPLIDA
 
                                         </span>
 
-
                                     <?php else: ?>
-
 
                                         <span
                                             class="induccion-no"
-                                            title="El contratista no tiene registrada la inducción SG-SST">
+                                            title="Inducción SG-SST obligatoria">
 
-                                            <i
-                                                class="fas fa-exclamation-triangle">
-                                            </i>
+                                            <i class="fas fa-exclamation-triangle"></i>
 
                                             OBLIGATORIA
 
                                         </span>
 
-
                                     <?php endif; ?>
 
-
                                 </td>
 
 
                                 <!-- =================================================
-                                     MARCA
+                                     EQUIPO
                                 ================================================== -->
 
-                                <td data-label="Marca">
+                                <td>
 
-                                    <?= htmlspecialchars(
-                                        $row['marca'] ?? '',
-                                        ENT_QUOTES,
-                                        'UTF-8'
-                                    ) ?>
+                                    <div class="empresa">
 
-                                </td>
+                                        <strong>
 
+                                            <?= e(
+                                                $row['marca'] ?? 'Sin equipo'
+                                            ) ?>
 
-                                <!-- =================================================
-                                     SERIAL
-                                ================================================== -->
+                                        </strong>
 
-                                <td data-label="Serial">
+                                        <small>
 
-                                    <?= htmlspecialchars(
-                                        $row['serial'] ?? '',
-                                        ENT_QUOTES,
-                                        'UTF-8'
-                                    ) ?>
+                                            <?= e(
+                                                $row['serial'] ?? 'Sin serial'
+                                            ) ?>
+
+                                        </small>
+
+                                    </div>
 
                                 </td>
 
@@ -1121,43 +1266,58 @@ try {
                                      INGRESO
                                 ================================================== -->
 
-                                <td data-label="Ingreso">
-
+                                <td>
 
                                     <?php if (!empty($row['ingreso'])): ?>
 
+                                        <span class="hora-ingreso">
 
-                                        <span
-                                            style="
-                                                background:#28a745;
-                                                color:white;
-                                                padding:5px 9px;
-                                                border-radius:6px;
-                                                font-weight:600;
-                                            ">
-
-                                            <?= htmlspecialchars(
-                                                $row['ingreso'],
-                                                ENT_QUOTES,
-                                                'UTF-8'
+                                            <?= e(
+                                                $row['ingreso']
                                             ) ?>
 
                                         </span>
 
-
                                     <?php else: ?>
 
-
-                                        <span
-                                            style="color:#6c757d;">
+                                        <span class="text-muted">
 
                                             —
 
                                         </span>
 
-
                                     <?php endif; ?>
 
+                                </td>
+
+
+                                <!-- =================================================
+                                     USUARIO INGRESO
+                                ================================================== -->
+
+                                <td>
+
+                                    <?php if ($realizo !== ''): ?>
+
+                                        <span
+                                            class="usuario-salida"
+                                            title="<?= e($realizo) ?>">
+
+                                            <i class="fas fa-user"></i>
+
+                                            <?= e($realizo) ?>
+
+                                        </span>
+
+                                    <?php else: ?>
+
+                                        <span class="text-muted">
+
+                                            —
+
+                                        </span>
+
+                                    <?php endif; ?>
 
                                 </td>
 
@@ -1166,13 +1326,9 @@ try {
                                      SALIDA
                                 ================================================== -->
 
-                                <td
-                                    data-label="Salida"
-                                    id="salida_<?= $id ?>">
-
+                                <td id="salida_<?= $id ?>">
 
                                     <?php if (!$tieneSalida): ?>
-
 
                                         <span class="pendiente">
 
@@ -1180,38 +1336,62 @@ try {
 
                                         </span>
 
-
                                     <?php else: ?>
-
 
                                         <span class="hora-salida">
 
-                                            <?= htmlspecialchars(
-                                                $horaSalida,
-                                                ENT_QUOTES,
-                                                'UTF-8'
+                                            <?= e(
+                                                $horaSalida
                                             ) ?>
 
                                         </span>
 
-
                                     <?php endif; ?>
-
 
                                 </td>
 
 
                                 <!-- =================================================
-                                     ACCIONES
+                                     USUARIO SALIDA
                                 ================================================== -->
 
-                                <td
-                                    data-label="Acciones"
-                                    id="accion_<?= $id ?>">
+                                <td id="realizo_salida_<?= $id ?>">
 
+                                    <?php if (
+                                        $tieneSalida &&
+                                        $realizoSalida !== ''
+                                    ): ?>
+
+                                        <span
+                                            class="usuario-salida"
+                                            title="<?= e($realizoSalida) ?>">
+
+                                            <i class="fas fa-user-check"></i>
+
+                                            <?= e($realizoSalida) ?>
+
+                                        </span>
+
+                                    <?php else: ?>
+
+                                        <span class="text-muted">
+
+                                            —
+
+                                        </span>
+
+                                    <?php endif; ?>
+
+                                </td>
+
+
+                                <!-- =================================================
+                                     ACCIÓN
+                                ================================================== -->
+
+                                <td id="accion_<?= $id ?>">
 
                                     <?php if (!$tieneSalida): ?>
-
 
                                         <button
                                             type="button"
@@ -1219,31 +1399,23 @@ try {
                                             class="btnSalida"
                                             onclick="marcarSalida(<?= $id ?>)">
 
-                                            <i
-                                                class="fas fa-sign-out-alt">
-                                            </i>
+                                            <i class="fas fa-sign-out-alt"></i>
 
                                             Salida
 
                                         </button>
 
-
                                     <?php else: ?>
-
 
                                         <span class="finalizado">
 
-                                            <i
-                                                class="fas fa-check">
-                                            </i>
+                                            <i class="fas fa-check"></i>
 
                                             Finalizado
 
                                         </span>
 
-
                                     <?php endif; ?>
-
 
                                 </td>
 
@@ -1265,36 +1437,140 @@ try {
     </div>
 
 
+
     <!-- =====================================================
-         JAVASCRIPT
+         MODAL DETALLES
     ====================================================== -->
+
+    <div
+        class="modal fade"
+        id="modalDetalles"
+        tabindex="-1"
+        aria-hidden="true">
+
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+
+                    <h5 class="modal-title">
+
+                        <i class="fas fa-hard-hat text-primary"></i>
+
+                        Detalles del contratista
+
+                    </h5>
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                    </button>
+
+                </div>
+
+
+                <div class="modal-body">
+
+                    <div id="contenidoDetalles"></div>
+
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary btn-sm"
+                        data-bs-dismiss="modal">
+
+                        Cerrar
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         JQUERY
+    ====================================================== -->
+
+    <script
+        src="https://code.jquery.com/jquery-3.7.1.min.js">
+    </script>
+
+
+    <!-- =====================================================
+         BOOTSTRAP
+    ====================================================== -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+
+    <!-- =====================================================
+         DATATABLES
+    ====================================================== -->
+
+    <script
+        src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js">
+    </script>
+
+    <script
+        src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js">
+    </script>
+
+
+    <!-- =====================================================
+         SWEETALERT
+    ====================================================== -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+    </script>
+
+
 
     <script>
 
-
-        /* =====================================================
+        /* =========================================================
            DATATABLE
-        ====================================================== */
+        ========================================================= */
 
         $(document).ready(function() {
 
-
             $('#tablaContratistas').DataTable({
 
-                pageLength: 10,
+                pageLength: 15,
+
+                lengthMenu: [
+                    [10, 15, 25, 50, 100, -1],
+                    [10, 15, 25, 50, 100, "Todos"]
+                ],
+
+                columnDefs: [
+
+                    {
+                        targets: 0,
+                        type: 'num'
+                    }
+
+                ],
 
                 order: [
                     [0, 'desc']
                 ],
 
-                lengthMenu: [
-                    [10, 50, -1],
-                    [10, 50, "Todos"]
-                ],
-
-                searching: true,
-
-                responsive: false,
+                autoWidth: false,
 
                 language: {
 
@@ -1338,33 +1614,34 @@ try {
 
 
 
-        /* =====================================================
+        /* =========================================================
            REGISTRAR SALIDA
-        ====================================================== */
+        ========================================================= */
 
         function marcarSalida(id) {
 
-
             Swal.fire({
 
-                title: "¿Registrar salida?",
+                title: '¿Registrar salida?',
 
                 text:
-                    "La salida del contratista será registrada.",
+                    'Se registrará la hora actual y el usuario que realiza la salida.',
 
-                icon: "question",
+                icon: 'question',
 
                 showCancelButton: true,
 
-                confirmButtonColor: "#dc3545",
-
-                cancelButtonColor: "#6c757d",
-
                 confirmButtonText:
-                    "Sí, registrar",
+                    'Sí, registrar',
 
                 cancelButtonText:
-                    "Cancelar",
+                    'Cancelar',
+
+                confirmButtonColor:
+                    '#dc3545',
+
+                cancelButtonColor:
+                    '#6c757d',
 
                 reverseButtons: true
 
@@ -1380,36 +1657,35 @@ try {
 
                 /* =================================================
                    BOTÓN
-                ================================================= */
+                ================================================== */
 
                 const $boton =
-                    $("#btnSalida_" + id);
+                    $('#btnSalida_' + id);
 
 
                 $boton
 
                     .prop(
-                        "disabled",
+                        'disabled',
                         true
                     )
 
                     .html(
-                        '<i class="fas fa-spinner fa-spin"></i> ' +
-                        'Registrando...'
+                        '<i class="fas fa-spinner fa-spin"></i>'
                     );
 
 
                 /* =================================================
                    AJAX
-                ================================================= */
+                ================================================== */
 
                 $.ajax({
 
                     url:
-                        "../Controller/salidas_contratistas.php",
+                        '../Controller/salidas_contratistas.php',
 
                     type:
-                        "POST",
+                        'POST',
 
                     data: {
 
@@ -1418,64 +1694,100 @@ try {
                     },
 
                     dataType:
-                        "json",
+                        'json',
 
 
                     /* =============================================
-                       ÉXITO
+                       RESPUESTA CORRECTA
                     ============================================== */
 
                     success: function(response) {
 
 
                         console.log(
-                            "RESPUESTA PHP:",
+                            'RESPUESTA PHP:',
                             response
                         );
 
 
-                        if (
-                            response.ok === true
-                        ) {
+                        if (response.ok === true) {
 
 
                             const horaSalida =
-                                response.hora_salida ||
-                                "";
+                                response.hora_salida || '';
+
+
+                            const realizoSalida =
+                                response.realizo_salida || '';
+
+
+                            /* =====================================
+                               ESCAPAR DATOS
+                            ====================================== */
+
+                            const horaSegura =
+                                $('<div>')
+                                .text(horaSalida)
+                                .html();
+
+
+                            const usuarioSeguro =
+                                $('<div>')
+                                .text(realizoSalida)
+                                .html();
 
 
                             /* =====================================
                                ACTUALIZAR SALIDA
                             ====================================== */
 
-                            $("#salida_" + id)
-                                .html(
+                            $('#salida_' + id).html(
 
-                                    '<span class="hora-salida">' +
+                                '<span class="hora-salida">' +
 
-                                    horaSalida +
+                                horaSegura +
 
-                                    '</span>'
+                                '</span>'
 
-                                );
+                            );
 
 
                             /* =====================================
-                               CAMBIAR ACCIÓN
+                               ACTUALIZAR USUARIO SALIDA
                             ====================================== */
 
-                            $("#accion_" + id)
-                                .html(
+                            $('#realizo_salida_' + id).html(
 
-                                    '<span class="finalizado">' +
+                                '<span ' +
+                                'class="usuario-salida" ' +
+                                'title="' +
+                                usuarioSeguro +
+                                '">' +
 
-                                    '<i class="fas fa-check"></i> ' +
+                                '<i class="fas fa-user-check"></i> ' +
 
-                                    'Finalizado' +
+                                usuarioSeguro +
 
-                                    '</span>'
+                                '</span>'
 
-                                );
+                            );
+
+
+                            /* =====================================
+                               ACTUALIZAR ACCIÓN
+                            ====================================== */
+
+                            $('#accion_' + id).html(
+
+                                '<span class="finalizado">' +
+
+                                '<i class="fas fa-check"></i> ' +
+
+                                'Finalizado' +
+
+                                '</span>'
+
+                            );
 
 
                             /* =====================================
@@ -1485,19 +1797,28 @@ try {
                             Swal.fire({
 
                                 title:
-                                    "Salida registrada",
+                                    'Salida registrada',
 
-                                text:
-                                    "La hora de salida se registró correctamente.",
+                                html:
+                                    'Hora: <b>' +
+                                    horaSegura +
+                                    '</b><br>' +
+
+                                    'Registró: <b>' +
+                                    usuarioSeguro +
+                                    '</b>',
 
                                 icon:
-                                    "success",
+                                    'success',
 
                                 confirmButtonColor:
-                                    "#28a745",
+                                    '#198754',
+
+                                confirmButtonText:
+                                    'Aceptar',
 
                                 timer:
-                                    2000,
+                                    2500,
 
                                 timerProgressBar:
                                     true
@@ -1515,7 +1836,7 @@ try {
                             $boton
 
                                 .prop(
-                                    "disabled",
+                                    'disabled',
                                     false
                                 )
 
@@ -1531,17 +1852,17 @@ try {
                             Swal.fire({
 
                                 title:
-                                    "Aviso",
+                                    'Aviso',
 
                                 text:
                                     response.mensaje ||
-                                    "No se pudo registrar la salida.",
+                                    'No se pudo registrar la salida.',
 
                                 icon:
-                                    "warning",
+                                    'warning',
 
                                 confirmButtonColor:
-                                    "#ffc107"
+                                    '#ffc107'
 
                             });
 
@@ -1562,36 +1883,31 @@ try {
 
 
                         console.error(
-                            "========== ERROR AJAX =========="
+                            '========== ERROR AJAX =========='
                         );
 
-
                         console.error(
-                            "HTTP:",
+                            'HTTP:',
                             xhr.status
                         );
 
-
                         console.error(
-                            "STATUS:",
+                            'STATUS:',
                             status
                         );
 
-
                         console.error(
-                            "ERROR:",
+                            'ERROR:',
                             error
                         );
 
-
                         console.error(
-                            "RESPUESTA:",
+                            'RESPUESTA:',
                             xhr.responseText
                         );
 
-
                         console.error(
-                            "================================"
+                            '================================'
                         );
 
 
@@ -1602,7 +1918,7 @@ try {
                         $boton
 
                             .prop(
-                                "disabled",
+                                'disabled',
                                 false
                             )
 
@@ -1615,39 +1931,57 @@ try {
                             );
 
 
+                        /* =====================================
+                           ESCAPAR RESPUESTA
+                        ====================================== */
+
+                        const respuestaSegura =
+                            $('<div>')
+                            .text(
+                                xhr.responseText
+                            )
+                            .html();
+
+
+                        /* =====================================
+                           MENSAJE
+                        ====================================== */
+
                         Swal.fire({
 
                             title:
-                                "Error de servidor",
+                                'Error de servidor',
 
                             html:
 
-                                "<b>Código HTTP:</b> " +
+                                '<b>Código HTTP:</b> ' +
                                 xhr.status +
 
-                                "<br><br>" +
+                                '<br><br>' +
 
-                                "<b>Respuesta del servidor:</b>" +
+                                '<b>Respuesta del servidor:</b>' +
 
-                                "<pre " +
-                                "style='text-align:left;" +
-                                "white-space:pre-wrap;" +
-                                "max-height:300px;" +
-                                "overflow:auto;'>" +
+                                '<pre style="' +
 
-                                $("<div>")
-                                    .text(
-                                        xhr.responseText
-                                    )
-                                    .html() +
+                                'text-align:left;' +
+                                'white-space:pre-wrap;' +
+                                'max-height:300px;' +
+                                'overflow:auto;' +
+                                'background:#f8f9fa;' +
+                                'padding:10px;' +
+                                'border-radius:6px;' +
 
-                                "</pre>",
+                                '">' +
+
+                                respuestaSegura +
+
+                                '</pre>',
 
                             icon:
-                                "error",
+                                'error',
 
                             confirmButtonColor:
-                                "#dc3545"
+                                '#dc3545'
 
                         });
 
