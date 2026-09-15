@@ -876,7 +876,7 @@ $error = htmlspecialchars(
 
 
         <!-- ==================================================
-             FORMULARIO
+            FORMULARIO
         =================================================== -->
 
         <form
@@ -886,7 +886,7 @@ $error = htmlspecialchars(
 
 
             <!-- =================================================
-                 DATOS PERSONALES
+                DATOS PERSONALES
             ================================================== -->
 
             <div class="form-section">

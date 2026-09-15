@@ -328,20 +328,31 @@ $modulos = [
     <!-- =========================================
         NAVBAR SUPERIOR
     ========================================== -->
+    <!-- =========================================
+        NAVBAR SUPERIOR
+    ========================================== -->
     <nav class="clay-navbar">
 
         <div class="d-flex justify-content-between align-items-center">
 
             <div class="navbar-brand">
                 <i class="fas fa-layer-group me-2"></i>
-                Plataforma Ingresos - Planta Lebrija
+                Plataforma Calidad - Regional Oriente
             </div>
 
             <div>
 
                 <span class="user-info me-3">
-                    Bienvenido
+                    Bienvenido,
+                    <strong><?= htmlspecialchars($_SESSION['nombre']) ?></strong>
                 </span>
+
+                <a href="../logout.php"
+                    class="btn btn-outline-danger logout-btn"
+                    onclick="return confirm('¿Deseas cerrar sesión?');">
+                    <i class="fas fa-sign-out-alt me-2"></i>
+                    Salir
+                </a>
 
             </div>
 

@@ -16,24 +16,13 @@ if (
 
     switch ($role) {
 
-        case 'super':
-            header("Location: View/menu_administrador.php");
-            exit;
+    case 'super':
+        header("Location: View/menu_administrador.php");
+        exit;
 
-        case 'porteria1':
-            header("Location: View/menu_operario.php");
-            exit;
-
-        case 'porteria2':
-            header("Location: View/menu_consulta.php");
-            exit;
-
-        default:
-
-            $_SESSION = [];
-            session_destroy();
-
-            break;
+    default:
+        header("Location: View/menu_principal.php");
+        exit;
     }
 }
 
@@ -173,7 +162,6 @@ if (
 
         }
 
-
         /* =====================================================
            ICONO
         ===================================================== */
@@ -206,7 +194,6 @@ if (
 
         }
 
-
         /* =====================================================
            TITULO
         ===================================================== */
@@ -223,7 +210,6 @@ if (
 
         }
 
-
         .login-subtitle {
 
             text-align: center;
@@ -233,7 +219,6 @@ if (
             margin-bottom: 30px;
 
         }
-
 
         /* =====================================================
            LABEL
@@ -246,7 +231,6 @@ if (
             margin-bottom: 8px;
 
         }
-
 
         /* =====================================================
            INPUTS
@@ -269,7 +253,6 @@ if (
 
         }
 
-
         .form-control:focus {
 
             border-color:
@@ -279,7 +262,6 @@ if (
                 0 0 0 .15rem rgba(220, 53, 69, .15);
 
         }
-
 
         /* =====================================================
            INPUT CON ICONO
@@ -296,7 +278,6 @@ if (
                 12px 0 0 12px;
 
         }
-
 
         .input-group .form-control {
 
