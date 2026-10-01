@@ -11,10 +11,9 @@ require_once '../Config/database.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
-    header('Location: ../View/registro_vehiculos_externos.php');
+    header('Location: ../View/realizo_vehiculos_externos.php');
     exit;
 }
-
 
 /* ==========================================================
    CONEXIÓN
@@ -22,11 +21,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $connection = connection();
 
-
 try {
 
     /* ==========================================================
-       CAPTURAR DATOS GENERALES
+    CAPTURAR DATOS GENERALES
     ========================================================== */
 
     $fecha = trim(
@@ -68,7 +66,7 @@ try {
 
     $placa = strtoupper(
         trim(
-            $_POST['placa_vehiculo'] ?? ''
+            $_POST['placa'] ?? ''
         )
     );
 
@@ -77,11 +75,11 @@ try {
     );
 
     $revision_tecn = trim(
-        $_POST['fecha_revision'] ?? ''
+        $_POST['revision_tecn'] ?? ''
     );
 
     $licencia = trim(
-        $_POST['fecha_licencia'] ?? ''
+        $_POST['licencia'] ?? ''
     );
 
 
@@ -104,16 +102,16 @@ try {
 
 
     /* ==========================================================
-       PERSONA QUE REALIZA EL REGISTRO
+       PERSONA QUE REALIZA EL realizo
     ========================================================== */
 
-    $registro = trim(
-        $_POST['registro'] ?? ''
+    $realizo = trim(
+        $_POST['realizo'] ?? ''
     );
 
 
     /* ==========================================================
-       HORAS
+    HORAS
     ========================================================== */
 
     $hora_ingreso = date('H:i:s');
@@ -122,13 +120,14 @@ try {
 
 
     /* ==========================================================
-       VALIDAR CAMPOS OBLIGATORIOS
+    VALIDAR CAMPOS OBLIGATORIOS
     ========================================================== */
-
     if (
         empty($fecha) ||
         empty($nombre) ||
         empty($cedula) ||
+        empty($eps) ||
+        empty($arl) ||
         empty($tipo_visita) ||
         empty($procedencia) ||
         empty($destino) ||
@@ -137,7 +136,7 @@ try {
         empty($revision_tecn) ||
         empty($licencia) ||
         empty($frecuencia_ingreso) ||
-        empty($registro)
+        empty($realizo)
     ) {
 
         throw new Exception(
@@ -147,7 +146,7 @@ try {
 
 
     /* ==========================================================
-       VALIDAR FRECUENCIA
+    VALIDAR FRECUENCIA
     ========================================================== */
 
     if (
@@ -238,13 +237,13 @@ try {
     if ($fecha > $hoy) {
 
         throw new Exception(
-            'La fecha del registro no puede ser futura.'
+            'La fecha del realizo no puede ser futura.'
         );
     }
 
 
     /* ==========================================================
-       INSERTAR REGISTRO
+       INSERTAR realizo
     ========================================================== */
 
     $sql = "
@@ -267,7 +266,7 @@ try {
             licencia,
             frecuencia_ingreso,
             induccion_sst,
-            registro
+            realizo
 
         )
 
@@ -289,7 +288,7 @@ try {
             :licencia,
             :frecuencia_ingreso,
             :induccion_sst,
-            :registro
+            :realizo
 
         )
 
@@ -304,61 +303,61 @@ try {
     $stmt->execute([
 
         ':fecha' =>
-            $fecha,
+        $fecha,
 
         ':nombre' =>
-            $nombre,
+        $nombre,
 
         ':cedula' =>
-            $cedula,
+        $cedula,
 
         ':eps' =>
-            $eps,
+        $eps,
 
         ':arl' =>
-            $arl,
+        $arl,
 
         ':tipo_visita' =>
-            $tipo_visita,
+        $tipo_visita,
 
         ':hora_ingreso' =>
-            $hora_ingreso,
+        $hora_ingreso,
 
         ':hora_salida' =>
-            $hora_salida,
+        $hora_salida,
 
         ':procedencia' =>
-            $procedencia,
+        $procedencia,
 
         ':destino' =>
-            $destino,
+        $destino,
 
         ':placa' =>
-            $placa,
+        $placa,
 
         ':fecha_soat' =>
-            $fecha_soat,
+        $fecha_soat,
 
         ':revision_tecn' =>
-            $revision_tecn,
+        $revision_tecn,
 
         ':licencia' =>
-            $licencia,
+        $licencia,
 
         ':frecuencia_ingreso' =>
-            $frecuencia_ingreso,
+        $frecuencia_ingreso,
 
         ':induccion_sst' =>
-            $induccion_sst,
+        $induccion_sst,
 
-        ':registro' =>
-            $registro
+        ':realizo' =>
+        $realizo
 
     ]);
 
 
     /* ==========================================================
-       REGISTRO EXITOSO
+    realizo EXITOSO
     ========================================================== */
 
     header(
@@ -366,20 +365,16 @@ try {
     );
 
     exit;
-
-
 }
 
 
 /* ==========================================================
-   ERROR BASE DE DATOS
-========================================================== */
-
-catch (PDOException $e) {
+ERROR BASE DE DATOS
+========================================================== */ catch (PDOException $e) {
 
     $mensaje = urlencode(
         'Error de base de datos: ' .
-        $e->getMessage()
+            $e->getMessage()
     );
 
     header(
@@ -387,15 +382,12 @@ catch (PDOException $e) {
     );
 
     exit;
-
 }
 
 
 /* ==========================================================
    ERROR DE VALIDACIÓN
-========================================================== */
-
-catch (Exception $e) {
+========================================================== */ catch (Exception $e) {
 
     $mensaje = urlencode(
         $e->getMessage()

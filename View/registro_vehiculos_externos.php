@@ -724,8 +724,8 @@ $realizo = $_SESSION['nombre'] ?? $_SESSION['usuario'] ?? '';
                     <div class="row g-3">
 
                         <div class="col-12 col-md-3">
-                            <label for="placa_vehiculo" class="form-label">Placa:</label>
-                            <input type="text" name="placa_vehiculo" id="placa_vehiculo" class="form-control" min="1" required>
+                            <label for="placa" class="form-label">Placa:</label>
+                            <input type="text" name="placa" id="placa" class="form-control" min="1" required>
                         </div>
 
                         <div class="col-md-3">
@@ -741,25 +741,24 @@ $realizo = $_SESSION['nombre'] ?? $_SESSION['usuario'] ?? '';
                         </div>
 
                         <div class="col-md-3">
-                            <label for="fecha_revision" class="form-label">
+                            <label for="revision_tecn" class="form-label">
                                 FV Revision Tecnicomecanica:
                             </label>
-                            <input type="date" name="fecha_revision" id="fecha_revision"
+                            <input type="date" name="revision_tecn" id="revision_tecn"
                                 class="form-control" required>
                         </div>
 
                         <div class="col-md-3">
-                            <label for="fecha_licencia" class="form-label">
+                            <label for="licencia" class="form-label">
                                 FV Licencia de Conduccion:
                             </label>
-                            <input type="date" name="fecha_licencia" id="fecha_licencia"
+                            <input type="date" name="licencia" id="licencia"
                                 class="form-control" required>
                         </div>
 
                         <!-- ======================================================
                         FRECUENCIA DE INGRESO DEL VEHÍCULO
                         ======================================================= -->
-
                         <div class="col-12">
 
                             <div
@@ -788,7 +787,6 @@ $realizo = $_SESSION['nombre'] ?? $_SESSION['usuario'] ?? '';
                                         </small>
 
                                     </div>
-
 
                                     <div class="col-12 col-md-4">
 
@@ -823,7 +821,6 @@ $realizo = $_SESSION['nombre'] ?? $_SESSION['usuario'] ?? '';
 
                                     </div>
 
-
                                     <div class="col-12 col-md-3">
 
                                         <div
@@ -839,7 +836,6 @@ $realizo = $_SESSION['nombre'] ?? $_SESSION['usuario'] ?? '';
                                     </div>
 
                                 </div>
-
 
                                 <!-- ==================================================
                                 VALIDACIÓN SG-SST
@@ -875,7 +871,6 @@ $realizo = $_SESSION['nombre'] ?? $_SESSION['usuario'] ?? '';
                                         </div>
 
                                     </div>
-
 
                                     <div class="row g-3 align-items-end">
 
@@ -973,9 +968,6 @@ $realizo = $_SESSION['nombre'] ?? $_SESSION['usuario'] ?? '';
                         </div>
 
                     </div>
-
-
-
                 </div>
 
                 <!-- BOTONES -->
@@ -1034,7 +1026,7 @@ $realizo = $_SESSION['nombre'] ?? $_SESSION['usuario'] ?? '';
                 $("#nombre").val("");
                 $("#arl").val("");
                 $("#eps").val("");
-                $("#placa_vehiculo").val("");
+                $("#placa").val("");
 
             }
 
@@ -1236,7 +1228,7 @@ $realizo = $_SESSION['nombre'] ?? $_SESSION['usuario'] ?? '';
                         PLACA
                         ============================================== */
 
-                        $("#placa_vehiculo").val(
+                        $("#placa").val(
                             response.placa || ""
                         );
 

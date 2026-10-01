@@ -7,7 +7,7 @@ $con = connection();
 try {
 
     /* ==========================================================
-       CONSULTAR VEHÍCULOS
+    CONSULTAR VEHÍCULOS
     ========================================================== */
 
     $sql = "
@@ -217,8 +217,36 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
 
     /* ======================================================
-       GUARDAR TODOS LOS DOCUMENTOS
-       PARA MOSTRARLOS EN EL MODAL
+    CONTAR ESTADOS DE LOS DOCUMENTOS
+    ====================================================== */
+
+    foreach ($documentos as $estado) {
+
+        switch ($estado['estado']) {
+
+            case 'vigente':
+                $totalVigentes++;
+                break;
+
+            case 'proximo':
+                $totalProximos++;
+                break;
+
+            case 'urgente':
+            case 'vence_hoy':
+                $totalUrgentes++;
+                break;
+
+            case 'vencido':
+                $totalVencidos++;
+                break;
+        }
+    }
+
+
+    /* ======================================================
+    GUARDAR TODOS LOS DOCUMENTOS
+    PARA MOSTRARLOS EN EL MODAL
     ====================================================== */
 
     foreach ($documentos as $nombreDocumento => $estado) {
@@ -260,7 +288,6 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $fechaDocumento
         ];
     }
-
 }
 
 ?>
@@ -327,6 +354,104 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             margin: 0;
 
             padding: 0;
+        }
+
+        /* =====================================================
+   USUARIOS DE INGRESO Y SALIDA
+===================================================== */
+
+        .usuario-registro {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 5px;
+
+            max-width: 150px;
+
+            padding: 5px 8px;
+
+            border-radius: 6px;
+
+            font-size: 11px;
+
+            font-weight: 600;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+            white-space: nowrap;
+        }
+
+
+        .usuario-ingreso {
+
+            background: #e7f1ff;
+
+            color: #0d6efd;
+
+            border: 1px solid #b6d4fe;
+        }
+
+
+        .usuario-salida {
+
+            background: #e8f5e9;
+
+            color: #198754;
+
+            border: 1px solid #badbcc;
+        }
+
+        /* =====================================================
+        USUARIOS QUE REGISTRAN INGRESO Y SALIDA
+        ===================================================== */
+
+        .usuario-registro {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 5px;
+
+            max-width: 150px;
+
+            padding: 5px 8px;
+
+            border-radius: 6px;
+
+            font-size: 11px;
+
+            font-weight: 600;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+            white-space: nowrap;
+        }
+
+
+        .usuario-ingreso {
+
+            background: #e7f1ff;
+
+            color: #0d6efd;
+
+            border: 1px solid #b6d4fe;
+        }
+
+
+        .usuario-salida {
+
+            background: #e8f5e9;
+
+            color: #198754;
+
+            border: 1px solid #badbcc;
         }
 
 
@@ -1629,8 +1754,8 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
 
             <!-- =================================================
-             TABLA CON BARRA INFERIOR
-        ================================================== -->
+            TABLA CON BARRA INFERIOR
+            ================================================== -->
 
             <div
                 id="scrollInferior"
@@ -1645,33 +1770,20 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                         <tr>
 
                             <th>ID</th>
-
                             <th>Fecha</th>
-
                             <th>Nombre</th>
-
                             <th>Cédula</th>
-
                             <th>Placa</th>
-
                             <th>ARL</th>
-
                             <th>EPS</th>
-
                             <th>Tipo Visita</th>
-
                             <th>Procedencia</th>
-
                             <th>Destino</th>
-
                             <th>Ingreso</th>
-
+                            <th>Registró ingreso</th>
                             <th>Salida</th>
-
+                            <th>Registró salida</th>
                             <th>Documentación</th>
-
-                            <th>Registro</th>
-
                             <th>Acción</th>
 
                         </tr>
@@ -1681,20 +1793,24 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
                     <tbody>
 
-
                         <?php foreach ($rows as $row): ?>
-
 
                             <?php
 
-                            $id =
-                                (int) $row['id_registro'];
+                            /* =====================================================
+                            ID DEL REGISTRO
+                            ===================================================== */
+
+                            $id = (int) ($row['id_registro'] ?? 0);
 
 
-                            $horaSalida =
-                                trim(
-                                    $row['hora_salida'] ?? ''
-                                );
+                            /* =====================================================
+                            HORA DE SALIDA
+                            ===================================================== */
+
+                            $horaSalida = trim(
+                                $row['hora_salida'] ?? ''
+                            );
 
 
                             $tieneSalida =
@@ -1702,36 +1818,51 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                 $horaSalida !== '00:00:00';
 
 
-                            $estadoLicencia =
-                                estadoDocumento(
-                                    $row['licencia'] ?? ''
-                                );
+                            /* =====================================================
+                            USUARIOS DE INGRESO Y SALIDA
+                            ===================================================== */
+
+                            $realizoIngreso = trim(
+                                $row['realizo'] ?? ''
+                            );
 
 
-                            $estadoSoat =
-                                estadoDocumento(
-                                    $row['fecha_soat'] ?? ''
-                                );
+                            $realizoSalida = trim(
+                                $row['realizo_salida'] ?? ''
+                            );
 
 
-                            $estadoRevision =
-                                estadoDocumento(
-                                    $row['revision_tecn'] ?? ''
-                                );
+                            /* =====================================================
+                            ESTADOS DE LOS DOCUMENTOS
+                            ===================================================== */
+
+                            $estadoLicencia = estadoDocumento(
+                                $row['licencia'] ?? ''
+                            );
+
+
+                            $estadoSoat = estadoDocumento(
+                                $row['fecha_soat'] ?? ''
+                            );
+
+
+                            $estadoRevision = estadoDocumento(
+                                $row['revision_tecn'] ?? ''
+                            );
 
                             ?>
 
 
-                            <tr
-                                data-id="<?= $id ?>">
+                            <!-- =================================================
+                            FILA DEL VEHÍCULO
+                            ================================================== -->
 
+                            <tr data-id="<?= $id ?>">
 
                                 <!-- ID -->
 
                                 <td>
-
                                     <?= $id ?>
-
                                 </td>
 
 
@@ -1817,7 +1948,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                 </td>
 
 
-                                <!-- TIPO VISITA -->
+                                <!-- TIPO DE VISITA -->
 
                                 <td>
 
@@ -1856,11 +1987,14 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                 </td>
 
 
-                                <!-- INGRESO -->
+                                <!-- HORA DE INGRESO -->
 
                                 <td>
 
-                                    <?php if (!empty($row['hora_ingreso'])): ?>
+                                    <?php if (
+                                        !empty($row['hora_ingreso']) &&
+                                        $row['hora_ingreso'] !== '00:00:00'
+                                    ): ?>
 
                                         <span class="hora-ingreso">
 
@@ -1883,16 +2017,49 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                 </td>
 
 
-                                <!-- SALIDA -->
+                                <!-- USUARIO QUE REGISTRÓ EL INGRESO -->
+
+                                <td>
+
+                                    <?php if ($realizoIngreso !== ''): ?>
+
+                                        <span
+                                            class="usuario-registro usuario-ingreso"
+                                            title="<?= htmlspecialchars(
+                                                        $realizoIngreso,
+                                                        ENT_QUOTES,
+                                                        'UTF-8'
+                                                    ) ?>">
+
+                                            <i class="fas fa-user-shield"></i>
+
+                                            <?= htmlspecialchars(
+                                                $realizoIngreso,
+                                                ENT_QUOTES,
+                                                'UTF-8'
+                                            ) ?>
+
+                                        </span>
+
+                                    <?php else: ?>
+
+                                        <span class="text-muted">
+                                            —
+                                        </span>
+
+                                    <?php endif; ?>
+
+                                </td>
+
+
+                                <!-- HORA DE SALIDA -->
 
                                 <td id="salida_<?= $id ?>">
 
                                     <?php if (!$tieneSalida): ?>
 
                                         <span class="pendiente">
-
                                             Pendiente
-
                                         </span>
 
                                     <?php else: ?>
@@ -1912,34 +2079,78 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                 </td>
 
 
+                                <!-- USUARIO QUE REGISTRÓ LA SALIDA -->
+
+                                <td id="realizo_salida_<?= $id ?>">
+
+                                    <?php if (
+                                        $tieneSalida &&
+                                        $realizoSalida !== ''
+                                    ): ?>
+
+                                        <span
+                                            class="usuario-registro usuario-salida"
+                                            title="<?= htmlspecialchars(
+                                                        $realizoSalida,
+                                                        ENT_QUOTES,
+                                                        'UTF-8'
+                                                    ) ?>">
+
+                                            <i class="fas fa-user-check"></i>
+
+                                            <?= htmlspecialchars(
+                                                $realizoSalida,
+                                                ENT_QUOTES,
+                                                'UTF-8'
+                                            ) ?>
+
+                                        </span>
+
+                                    <?php else: ?>
+
+                                        <span class="text-muted">
+                                            —
+                                        </span>
+
+                                    <?php endif; ?>
+
+                                </td>
+
+
                                 <!-- DOCUMENTACIÓN -->
 
                                 <td>
 
+                                    <!-- =================================================
+                     LICENCIA
+                ================================================== -->
 
-                                    <!-- LICENCIA -->
-
-                                    <div
-                                        class="documento-box <?= $estadoLicencia['clase'] ?>">
+                                    <div class="documento-box <?= htmlspecialchars(
+                                                                    $estadoLicencia['clase'],
+                                                                    ENT_QUOTES,
+                                                                    'UTF-8'
+                                                                ) ?>">
 
                                         <strong>
-
                                             <i class="fas fa-id-card me-1"></i>
-
                                             Licencia
-
                                         </strong>
-
 
                                         <div class="estado-linea">
 
-                                            <i
-                                                class="fas <?= $estadoLicencia['icono'] ?>"></i>
+                                            <i class="fas <?= htmlspecialchars(
+                                                                $estadoLicencia['icono'],
+                                                                ENT_QUOTES,
+                                                                'UTF-8'
+                                                            ) ?>"></i>
 
-                                            <?= $estadoLicencia['texto'] ?>
+                                            <?= htmlspecialchars(
+                                                $estadoLicencia['texto'],
+                                                ENT_QUOTES,
+                                                'UTF-8'
+                                            ) ?>
 
                                         </div>
-
 
                                         <?php if ($estadoLicencia['dias'] !== null): ?>
 
@@ -1973,29 +2184,36 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                     </div>
 
 
-                                    <!-- SOAT -->
+                                    <!-- =================================================
+                                    SOAT
+                                    ================================================== -->
 
-                                    <div
-                                        class="documento-box <?= $estadoSoat['clase'] ?>">
+                                    <div class="documento-box <?= htmlspecialchars(
+                                                                    $estadoSoat['clase'],
+                                                                    ENT_QUOTES,
+                                                                    'UTF-8'
+                                                                ) ?>">
 
                                         <strong>
-
                                             <i class="fas fa-car me-1"></i>
-
                                             SOAT
-
                                         </strong>
-
 
                                         <div class="estado-linea">
 
-                                            <i
-                                                class="fas <?= $estadoSoat['icono'] ?>"></i>
+                                            <i class="fas <?= htmlspecialchars(
+                                                                $estadoSoat['icono'],
+                                                                ENT_QUOTES,
+                                                                'UTF-8'
+                                                            ) ?>"></i>
 
-                                            <?= $estadoSoat['texto'] ?>
+                                            <?= htmlspecialchars(
+                                                $estadoSoat['texto'],
+                                                ENT_QUOTES,
+                                                'UTF-8'
+                                            ) ?>
 
                                         </div>
-
 
                                         <?php if ($estadoSoat['dias'] !== null): ?>
 
@@ -2028,30 +2246,32 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
                                     </div>
 
+                                    <!-- =================================================
+                                    REVISIÓN TÉCNICO-MECÁNICA
+                                    ================================================== -->
 
-                                    <!-- TÉCNICO MECÁNICA -->
-
-                                    <div
-                                        class="documento-box <?= $estadoRevision['clase'] ?>">
+                                    <div class="documento-box <?= htmlspecialchars($estadoRevision['clase'],ENT_QUOTES,'UTF-8') ?>">
 
                                         <strong>
-
                                             <i class="fas fa-screwdriver-wrench me-1"></i>
-
                                             Técnico-mecánica
-
                                         </strong>
-
 
                                         <div class="estado-linea">
 
-                                            <i
-                                                class="fas <?= $estadoRevision['icono'] ?>"></i>
+                                            <i class="fas <?= htmlspecialchars(
+                                                                $estadoRevision['icono'],
+                                                                ENT_QUOTES,
+                                                                'UTF-8'
+                                                            ) ?>"></i>
 
-                                            <?= $estadoRevision['texto'] ?>
+                                            <?= htmlspecialchars(
+                                                $estadoRevision['texto'],
+                                                ENT_QUOTES,
+                                                'UTF-8'
+                                            ) ?>
 
                                         </div>
-
 
                                         <?php if ($estadoRevision['dias'] !== null): ?>
 
@@ -2083,19 +2303,6 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                         <?php endif; ?>
 
                                     </div>
-
-                                </td>
-
-
-                                <!-- REGISTRO -->
-
-                                <td>
-
-                                    <?= htmlspecialchars(
-                                        $row['registro'] ?? '',
-                                        ENT_QUOTES,
-                                        'UTF-8'
-                                    ) ?>
 
                                 </td>
 
@@ -2134,9 +2341,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
                             </tr>
 
-
                         <?php endforeach; ?>
-
 
                     </tbody>
 
@@ -2250,12 +2455,34 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
     <script>
         /* =========================================================
-       VARIABLES BARRAS HORIZONTALES
+       VARIABLES PARA LAS BARRAS HORIZONTALES
     ========================================================= */
 
         let scrollSuperior;
         let scrollInferior;
         let scrollSuperiorContenido;
+
+
+        /* =========================================================
+           ESCAPAR CONTENIDO HTML
+        ========================================================= */
+
+        function escapeHtml(text) {
+
+            if (
+                text === null ||
+                text === undefined
+            ) {
+                return '';
+            }
+
+            return String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
 
 
         /* =========================================================
@@ -2301,30 +2528,27 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
 
             /* =====================================================
-               SUPERIOR → INFERIOR
+               BARRA SUPERIOR HACIA BARRA INFERIOR
             ===================================================== */
 
-            scrollSuperior.onscroll =
-                function() {
+            scrollSuperior.onscroll = function() {
 
-                    scrollInferior.scrollLeft =
-                        scrollSuperior.scrollLeft;
+                scrollInferior.scrollLeft =
+                    scrollSuperior.scrollLeft;
 
-                };
+            };
 
 
             /* =====================================================
-               INFERIOR → SUPERIOR
+               BARRA INFERIOR HACIA BARRA SUPERIOR
             ===================================================== */
 
-            scrollInferior.onscroll =
-                function() {
+            scrollInferior.onscroll = function() {
 
-                    scrollSuperior.scrollLeft =
-                        scrollInferior.scrollLeft;
+                scrollSuperior.scrollLeft =
+                    scrollInferior.scrollLeft;
 
-                };
-
+            };
         }
 
 
@@ -2344,7 +2568,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
 
         /* =========================================================
-           MOSTRAR VEHÍCULOS SEGÚN ESTADO
+           MOSTRAR VEHÍCULOS SEGÚN EL ESTADO DEL DOCUMENTO
         ========================================================= */
 
         function mostrarVehiculosPorEstado(estado) {
@@ -2359,42 +2583,36 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
 
             /* =====================================================
-               URGENTES
-               Incluye:
-               - urgente
-               - vence_hoy
+               LOS URGENTES INCLUYEN LOS QUE VENCEN HOY
             ===================================================== */
 
             if (estado === 'urgente') {
 
-                documentos =
-                    documentosVehiculos.filter(
-                        function(item) {
+                documentos = documentosVehiculos.filter(
+                    function(item) {
 
-                            return (
-                                item.estado === 'urgente' ||
-                                item.estado === 'vence_hoy'
-                            );
+                        return (
+                            item.estado === 'urgente' ||
+                            item.estado === 'vence_hoy'
+                        );
 
-                        }
-                    );
+                    }
+                );
 
             } else {
 
-                documentos =
-                    documentosVehiculos.filter(
-                        function(item) {
+                documentos = documentosVehiculos.filter(
+                    function(item) {
 
-                            return item.estado === estado;
+                        return item.estado === estado;
 
-                        }
-                    );
-
+                    }
+                );
             }
 
 
             /* =====================================================
-               TÍTULO E ICONO
+               CONFIGURAR TÍTULO E ICONO DEL MODAL
             ===================================================== */
 
             let titulo = 'Documentos';
@@ -2445,20 +2663,16 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                         'fa-circle-xmark';
 
                     break;
-
             }
 
-
-            /* =====================================================
-               TÍTULO MODAL
-            ===================================================== */
 
             $('#tituloModalVehiculos').html(
 
                 '<i class="fas ' +
                 icono +
                 ' me-2"></i>' +
-                titulo
+
+                escapeHtml(titulo)
 
             );
 
@@ -2467,7 +2681,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
 
             /* =====================================================
-               SIN RESULTADOS
+               NO HAY RESULTADOS
             ===================================================== */
 
             if (documentos.length === 0) {
@@ -2481,18 +2695,15 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     '<h5>No hay vehículos para mostrar</h5>' +
 
                     '<p class="mb-0">' +
-
                     'No existen documentos en este estado.' +
-
                     '</p>' +
 
                     '</div>';
 
             } else {
 
-
                 /* =================================================
-                   TABLA DEL MODAL
+                   CREAR TABLA DEL MODAL
                 ================================================= */
 
                 html =
@@ -2506,17 +2717,11 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     '<tr>' +
 
                     '<th>Placa</th>' +
-
                     '<th>Nombre</th>' +
-
                     '<th>Documento</th>' +
-
                     '<th>Fecha vencimiento</th>' +
-
                     '<th>Estado</th>' +
-
                     '<th>Días</th>' +
-
                     '<th>Acción</th>' +
 
                     '</tr>' +
@@ -2529,82 +2734,62 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 documentos.forEach(
                     function(item) {
 
-
                         /* =========================================
-                           FECHA
+                           FECHA DEL DOCUMENTO
                         ========================================= */
 
-                        let fecha =
+                        const fecha =
                             item.fecha || 'Sin fecha';
 
 
                         /* =========================================
-                           DÍAS
+                           TEXTO DE LOS DÍAS
                         ========================================= */
 
-                        let diasTexto = '';
+                        let diasTexto = '—';
 
 
-                        if (item.dias === null) {
+                        if (item.dias !== null) {
 
-                            diasTexto =
-                                '—';
+                            if (item.estado === 'vencido') {
 
-                        } else if (
-                            item.estado === 'vencido'
-                        ) {
+                                diasTexto =
+                                    'Vencido hace ' +
+                                    Math.abs(item.dias) +
+                                    ' día(s)';
 
-                            diasTexto =
+                            } else if (
+                                item.estado === 'vence_hoy' ||
+                                Number(item.dias) === 0
+                            ) {
 
-                                'Vencido hace ' +
+                                diasTexto =
+                                    'Vence hoy';
 
-                                Math.abs(item.dias) +
+                            } else {
 
-                                ' día(s)';
-
-                        } else if (
-                            item.estado === 'vence_hoy' ||
-                            item.dias === 0
-                        ) {
-
-                            diasTexto =
-                                'Vence hoy';
-
-                        } else {
-
-                            diasTexto =
-
-                                item.dias +
-
-                                ' día(s) restantes';
-
+                                diasTexto =
+                                    item.dias +
+                                    ' día(s) restantes';
+                            }
                         }
 
 
-                        /* =========================================
-                           ESTADO
-                        ========================================= */
-
-                        let estadoTexto =
-                            item.texto;
+                        const estadoTexto =
+                            item.texto || 'Sin estado';
 
 
-                        let estadoClase =
-                            item.estado;
+                        const estadoClase =
+                            item.estado || 'sin_fecha';
 
 
                         /* =========================================
-                           FILA
+                           CREAR FILA
                         ========================================= */
 
                         html +=
 
                             '<tr>' +
-
-
-                            /* ================================
-                               PLACA
-                            ================================= */
 
                             '<td>' +
 
@@ -2619,10 +2804,6 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                             '</td>' +
 
 
-                            /* ================================
-                               NOMBRE
-                            ================================= */
-
                             '<td>' +
 
                             escapeHtml(
@@ -2631,10 +2812,6 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
                             '</td>' +
 
-
-                            /* ================================
-                               DOCUMENTO
-                            ================================= */
 
                             '<td>' +
 
@@ -2649,10 +2826,6 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                             '</td>' +
 
 
-                            /* ================================
-                               FECHA
-                            ================================= */
-
                             '<td>' +
 
                             escapeHtml(
@@ -2662,16 +2835,10 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                             '</td>' +
 
 
-                            /* ================================
-                               ESTADO
-                            ================================= */
-
                             '<td>' +
 
                             '<span class="badge-estado badge-' +
-
-                            estadoClase +
-
+                            escapeHtml(estadoClase) +
                             '">' +
 
                             escapeHtml(
@@ -2683,16 +2850,10 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                             '</td>' +
 
 
-                            /* ================================
-                               DÍAS
-                            ================================= */
-
                             '<td>' +
 
                             '<span class="alerta-dias ' +
-
-                            estadoClase +
-
+                            escapeHtml(estadoClase) +
                             '">' +
 
                             escapeHtml(
@@ -2704,25 +2865,14 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                             '</td>' +
 
 
-                            /* ================================
-                               ACCIÓN
-                            ================================= */
-
                             '<td>' +
 
                             '<button ' +
-
                             'type="button" ' +
-
                             'class="btn btn-sm btn-primary" ' +
-
                             'onclick="irAlVehiculo(' +
-
                             Number(item.id) +
-
-                            ')"' +
-
-                            '>' +
+                            ')">' +
 
                             '<i class="fas fa-eye me-1"></i>' +
 
@@ -2732,9 +2882,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
                             '</td>' +
 
-
                             '</tr>';
-
                     }
                 );
 
@@ -2746,12 +2894,11 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     '</table>' +
 
                     '</div>';
-
             }
 
 
             /* =====================================================
-               INSERTAR CONTENIDO
+               INSERTAR CONTENIDO EN EL MODAL
             ===================================================== */
 
             $('#contenidoVehiculosEstado').html(
@@ -2760,7 +2907,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
 
             /* =====================================================
-               OBTENER MODAL
+               ABRIR MODAL
             ===================================================== */
 
             const modalElement =
@@ -2772,7 +2919,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             if (!modalElement) {
 
                 console.error(
-                    'No existe #modalVehiculosEstado'
+                    'No existe el modal #modalVehiculosEstado'
                 );
 
                 return;
@@ -2786,51 +2933,31 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
 
             modal.show();
-
         }
 
 
         /* =========================================================
-           ESCAPAR HTML
-        ========================================================= */
-
-        function escapeHtml(text) {
-
-            if (
-                text === null ||
-                text === undefined
-            ) {
-
-                return '';
-
-            }
-
-
-            return String(text)
-
-                .replace(/&/g, '&amp;')
-
-                .replace(/</g, '&lt;')
-
-                .replace(/>/g, '&gt;')
-
-                .replace(/"/g, '&quot;')
-
-                .replace(/'/g, '&#039;');
-
-        }
-
-
-        /* =========================================================
-           IR AL VEHÍCULO
+           IR AL VEHÍCULO DESDE EL MODAL
         ========================================================= */
 
         function irAlVehiculo(id) {
 
-            console.log(
-                'Ir al vehículo:',
-                id
-            );
+            const idVehiculo =
+                Number(id);
+
+
+            if (
+                !Number.isInteger(idVehiculo) ||
+                idVehiculo <= 0
+            ) {
+
+                console.error(
+                    'El ID del vehículo no es válido:',
+                    id
+                );
+
+                return;
+            }
 
 
             /* =====================================================
@@ -2856,50 +2983,52 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     modal.hide();
 
                 }
-
             }
 
 
             /* =====================================================
-               ESPERAR CIERRE DEL MODAL
+               ESPERAR A QUE TERMINE DE CERRAR
             ===================================================== */
 
             setTimeout(
                 function() {
 
+                    if (
+                        !$.fn.DataTable.isDataTable(
+                            '#tablaVehiculos'
+                        )
+                    ) {
+
+                        console.error(
+                            'La tabla de vehículos no está inicializada.'
+                        );
+
+                        return;
+                    }
+
+
                     const tabla =
                         $('#tablaVehiculos').DataTable();
 
 
-                    if (!tabla) {
-
-                        console.error(
-                            'No se pudo obtener DataTable'
-                        );
-
-                        return;
-
-                    }
-
-
                     /* =============================================
-                       LIMPIAR BÚSQUEDAS
+                       LIMPIAR BÚSQUEDAS ANTERIORES
                     ============================================= */
 
                     tabla
                         .search('')
                         .columns()
-                        .search();
+                        .search('');
 
 
                     /* =============================================
-                       BUSCAR ID EXACTO
+                       BUSCAR EL ID EXACTO
                     ============================================= */
 
                     tabla
                         .column(0)
                         .search(
-                            '^' + id + '$',
+                            '^' + idVehiculo + '$',
                             true,
                             false
                         )
@@ -2907,7 +3036,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
 
                     /* =============================================
-                       ESPERAR ACTUALIZACIÓN
+                       RESALTAR LA FILA ENCONTRADA
                     ============================================= */
 
                     setTimeout(
@@ -2923,61 +3052,48 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                             .first()
                                             .text()
                                             .trim() ===
-                                            String(id);
-
+                                            String(idVehiculo);
                                     }
                                 );
 
 
-                            if (fila.length) {
-
-
-                                /* =============================
-                                   RESALTAR
-                                ============================= */
-
-                                fila.addClass(
-                                    'resaltado-vehiculo'
-                                );
-
-
-                                /* =============================
-                                   DESPLAZAR
-                                ============================= */
-
-                                fila[0].scrollIntoView({
-
-                                    behavior: 'smooth',
-
-                                    block: 'center'
-
-                                });
-
-
-                                /* =============================
-                                   QUITAR RESALTADO
-                                ============================= */
-
-                                setTimeout(
-                                    function() {
-
-                                        fila.removeClass(
-                                            'resaltado-vehiculo'
-                                        );
-
-                                    },
-                                    4000
-                                );
-
-
-                            } else {
+                            if (!fila.length) {
 
                                 console.warn(
                                     'No se encontró la fila con ID:',
-                                    id
+                                    idVehiculo
                                 );
 
+                                return;
                             }
+
+
+                            fila.addClass(
+                                'resaltado-vehiculo'
+                            );
+
+
+                            fila[0].scrollIntoView({
+
+                                behavior: 'smooth',
+
+                                block: 'center',
+
+                                inline: 'nearest'
+
+                            });
+
+
+                            setTimeout(
+                                function() {
+
+                                    fila.removeClass(
+                                        'resaltado-vehiculo'
+                                    );
+
+                                },
+                                4000
+                            );
 
                         },
                         250
@@ -2986,178 +3102,30 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 },
                 400
             );
-
         }
 
 
         /* =========================================================
-           DOCUMENT READY
+           RESTAURAR BOTÓN DE SALIDA
         ========================================================= */
 
-        $(document).ready(function() {
+        function restaurarBotonSalida(id) {
 
-            console.log(
-                'JavaScript cargado correctamente'
-            );
+            $('#btnSalida_' + id)
 
+                .prop(
+                    'disabled',
+                    false
+                )
 
-            /* =====================================================
-               INICIALIZAR DATATABLE
-            ===================================================== */
+                .html(
 
-            const tabla =
-                $('#tablaVehiculos').DataTable({
+                    '<i class="fas fa-sign-out-alt"></i> ' +
 
-                    pageLength: 10,
+                    'Salida'
 
-                    autoWidth: false,
-
-                    scrollX: false,
-
-                    order: [
-                        [0, 'desc']
-                    ],
-
-                    language: {
-
-                        search: "Buscar:",
-
-                        lengthMenu: "Mostrar _MENU_ registros",
-
-                        info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
-
-                        infoEmpty: "No hay registros disponibles",
-
-                        infoFiltered: "(filtrado de _MAX_ registros)",
-
-                        zeroRecords: "No se encontraron registros",
-
-                        paginate: {
-
-                            first: "Primero",
-
-                            last: "Último",
-
-                            next: "Siguiente",
-
-                            previous: "Anterior"
-
-                        }
-
-                    }
-
-                });
-
-
-            /* =====================================================
-               CONFIGURAR SCROLL
-            ===================================================== */
-
-            setTimeout(
-                configurarScrollHorizontal,
-                200
-            );
-
-
-            /* =====================================================
-               REAJUSTAR DATATABLE
-            ===================================================== */
-
-            tabla.on(
-                'draw',
-                function() {
-
-                    setTimeout(
-                        configurarScrollHorizontal,
-                        50
-                    );
-
-                }
-            );
-
-
-            /* =====================================================
-               REAJUSTAR AL CAMBIAR VENTANA
-            ===================================================== */
-
-            $(window).on(
-                'resize',
-                function() {
-
-                    setTimeout(
-                        configurarScrollHorizontal,
-                        100
-                    );
-
-                }
-            );
-
-
-            /* =====================================================
-               TARJETAS DE RESUMEN
-            ===================================================== */
-
-            $('.resumen-card').on(
-                'click',
-                function(event) {
-
-                    event.preventDefault();
-
-                    event.stopPropagation();
-
-
-                    const estado =
-                        $(this).data('estado');
-
-
-                    console.log(
-                        'CLICK EN TARJETA:',
-                        estado
-                    );
-
-
-                    if (!estado) {
-
-                        console.error(
-                            'La tarjeta no tiene data-estado'
-                        );
-
-                        return;
-
-                    }
-
-
-                    mostrarVehiculosPorEstado(
-                        estado
-                    );
-
-                }
-            );
-
-
-            /* =====================================================
-               ACCESIBILIDAD ENTER / SPACE
-            ===================================================== */
-
-            $('.resumen-card').on(
-                'keydown',
-                function(event) {
-
-                    if (
-                        event.key === 'Enter' ||
-                        event.key === ' '
-                    ) {
-
-                        event.preventDefault();
-
-                        $(this).trigger('click');
-
-                    }
-
-                }
-            );
-
-        });
+                );
+        }
 
 
         /* =========================================================
@@ -3166,17 +3134,42 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
         function marcarSalida(id) {
 
+            const idVehiculo =
+                Number(id);
+
+
+            if (
+                !Number.isInteger(idVehiculo) ||
+                idVehiculo <= 0
+            ) {
+
+                Swal.fire({
+
+                    title: 'ID no válido',
+
+                    text: 'No fue posible identificar el registro del vehículo.',
+
+                    icon: 'error',
+
+                    confirmButtonColor: '#dc3545'
+
+                });
+
+                return;
+            }
+
+
             Swal.fire({
 
                 title: '¿Registrar salida?',
 
-                text: 'La salida del vehículo será registrada.',
+                text: 'Se registrará la hora actual y el usuario que realiza la salida.',
 
                 icon: 'question',
 
                 showCancelButton: true,
 
-                confirmButtonText: 'Sí, registrar',
+                confirmButtonText: '<i class="fas fa-sign-out-alt me-1"></i> Sí, registrar',
 
                 cancelButtonText: 'Cancelar',
 
@@ -3197,11 +3190,11 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
 
                     /* =============================================
-                       BOTÓN
+                       DESACTIVAR BOTÓN
                     ============================================= */
 
                     const $boton =
-                        $('#btnSalida_' + id);
+                        $('#btnSalida_' + idVehiculo);
 
 
                     $boton
@@ -3221,7 +3214,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
 
                     /* =============================================
-                       AJAX
+                       PETICIÓN AJAX
                     ============================================= */
 
                     $.ajax({
@@ -3232,131 +3225,226 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
                         data: {
 
-                            id: id
+                            id: idVehiculo
 
                         },
 
                         dataType: 'json',
 
+                        timeout: 15000,
+
 
                         /* =========================================
-                           SUCCESS
+                           RESPUESTA EXITOSA DEL SERVIDOR
                         ========================================= */
 
                         success: function(response) {
 
                             console.log(
-                                'RESPUESTA PHP:',
+                                'Respuesta salida vehículo:',
                                 response
                             );
 
 
                             if (
-                                response.ok === true
+                                !response ||
+                                response.ok !== true
                             ) {
 
+                                restaurarBotonSalida(
+                                    idVehiculo
+                                );
 
-                                const horaSalida =
-                                    response.hora_salida;
+
+                                Swal.fire({
+
+                                    title: 'No se pudo registrar',
+
+                                    text: response &&
+                                        response.mensaje ?
+                                        response.mensaje : 'No se pudo registrar la salida.',
+
+                                    icon: 'warning',
+
+                                    confirmButtonColor: '#ffc107',
+
+                                    confirmButtonText: 'Aceptar'
+
+                                });
+
+                                return;
+                            }
 
 
-                                /* =========================
-                                   ACTUALIZAR SALIDA
-                                ========================= */
+                            const horaSalida =
+                                response.hora_salida || '';
 
-                                $('#salida_' + id).html(
 
-                                    '<span class="hora-salida">' +
+                            const realizoSalida =
+                                response.realizo_salida || '';
+
+
+                            /* =====================================
+                               VALIDAR RESPUESTA
+                            ===================================== */
+
+                            if (
+                                horaSalida === '' ||
+                                realizoSalida === ''
+                            ) {
+
+                                console.warn(
+                                    'La respuesta no contiene todos los datos:',
+                                    response
+                                );
+                            }
+
+
+                            /* =====================================
+                               ACTUALIZAR HORA DE SALIDA
+                            ===================================== */
+
+                            $('#salida_' + idVehiculo).html(
+
+                                '<span class="hora-salida">' +
+
+                                escapeHtml(
+                                    horaSalida || 'Registrada'
+                                ) +
+
+                                '</span>'
+
+                            );
+
+
+                            /* =====================================
+                               ACTUALIZAR USUARIO DE SALIDA
+                            ===================================== */
+
+                            $('#realizo_salida_' + idVehiculo).html(
+
+                                '<span ' +
+
+                                'class="usuario-registro usuario-salida" ' +
+
+                                'title="' +
+                                escapeHtml(
+                                    realizoSalida
+                                ) +
+                                '">' +
+
+                                '<i class="fas fa-user-check"></i> ' +
+
+                                escapeHtml(
+                                    realizoSalida || 'Sin usuario'
+                                ) +
+
+                                '</span>'
+
+                            );
+
+
+                            /* =====================================
+                               ACTUALIZAR COLUMNA DE ACCIÓN
+                            ===================================== */
+
+                            $('#accion_' + idVehiculo).html(
+
+                                '<span class="finalizado">' +
+
+                                '<i class="fas fa-check"></i> ' +
+
+                                'Finalizado' +
+
+                                '</span>'
+
+                            );
+
+
+                            /* =====================================
+                               ACTUALIZAR DATATABLE INTERNAMENTE
+                            ===================================== */
+
+                            if (
+                                $.fn.DataTable.isDataTable(
+                                    '#tablaVehiculos'
+                                )
+                            ) {
+
+                                const tabla =
+                                    $('#tablaVehiculos').DataTable();
+
+
+                                const fila =
+                                    $('#tablaVehiculos tbody tr[data-id="' +
+                                        idVehiculo +
+                                        '"]');
+
+
+                                if (fila.length) {
+
+                                    tabla
+                                        .row(fila)
+                                        .invalidate('dom');
+                                }
+                            }
+
+
+                            /* =====================================
+                               REAJUSTAR BARRA HORIZONTAL
+                            ===================================== */
+
+                            setTimeout(
+                                configurarScrollHorizontal,
+                                100
+                            );
+
+
+                            /* =====================================
+                               MENSAJE DE ÉXITO
+                            ===================================== */
+
+                            Swal.fire({
+
+                                title: '¡Salida registrada!',
+
+                                html:
+
+                                    '<div class="text-start">' +
+
+                                    '<p class="mb-2">' +
+
+                                    '<strong>Hora de salida:</strong> ' +
 
                                     escapeHtml(
                                         horaSalida
                                     ) +
 
-                                    '</span>'
+                                    '</p>' +
 
-                                );
+                                    '<p class="mb-0">' +
 
+                                    '<strong>Registró la salida:</strong> ' +
 
-                                /* =========================
-                                   ACTUALIZAR ACCIÓN
-                                ========================= */
+                                    escapeHtml(
+                                        realizoSalida
+                                    ) +
 
-                                $('#accion_' + id).html(
+                                    '</p>' +
 
-                                    '<span class="finalizado">' +
+                                    '</div>',
 
-                                    '<i class="fas fa-check"></i> ' +
+                                icon: 'success',
 
-                                    'Finalizado' +
+                                confirmButtonColor: '#198754',
 
-                                    '</span>'
+                                confirmButtonText: 'Aceptar',
 
-                                );
+                                timer: 3000,
 
+                                timerProgressBar: true
 
-                                /* =========================
-                                   MENSAJE ÉXITO
-                                ========================= */
-
-                                Swal.fire({
-
-                                    title: '¡Salida registrada!',
-
-                                    text: 'La salida fue registrada correctamente.',
-
-                                    icon: 'success',
-
-                                    confirmButtonColor: '#198754',
-
-                                    timer: 2000,
-
-                                    timerProgressBar: true
-
-                                });
-
-
-                            } else {
-
-
-                                /* =========================
-                                   RESTAURAR BOTÓN
-                                ========================= */
-
-                                $('#btnSalida_' + id)
-
-                                    .prop(
-                                        'disabled',
-                                        false
-                                    )
-
-                                    .html(
-
-                                        '<i class="fas fa-sign-out-alt"></i> ' +
-
-                                        'Salida'
-
-                                    );
-
-
-                                /* =========================
-                                   ERROR PHP
-                                ========================= */
-
-                                Swal.fire({
-
-                                    title: 'Aviso',
-
-                                    text: response.mensaje ||
-                                        'No se pudo registrar la salida.',
-
-                                    icon: 'warning',
-
-                                    confirmButtonColor: '#ffc107'
-
-                                });
-
-                            }
-
+                            });
                         },
 
 
@@ -3364,86 +3452,298 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                            ERROR AJAX
                         ========================================= */
 
-                        error: function(xhr, status, error) {
+                        error: function(
+                            xhr,
+                            status,
+                            error
+                        ) {
 
                             console.error(
                                 '========== ERROR AJAX =========='
                             );
-
 
                             console.error(
                                 'HTTP:',
                                 xhr.status
                             );
 
-
                             console.error(
-                                'STATUS:',
+                                'Estado:',
                                 status
                             );
 
-
                             console.error(
-                                'ERROR:',
+                                'Error:',
                                 error
                             );
 
-
                             console.error(
-                                'RESPUESTA:',
+                                'Respuesta:',
                                 xhr.responseText
                             );
-
 
                             console.error(
                                 '================================'
                             );
 
 
-                            /* =========================
-                               RESTAURAR BOTÓN
-                            ========================= */
-
-                            $('#btnSalida_' + id)
-
-                                .prop(
-                                    'disabled',
-                                    false
-                                )
-
-                                .html(
-
-                                    '<i class="fas fa-sign-out-alt"></i> ' +
-
-                                    'Salida'
-
-                                );
+                            restaurarBotonSalida(
+                                idVehiculo
+                            );
 
 
-                            /* =========================
-                               MENSAJE ERROR
-                            ========================= */
+                            /* =====================================
+                               OBTENER MENSAJE JSON DEL CONTROLLER
+                            ===================================== */
+
+                            let mensaje =
+                                'No fue posible registrar la salida.';
+
+
+                            if (status === 'timeout') {
+
+                                mensaje =
+                                    'La solicitud tardó demasiado tiempo. Inténtelo nuevamente.';
+
+                            } else if (
+                                xhr.responseJSON &&
+                                xhr.responseJSON.mensaje
+                            ) {
+
+                                mensaje =
+                                    xhr.responseJSON.mensaje;
+
+                            } else {
+
+                                try {
+
+                                    const respuesta =
+                                        JSON.parse(
+                                            xhr.responseText
+                                        );
+
+
+                                    if (
+                                        respuesta &&
+                                        respuesta.mensaje
+                                    ) {
+
+                                        mensaje =
+                                            respuesta.mensaje;
+
+                                    }
+
+                                } catch (e) {
+
+                                    console.warn(
+                                        'La respuesta no es un JSON válido.'
+                                    );
+                                }
+                            }
+
 
                             Swal.fire({
 
-                                title: 'Error',
+                                title: 'Error al registrar la salida',
 
-                                text: 'No fue posible registrar la salida.',
+                                text: mensaje,
 
                                 icon: 'error',
 
-                                confirmButtonColor: '#dc3545'
+                                confirmButtonColor: '#dc3545',
+
+                                confirmButtonText: 'Aceptar'
 
                             });
+                        }
+                    });
+                }
+            );
+        }
 
+
+        /* =========================================================
+           DOCUMENT READY
+        ========================================================= */
+
+        $(document).ready(function() {
+
+            console.log(
+                'JavaScript de vehículos cargado correctamente.'
+            );
+
+
+            /* =====================================================
+               INICIALIZAR DATATABLE
+            ===================================================== */
+
+            const tabla =
+                $('#tablaVehiculos').DataTable({
+
+                    pageLength: 10,
+
+                    lengthMenu: [
+                        [10, 15, 25, 50, 100, -1],
+                        [10, 15, 25, 50, 100, 'Todos']
+                    ],
+
+                    autoWidth: false,
+
+                    scrollX: false,
+
+                    order: [
+                        [0, 'desc']
+                    ],
+
+                    columnDefs: [
+
+                        {
+                            targets: 0,
+                            type: 'num'
+                        },
+
+                        {
+                            targets: -1,
+                            orderable: false,
+                            searchable: false
                         }
 
-                    });
+                    ],
+
+                    language: {
+
+                        search: 'Buscar:',
+
+                        lengthMenu: 'Mostrar _MENU_ registros',
+
+                        info: 'Mostrando _START_ a _END_ de _TOTAL_ registros',
+
+                        infoEmpty: 'No hay registros disponibles',
+
+                        infoFiltered: '(filtrado de _MAX_ registros)',
+
+                        zeroRecords: 'No se encontraron registros',
+
+                        emptyTable: 'No hay vehículos registrados',
+
+                        loadingRecords: 'Cargando registros...',
+
+                        processing: 'Procesando...',
+
+                        paginate: {
+
+                            first: 'Primero',
+
+                            last: 'Último',
+
+                            next: 'Siguiente',
+
+                            previous: 'Anterior'
+                        }
+                    }
+                });
+
+
+            /* =====================================================
+               CONFIGURAR SCROLL INICIAL
+            ===================================================== */
+
+            setTimeout(
+                configurarScrollHorizontal,
+                200
+            );
+
+
+            /* =====================================================
+               REAJUSTAR AL REDIBUJAR DATATABLE
+            ===================================================== */
+
+            tabla.on(
+                'draw',
+                function() {
+
+                    setTimeout(
+                        configurarScrollHorizontal,
+                        50
+                    );
 
                 }
             );
 
-        }
+
+            /* =====================================================
+               REAJUSTAR AL CAMBIAR EL TAMAÑO DE LA VENTANA
+            ===================================================== */
+
+            $(window).on(
+                'resize',
+                function() {
+
+                    setTimeout(
+                        configurarScrollHorizontal,
+                        100
+                    );
+
+                }
+            );
+
+
+            /* =====================================================
+               EVENTO DE LAS TARJETAS DE RESUMEN
+            ===================================================== */
+
+            $('.resumen-card').on(
+                'click',
+                function(event) {
+
+                    event.preventDefault();
+
+                    event.stopPropagation();
+
+
+                    const estado =
+                        $(this).data('estado');
+
+
+                    if (!estado) {
+
+                        console.error(
+                            'La tarjeta no tiene el atributo data-estado.'
+                        );
+
+                        return;
+                    }
+
+
+                    mostrarVehiculosPorEstado(
+                        estado
+                    );
+                }
+            );
+
+
+            /* =====================================================
+               ACCESIBILIDAD CON ENTER Y ESPACIO
+            ===================================================== */
+
+            $('.resumen-card').on(
+                'keydown',
+                function(event) {
+
+                    if (
+                        event.key === 'Enter' ||
+                        event.key === ' '
+                    ) {
+
+                        event.preventDefault();
+
+                        $(this).trigger(
+                            'click'
+                        );
+                    }
+                }
+            );
+        });
     </script>
 
 </body>

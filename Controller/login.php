@@ -179,7 +179,7 @@ switch ($role) {
         break;
 
     case "porteria2":
-        $redirect = "View/menu_consulta.php";
+        $redirect = "View/menu_principal.php";
         break;
 
     default:

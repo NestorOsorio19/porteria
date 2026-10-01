@@ -1539,18 +1539,10 @@ CONTENIDO
 
 
                         <!-- QUIÉN REGISTRA -->
-
                         <div class="col-12 col-md-3">
-
                             <label
                                 for="realizo"
-                                class="form-label">
-
-                                Usuario que Registra:
-
-                            </label>
-
-
+                                class="form-label"> Usuario que Registra: </label>
                             <div class="input-group">
 
                                 <span class="input-group-text">
@@ -1559,18 +1551,7 @@ CONTENIDO
 
                                 </span>
 
-
-                                <input
-                                    type="text"
-                                    name="realizo"
-                                    id="realizo"
-                                    class="form-control bg-light"
-                                    value="<?= htmlspecialchars(
-                                                $realizo,
-                                                ENT_QUOTES,
-                                                'UTF-8'
-                                            ) ?>"
-                                    readonly>
+                                <input type="text" name="realizo" id="realizo" class="form-control bg-light" value="<?= htmlspecialchars($realizo,ENT_QUOTES,'UTF-8') ?>" readonly>
 
                             </div>
 
@@ -1579,7 +1560,6 @@ CONTENIDO
                     </div>
 
                 </div>
-
 
                 <!-- ==================================================
             BARRA DE ACCIONES
@@ -1642,7 +1622,7 @@ BOOTSTRAP JS
         $(document).ready(function() {
 
             /* ==========================================================
-               ELEMENTOS PRINCIPALES
+            ELEMENTOS PRINCIPALES
             ========================================================== */
 
             const $form = $("#formContratista");
@@ -1678,10 +1658,9 @@ BOOTSTRAP JS
 
 
             /* ==========================================================
-               MOSTRAR / OCULTAR NUEVA EMPRESA
-               
-               ESTA ES LA PARTE IMPORTANTE
-               ========================================================== */
+            MOSTRAR / OCULTAR NUEVA EMPRESA
+            ESTA ES LA PARTE IMPORTANTE
+            ========================================================== */
 
             function controlarNuevaEmpresa() {
 
@@ -1721,7 +1700,7 @@ BOOTSTRAP JS
             }
 
             /* ==========================================================
-               CAMBIO DE EMPRESA
+            CAMBIO DE EMPRESA
             ========================================================== */
 
             $("#empresa").on("change", function() {
@@ -1738,14 +1717,14 @@ BOOTSTRAP JS
             });
 
             /* ==========================================================
-               EJECUTAR AL CARGAR
+            EJECUTAR AL CARGAR
             ========================================================== */
 
             controlarNuevaEmpresa();
 
 
             /* ==========================================================
-               CÉDULA - SOLO NÚMEROS
+            CÉDULA - SOLO NÚMEROS
             ========================================================== */
 
             $cedula.on("input", function() {
@@ -1770,7 +1749,7 @@ BOOTSTRAP JS
 
 
             /* ==========================================================
-               CONSULTAR CONTRATISTA
+            CONSULTAR CONTRATISTA
             ========================================================== */
 
             $cedula.on("blur", function() {

@@ -418,7 +418,7 @@ $realizo = $_SESSION['nombre'] ?? $_SESSION['usuario'] ?? '';
         <div class="container">
 
             <span class="navbar-brand">
-                <i class="fas fa-person me-2"></i>
+                <i class="fa-solid fa-user"></i>
                 Registro Visitantes
             </span>
 
@@ -436,7 +436,7 @@ $realizo = $_SESSION['nombre'] ?? $_SESSION['usuario'] ?? '';
 
                 <li class="breadcrumb-item">
                     <a href="../index.php">
-                        <i class="fas fa-home"></i>
+                        <i class="fa-solid fa-home"></i>
                         Menu de Registros
                     </a>
                 </li>
@@ -454,7 +454,7 @@ $realizo = $_SESSION['nombre'] ?? $_SESSION['usuario'] ?? '';
             <div class="page-header">
 
                 <div class="icon-circle mb-4">
-                    <i class="fas fa-person"></i>
+                    <i class="fa-solid fa-user"></i>
                 </div>
 
                 <h1>Formulario Registro Visitantes</h1>
@@ -521,12 +521,12 @@ $realizo = $_SESSION['nombre'] ?? $_SESSION['usuario'] ?? '';
 
                         <div class="col-12 col-md-3">
                             <label for="nombre" class="form-label">Nombre:</label>
-                            <input type="text" name="nombre" id="nombre" class="form-control" min="1" required>
+                            <input type="text" name="nombre" class="form-control" required>
                         </div>
 
                         <div class="col-12 col-md-3">
                             <label for="telefono" class="form-label">Telefono:</label>
-                            <input type="text" name="telefono" id="telefono" class="form-control" min="1" required>
+                            <input type="text" name="telefono" class="form-control" required>
                         </div>
 
                         <div class="col-12 col-md-3">
@@ -568,30 +568,81 @@ $realizo = $_SESSION['nombre'] ?? $_SESSION['usuario'] ?? '';
 
                         <div class="col-12 col-md-3">
                             <label for="contacto" class="form-label">Contacto de Emergencia:</label>
-                            <input type="text" name="contacto" id="contacto" class="form-control" min="1" required>
+                            <input type="text" name="contacto" class="form-control" required>
                         </div>
 
                         <div class="col-12 col-md-3">
                             <label for="numero_emergencia" class="form-label">Numero de Emergencia:</label>
-                            <input type="text" name="numero_emergencia" id="numero_emergencia" class="form-control" min="1" required>
+                            <input type="text" name="numero_emergencia" class="form-control" required>
                         </div>
+
+                        <!-- ==================================================
+                        EMPRESA
+                        ================================================== -->
 
                         <div class="col-12 col-md-3">
-                            <label for="empresa" class="form-label">Empresa:</label>
 
-                            <select name="empresa" id="empresa" class="form-select" required>
-                                <option value="" disabled selected>
+                            <label
+                                for="empresa"
+                                class="form-label">
+
+                                Empresa:
+
+                            </label>
+
+                            <select
+                                name="empresa"
+                                id="empresa"
+                                class="form-select"
+                                required>
+
+                                <option value="" selected disabled>
                                     Seleccione la Empresa...
                                 </option>
+
                                 <?= $empresa ?>
-                                <option value="otra">OTRA...</option>
+
+                                <option value="otra">
+                                    OTRA...
+                                </option>
+
                             </select>
+
                         </div>
 
-                        <!-- Input oculto -->
-                        <div id="nuevaEmpresaContainer" style="display:none;">
-                            <label for="nueva_empresa">Nombre de la nueva empresa:</label>
-                            <input type="text" name="nueva_empresa" id="nueva_empresa" placeholder="Ingrese el nombre de la empresa">
+                        <!-- ==================================================
+                        NUEVA EMPRESA
+                        ================================================== -->
+
+                        <div
+                            class="col-12 col-md-6"
+                            id="nuevaEmpresaContainer"
+                            style="display:none;">
+
+                            <label
+                                for="nueva_empresa"
+                                class="form-label">
+
+                                Nombre de la nueva empresa:
+
+                            </label>
+
+                            <input
+                                type="text"
+                                name="nueva_empresa"
+                                id="nueva_empresa"
+                                class="form-control"
+                                maxlength="150"
+                                autocomplete="off"
+                                placeholder="Ingrese el nombre de la empresa"
+                                disabled
+                                readonly>
+
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Este campo solamente se utiliza cuando no esta la empresa a registrar en el listado. En ese caso, seleccione <strong>OTRA...</strong> en el campo de empresa y escriba el nombre de la nueva empresa.
+                            </div>
+
                         </div>
 
                         <!-- Campo para ingresar el motivo del ingreso -->
@@ -738,6 +789,7 @@ $realizo = $_SESSION['nombre'] ?? $_SESSION['usuario'] ?? '';
 
             let consultaActual = 0;
             let enviandoFormulario = false;
+            let ultimaCedulaConsultada = "";
 
             /* ==========================================================
             LIMPIAR DATOS DEL VISITANTES
@@ -749,7 +801,6 @@ $realizo = $_SESSION['nombre'] ?? $_SESSION['usuario'] ?? '';
                 $("#telefono").val("");
                 $("#arl").val("");
                 $("#eps").val("");
-                $("#area").val("");
                 $("#rh").val("");
                 $("#contacto").val("");
                 $("#numero_emergencia").val("");
@@ -794,6 +845,88 @@ $realizo = $_SESSION['nombre'] ?? $_SESSION['usuario'] ?? '';
                 }
             );
 
+            /* ==========================================================
+            MOSTRAR / OCULTAR NUEVA EMPRESA
+            ESTA ES LA PARTE IMPORTANTE
+            ========================================================== */
+
+            function controlarNuevaEmpresa() {
+
+                const valor = $("#empresa").val();
+
+                if (valor === "otra") {
+
+                    $("#nuevaEmpresaContainer")
+                        .stop(true, true)
+                        .slideDown(250);
+
+                    $("#nueva_empresa")
+                        .prop("disabled", false)
+                        .prop("readonly", false)
+                        .prop("required", true);
+
+                } else {
+
+                    $("#nuevaEmpresaContainer")
+                        .stop(true, true)
+                        .slideUp(250);
+
+                    $("#nueva_empresa")
+                        .val("")
+                        .prop("disabled", true)
+                        .prop("readonly", true)
+                        .prop("required", false);
+                }
+            }
+
+            /* ==========================================================
+            CAMBIO DE EMPRESA
+            ========================================================== */
+
+            $("#empresa").on("change", function() {
+
+                console.log(
+                    "Cambio detectado:",
+                    $(this).val()
+                );
+
+                controlarNuevaEmpresa();
+
+                console.log("Script cargado correctamente");
+
+            });
+
+            /* ==========================================================
+            EJECUTAR AL CARGAR
+            ========================================================== */
+
+            controlarNuevaEmpresa();
+
+
+            /* ==========================================================
+            CÉDULA - SOLO NÚMEROS
+            ========================================================== */
+
+            $cedula.on("input", function() {
+
+                this.value =
+                    this.value.replace(/\D/g, "");
+
+
+                ultimaCedulaConsultada = "";
+
+
+                $("#mensajeCedula")
+                    .removeClass(
+                        "text-success " +
+                        "text-danger " +
+                        "text-primary " +
+                        "text-warning"
+                    )
+                    .text("");
+
+            });
+
             /* ==========================================
             CONSULTAR VISITANTE
             ========================================== */
@@ -812,7 +945,7 @@ $realizo = $_SESSION['nombre'] ?? $_SESSION['usuario'] ?? '';
                 }
 
                 console.log("Página actual:", window.location.href);
-                console.log("Ruta AJAX:", "../Controller/buscar_visitante.php");
+                console.log("Ruta AJAX:", "../Controller/buscar_visitantes.php");
 
                 // ultimaCedulaConsultada = cedula;
 
@@ -838,7 +971,6 @@ $realizo = $_SESSION['nombre'] ?? $_SESSION['usuario'] ?? '';
                             $("#rh").val(response.rh);
                             $("#contacto").val(response.contacto);
                             $("#numero_emergencia").val(response.numero_emergencia);
-                            $("#area").val(response.area);
 
                             $("#mensajeCedula")
                                 .html("✅ Visitante encontrado")

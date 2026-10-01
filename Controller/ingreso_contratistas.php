@@ -43,14 +43,14 @@ $induccion_sgsst = $_POST['induccion_sgsst'] ?? '0';
 $equipo = isset($_POST['equipo']) ? 'SI' : 'NO';
 
 /* =====================================================
-   CONEXIÓN A BASE DE DATOS
+CONEXIÓN A BASE DE DATOS
 ===================================================== */
 $con = connection();
 
 try {
 
     /* =====================================================
-       MANEJO DE EMPRESA (NORMAL U "OTRA")
+    MANEJO DE EMPRESA (NORMAL U "OTRA")
     ===================================================== */
     if ($empresa_post === "otra") {
 
@@ -61,9 +61,7 @@ try {
         }
 
         // Verificar si la empresa ya existe
-        $sql_check = "SELECT id_registro 
-                      FROM empresas 
-                      WHERE nom_empresa = ?";
+        $sql_check = "SELECT id_registro FROM empresas WHERE nom_empresa = ?";
 
         $stmt_check = $con->prepare($sql_check);
         $stmt_check->execute([$nueva_empresa]);
@@ -78,8 +76,7 @@ try {
         } else {
 
             // Insertar nueva empresa
-            $sql_insert_empresa = "INSERT INTO empresas (nom_empresa)
-                                   VALUES (?)";
+            $sql_insert_empresa = "INSERT INTO empresas (nom_empresa) VALUES (?)";
 
             $stmt_insert = $con->prepare($sql_insert_empresa);
             $stmt_insert->execute([$nueva_empresa]);
@@ -95,7 +92,7 @@ try {
     }
 
     /* =====================================================
-       VALIDACIONES BÁSICAS
+    VALIDACIONES BÁSICAS
     ===================================================== */
     if (
         !$fecha ||

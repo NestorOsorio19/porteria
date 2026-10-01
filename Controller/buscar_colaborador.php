@@ -24,19 +24,22 @@ try {
     $cedula = trim($_POST['cedula']);
 
     $sql = "
-        SELECT
-            nombre,
-            telefono,
-            id_arl,
-            id_eps,
-            rh,
-            nom_eme,
-            tel_eme,
-            id_area
-        FROM colaboradores
-        WHERE cedula = :cedula
-        LIMIT 1
-    ";
+    SELECT
+        nombre,
+        telefono,
+        id_arl,
+        id_eps,
+        rh,
+        nom_eme,
+        tel_eme,
+        id_area
+    FROM colaboradores
+    WHERE cedula = :cedula
+    ORDER BY
+        telefono IS NULL,
+        id_registro DESC
+    LIMIT 1
+";
 
     $stmt = $con->prepare($sql);
     $stmt->bindValue(':cedula', (int)$cedula, PDO::PARAM_INT);
@@ -64,7 +67,6 @@ try {
         'numero_emergencia' => $colaborador['tel_eme'],
         'area'              => $colaborador['id_area']
     ]);
-
 } catch (Exception $e) {
 
     echo json_encode([
