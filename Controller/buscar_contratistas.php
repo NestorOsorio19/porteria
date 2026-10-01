@@ -71,23 +71,38 @@ try {
     ===================================================== */
 
     $sql = "
-        SELECT
-            nombre,
-            telefono,
-            id_arl,
-            id_eps,
-            rh,
-            empresa_fk,
-            nombre_emergencia,
-            telefono_emergencia,
-            induccion_sgsst,
-            enfermedad_alergia,
-            marca,
-            serial
-        FROM contratistas
-        WHERE cedula = :cedula
-        LIMIT 1
-    ";
+    SELECT
+        nombre,
+        telefono,
+        id_arl,
+        id_eps,
+        rh,
+        empresa_fk,
+        nombre_emergencia,
+        telefono_emergencia,
+        induccion_sgsst,
+        enfermedad_alergia,
+        marca,
+        serial
+    FROM contratistas
+    WHERE cedula = :cedula
+    ORDER BY
+        (
+            IF(telefono IS NOT NULL AND telefono <> '', 1, 0) +
+            IF(id_arl IS NOT NULL, 1, 0) +
+            IF(id_eps IS NOT NULL, 1, 0) +
+            IF(rh IS NOT NULL AND rh <> '', 1, 0) +
+            IF(empresa_fk IS NOT NULL, 1, 0) +
+            IF(nombre_emergencia IS NOT NULL AND nombre_emergencia <> '', 1, 0) +
+            IF(telefono_emergencia IS NOT NULL AND telefono_emergencia <> '', 1, 0) +
+            IF(induccion_sgsst IS NOT NULL AND induccion_sgsst <> '', 1, 0) +
+            IF(enfermedad_alergia IS NOT NULL AND enfermedad_alergia <> '', 1, 0) +
+            IF(marca IS NOT NULL AND marca <> '', 1, 0) +
+            IF(serial IS NOT NULL AND serial <> '', 1, 0)
+        ) DESC,
+        id DESC
+    LIMIT 1
+";
 
     $stmt = $con->prepare($sql);
 
@@ -142,7 +157,6 @@ try {
             'serial'               => $contratista['serial'] ?? ''
         ]
     );
-
 } catch (PDOException $e) {
 
     /*
@@ -156,7 +170,6 @@ try {
         true,
         'Error al consultar el contratista: ' . $e->getMessage()
     );
-
 } catch (Exception $e) {
 
     responderJSON(

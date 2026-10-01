@@ -72,18 +72,29 @@ try {
     ================================================= */
 
     $sql = "
-        SELECT
-            nombre,
-            telefono,
-            id_arl,
-            id_eps,
-            rh,
-            contacto,
-            numero_emergencia
-        FROM visitantes
-        WHERE cedula = :cedula
-        LIMIT 1
-    ";
+    SELECT
+        nombre,
+        telefono,
+        id_arl,
+        id_eps,
+        rh,
+        contacto,
+        numero_emergencia
+    FROM visitantes
+    WHERE cedula = :cedula
+    ORDER BY
+        (
+            IF(telefono IS NOT NULL AND telefono <> '',1,0) +
+            IF(contacto IS NOT NULL AND contacto <> '',1,0) +
+            IF(numero_emergencia IS NOT NULL AND numero_emergencia <> '',1,0) +
+            IF(id_arl IS NOT NULL,1,0) +
+            IF(id_eps IS NOT NULL,1,0) +
+            IF(rh IS NOT NULL AND rh <> '',1,0)
+        ) DESC,
+        id DESC
+    LIMIT 1
+";
+
 
     $stmt = $con->prepare($sql);
 
@@ -118,28 +129,27 @@ try {
         'error' => false,
 
         'nombre' =>
-            $visitante['nombre'] ?? '',
+        $visitante['nombre'] ?? '',
 
         'telefono' =>
-            $visitante['telefono'] ?? '',
+        $visitante['telefono'] ?? '',
 
         'arl' =>
-            $visitante['id_arl'] ?? '',
+        $visitante['id_arl'] ?? '',
 
         'eps' =>
-            $visitante['id_eps'] ?? '',
+        $visitante['id_eps'] ?? '',
 
         'rh' =>
-            $visitante['rh'] ?? '',
+        $visitante['rh'] ?? '',
 
         'contacto' =>
-            $visitante['contacto'] ?? '',
+        $visitante['contacto'] ?? '',
 
         'numero_emergencia' =>
-            $visitante['numero_emergencia'] ?? ''
+        $visitante['numero_emergencia'] ?? ''
 
     ]);
-
 } catch (PDOException $e) {
 
     responderJSON([
@@ -147,13 +157,12 @@ try {
         'error' => true,
 
         'mensaje' =>
-            'Error al consultar el visitante',
+        'Error al consultar el visitante',
 
         'detalle' =>
-            $e->getMessage()
+        $e->getMessage()
 
     ], 500);
-
 } catch (Exception $e) {
 
     responderJSON([
@@ -161,7 +170,7 @@ try {
         'error' => true,
 
         'mensaje' =>
-            $e->getMessage()
+        $e->getMessage()
 
     ], 500);
 }

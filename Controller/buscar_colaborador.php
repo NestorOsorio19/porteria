@@ -36,7 +36,15 @@ try {
     FROM colaboradores
     WHERE cedula = :cedula
     ORDER BY
-        telefono IS NULL,
+        (
+            IF(telefono IS NOT NULL AND telefono <> '', 1, 0) +
+            IF(nom_eme IS NOT NULL AND nom_eme <> '', 1, 0) +
+            IF(tel_eme IS NOT NULL AND tel_eme <> '', 1, 0) +
+            IF(id_arl IS NOT NULL, 1, 0) +
+            IF(id_eps IS NOT NULL, 1, 0) +
+            IF(rh IS NOT NULL AND rh <> '', 1, 0) +
+            IF(id_area IS NOT NULL, 1, 0)
+        ) DESC,
         id_registro DESC
     LIMIT 1
 ";
