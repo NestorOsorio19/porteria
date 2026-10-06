@@ -1,96 +1,113 @@
-<?php 
-    // Se incluye el archivo que contiene la función para establecer la conexión con la base de datos.
-    include("../Config/database.php");
+<?php
 
-    // Se establece la conexión a la base de datos utilizando la función 'connection' definida en el archivo incluido.
-    $con = connection();
+require_once("../Config/database.php");
 
-    // Se define la consulta SQL para seleccionar todos los registros de la tabla 'porteria'.
-    $sql = "SELECT * FROM porteria";
+$con = connection();
 
-    // Se ejecuta la consulta SQL utilizando la función 'mysqli_query', y los resultados se almacenan en la variable '$query'.
-    $query = mysqli_query($con, $sql);    
+$sql = "SELECT * FROM porteria ORDER BY id DESC";
+$stmt = $con->prepare($sql);
+$stmt->execute();
+
+$visitantes = $stmt->fetchAll();
+
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <!-- Se incluye el archivo de estilo CSS para la tabla -->
-        <link href="../View/CSS/estilostablas.css" rel="stylesheet">
-        <title>Consulta Visitantes</title>        
-    </head>
-    <body>
-        <!-- Se crea un contenedor para mostrar la tabla de visitantes -->
-        <div class="users-table">
-            <h2>Consulta General de Visitantes</h2>
-            <!-- Se define la tabla para mostrar los datos de los visitantes -->
-            <table id="tablaPersonas" name="tablaPersonas">
-                <thead>
-                    <!-- Encabezados de la tabla con los nombres de las columnas que se mostrarán -->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta General de Visitantes</title>
+
+    ../View/CSS/estilostablas.css
+
+    <!-- DataTables -->
+    <link rel="stylesheet".net/1.13.8/css/jquery.dataTables.min.css
+
+    <script/code.jquery.com/jquery-3.7.1.min.jsscript>
+
+    <script/cdn.datatables.net/1.13.8/js/jquery.dataTables.min.jsscript>
+</head>
+
+<body>
+
+    <div class="users-table">
+
+        <h2>Consulta General de Visitantes</h2>
+
+        <input
+            type="button"
+            value="Menú"
+            onclick="window.location.href='index.php';">
+
+        <br><br>
+
+        <table id="tablaPersonas" class="display">
+
+            <thead>
+                <tr>
                     <th>ID</th>
                     <th>Fecha</th>
                     <th>Cédula</th>
                     <th>Nombre</th>
-                    <th>Telefono</th>
+                    <th>Teléfono</th>
                     <th>ARL</th>
                     <th>EPS</th>
                     <th>RH</th>
-                    <th>Teléfono</th>
                     <th>Empresa</th>
                     <th>Motivo</th>
                     <th>Ingreso</th>
                     <th>Salida</th>
-                    <th>CARNET</th>
+                    <th>Carnet</th>
+                </tr>
+            </thead>
 
-                    <!-- Se incluyen los scripts necesarios para usar DataTables -->
-                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-                    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+            <tbody>
 
-                    <!-- Se inicializa DataTables, una librería que facilita la manipulación y visualización de tablas -->
-                    <script>
-                        var tablaPersonas; // Se declara una variable global para la instancia de DataTable
+                <?php foreach ($visitantes as $row): ?>
 
-                        $(document).ready(function () {
-                            // Inicializa la tabla con el ID correspondiente y configura la paginación y búsqueda
-                            tablaPersonas = $('#tablaPersonas').DataTable({
-                                "paging": true, // Habilita la paginación
-                                "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]], // Configura el número de registros por página
-                                "searching": true // Habilita la búsqueda en la tabla
-                            });
-                        });
-                    </script>
-                    
+                    <tr>
+                        <td><?= htmlspecialchars($row['id'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($row['fecha'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($row['cedula'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($row['nombre'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($row['telefono'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($row['arl'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($row['eps'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($row['rh'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($row['empresa'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($row['motivo'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($row['ingreso'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($row['salida'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($row['carnet'] ?? '') ?></td>
                     </tr>
-                    <br>
-                    <!-- Botón que redirige al menú principal -->
-                    <input type="button" onclick="window.location.href='index.php';" value="Menú">                    
-                </thead>
-                <tbody>
-                    <!-- Se utiliza un bucle PHP para recorrer los resultados de la consulta y mostrar cada registro en una fila de la tabla -->
-                    <?php while ($row = mysqli_fetch_array($query)): ?>
-                        <tr>
-                            <!-- Se muestran los datos de cada visitante en las celdas de la tabla -->
-                            <th><?= $row['id'] ?></th>
-                            <th><?= $row['fecha'] ?></th>
-                            <th><?= $row['cedula'] ?></th> 
-                            <th><?= $row['nombre'] ?></th> 
-                            <th><?= $row['telefono'] ?></th> 
-                            <th><?= $row['arl'] ?></th>                                                 
-                            <th><?= $row['eps'] ?></th>
-                            <th><?= $row['rh'] ?></th> 
-                            <th><?= $row['telefono'] ?></th>
-                            <th><?= $row['empresa'] ?></th>  
-                            <th><?= $row['motivo'] ?></th>
-                            <th><?= $row['ingreso'] ?></th> 
-                            <th><?= $row['salida'] ?></th>
-                            <th><?= $row['carnet'] ?></th>   
-                        </tr>
-                    <?php endwhile; ?>
-                </tbody>
-            </table>
-        </div>
-    </body>
+
+                <?php endforeach; ?>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <script>
+        $(document).ready(function() {
+
+            $('#tablaPersonas').DataTable({
+                pageLength: 10,
+                lengthMenu: [
+                    [10, 25, 50, 100, -1],
+                    [10, 25, 50, 100, "Todos"]
+                ],
+                language: {
+                    url: 'https://cdn.datatables.net/plug-ins/1.13.8/i18n/es-ES.json'
+                }
+            });
+
+        });
+    </script>
+
+</body>
+
 </html>

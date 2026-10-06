@@ -175,7 +175,7 @@ switch ($role) {
         break;
 
     case "porteria1":
-        $redirect = "View/menu_operario.php";
+        $redirect = "View/menu_principal.php";
         break;
 
     case "porteria2":

@@ -521,12 +521,12 @@ $realizo = $_SESSION['nombre'] ?? $_SESSION['usuario'] ?? '';
 
                         <div class="col-12 col-md-3">
                             <label for="nombre" class="form-label">Nombre:</label>
-                            <input type="text" name="nombre" class="form-control" required>
+                            <input type="text" id="nombre" name="nombre" class="form-control" required>
                         </div>
 
                         <div class="col-12 col-md-3">
                             <label for="telefono" class="form-label">Telefono:</label>
-                            <input type="text" name="telefono" class="form-control" required>
+                            <input type="text" id="telefono" name="telefono" class="form-control" required>
                         </div>
 
                         <div class="col-12 col-md-3">
@@ -568,12 +568,12 @@ $realizo = $_SESSION['nombre'] ?? $_SESSION['usuario'] ?? '';
 
                         <div class="col-12 col-md-3">
                             <label for="contacto" class="form-label">Contacto de Emergencia:</label>
-                            <input type="text" name="contacto" class="form-control" required>
+                            <input type="text" id="contacto" name="contacto" class="form-control" required>
                         </div>
 
                         <div class="col-12 col-md-3">
                             <label for="numero_emergencia" class="form-label">Numero de Emergencia:</label>
-                            <input type="text" name="numero_emergencia" class="form-control" required>
+                            <input type="text" id="numero_emergencia" name="numero_emergencia" class="form-control" required>
                         </div>
 
                         <!-- ==================================================
@@ -964,13 +964,13 @@ $realizo = $_SESSION['nombre'] ?? $_SESSION['usuario'] ?? '';
 
                         if (!response.error) {
 
-                            $("#nombre").val(response.nombre);
-                            $("#telefono").val(response.telefono);
-                            $("#arl").val(response.arl);
-                            $("#eps").val(response.eps);
-                            $("#rh").val(response.rh);
-                            $("#contacto").val(response.contacto);
-                            $("#numero_emergencia").val(response.numero_emergencia);
+                            $("#nombre").val(response.nombre || '');
+                            $("#telefono").val(response.telefono || '');
+                            $("#arl").val(response.arl || '');
+                            $("#eps").val(response.eps || '');
+                            $("#rh").val(response.rh || '');
+                            $("#contacto").val(response.contacto || '');
+                            $("#numero_emergencia").val(response.numero_emergencia || '');
 
                             $("#mensajeCedula")
                                 .html("✅ Visitante encontrado")
@@ -979,20 +979,21 @@ $realizo = $_SESSION['nombre'] ?? $_SESSION['usuario'] ?? '';
                         } else {
 
                             $("#mensajeCedula")
-                                .html("⚠️ Visitante no encontrado. Complete los datos.")
+                                .html("⚠️ Visitante no encontrado")
                                 .css("color", "orange");
 
                         }
-
                     },
 
                     error: function(xhr, status, error) {
 
+                        console.error("ERROR AJAX:");
                         console.error(xhr.responseText);
                         console.error(status);
                         console.error(error);
 
                     }
+
                 });
 
             });

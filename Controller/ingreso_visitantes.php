@@ -68,6 +68,7 @@ $serial             = clean_text($_POST['serial'] ?? '');
 $carnet             = intval($_POST['carnet'] ?? 0);
 
 $ingreso            = $_POST['ingreso'] ?? '';
+$realizo            = clean_text($_POST['realizo'] ?? '');
 
 $arl                = intval($_POST['arl'] ?? 0);
 $eps                = intval($_POST['eps'] ?? 0);
@@ -253,7 +254,7 @@ if (!$empresa) {
 }
 
 /* =====================================================
-   INSERTAR VISITANTE
+INSERTAR VISITANTE
 ===================================================== */
 
 try {
@@ -280,6 +281,7 @@ try {
             motivo,
 
             ingreso,
+            realizo,
 
             carnet,
 
@@ -307,6 +309,7 @@ try {
             :motivo,
 
             :ingreso,
+            :realizo,
 
             :carnet,
 
@@ -340,6 +343,7 @@ try {
         ':motivo' => $motivo,
 
         ':ingreso' => $ingreso,
+        ':realizo' => $realizo,
 
         ':carnet' => $carnet,
 
