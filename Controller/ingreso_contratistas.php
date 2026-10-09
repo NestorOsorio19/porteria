@@ -42,6 +42,11 @@ $empresa_post = $_POST['empresa'] ?? null;
 $induccion_sgsst = $_POST['induccion_sgsst'] ?? '0';
 $equipo = isset($_POST['equipo']) ? 'SI' : 'NO';
 
+/* QUIEN REGISTRA */
+$realizo = $_SESSION['nombre']
+    ?? $_SESSION['usuario']
+    ?? '';
+
 /* =====================================================
 CONEXIÓN A BASE DE DATOS
 ===================================================== */
@@ -72,7 +77,6 @@ try {
 
             // Existe
             $empresa = $row['id_registro'];
-
         } else {
 
             // Insertar nueva empresa
@@ -83,12 +87,10 @@ try {
 
             $empresa = $con->lastInsertId();
         }
-
     } else {
 
         // Empresa seleccionada del combo
         $empresa = filter_var($empresa_post, FILTER_VALIDATE_INT);
-
     }
 
     /* =====================================================
@@ -130,39 +132,38 @@ try {
 
         $marca = '';
         $serial = '';
-
     } else {
 
         if (!$marca || !$serial) {
             responderError('datos_equipo_incompletos');
         }
-
     }
 
     /* =====================================================
-       INSERTAR CONTRATISTA
+    INSERTAR CONTRATISTA
     ===================================================== */
     $sql = "INSERT INTO contratistas
-            (
-                fecha,
-                nombre,
-                cedula,
-                rh,
-                id_arl,
-                id_eps,
-                empresa_fk,
-                enfermedad_alergia,
-                nombre_emergencia,
-                telefono_emergencia,
-                induccion_sgsst,
-                marca,
-                serial,
-                ingreso
-            )
-            VALUES
-            (
-                ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
-            )";
+        (
+            fecha,
+            nombre,
+            cedula,
+            rh,
+            id_arl,
+            id_eps,
+            empresa_fk,
+            enfermedad_alergia,
+            nombre_emergencia,
+            telefono_emergencia,
+            induccion_sgsst,
+            marca,
+            serial,
+            ingreso,
+            realizo
+        )
+        VALUES
+        (
+            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+        )";
 
     $stmt = $con->prepare($sql);
 
@@ -180,7 +181,8 @@ try {
         $induccion_sgsst,
         $marca,
         $serial,
-        $ingreso
+        $ingreso,
+        $realizo
     ]);
 
     if ($ok) {
@@ -188,14 +190,12 @@ try {
     } else {
         responderError('error_insert');
     }
-
 } catch (PDOException $e) {
 
     // Para depuración puedes usar:
     // die($e->getMessage());
 
     $_SESSION['error'] = 'error_bd';
-
 }
 
 $con = null;
@@ -205,4 +205,3 @@ $con = null;
 ===================================================== */
 header("Location: ../View/registro_contratistas.php");
 exit;
-?>

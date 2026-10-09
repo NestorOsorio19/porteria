@@ -1551,8 +1551,12 @@ CONTENIDO
 
                                 </span>
 
-                                <input type="text" name="realizo" id="realizo" class="form-control bg-light" value="<?= htmlspecialchars($realizo,ENT_QUOTES,'UTF-8') ?>" readonly>
-
+                                <input
+                                    type="text"
+                                    id="realizo"
+                                    class="form-control bg-light"
+                                    value="<?= htmlspecialchars($realizo, ENT_QUOTES, 'UTF-8') ?>"
+                                    readonly>
                             </div>
 
                         </div>
