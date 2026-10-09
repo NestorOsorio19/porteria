@@ -598,8 +598,6 @@ $realizo = $_SESSION['nombre'] ?? $_SESSION['usuario'] ?? '';
 
                                 <input
                                     type="text"
-                                    name="realizo"
-                                    id="realizo"
                                     class="form-control bg-light"
                                     value="<?= htmlspecialchars($realizo, ENT_QUOTES, 'UTF-8') ?>"
                                     readonly>

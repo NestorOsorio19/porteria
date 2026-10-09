@@ -163,7 +163,7 @@ $_SESSION["id_rol"] = $usuario["id_rol"];
 $_SESSION["role"] = $usuario["nombre_rol"];
 
 /* ==========================================================
-   DEFINIR REDIRECCIÓN SEGÚN EL ROL
+DEFINIR REDIRECCIÓN SEGÚN EL ROL
 ========================================================== */
 
 $role = strtolower(trim($usuario["nombre_rol"]));
